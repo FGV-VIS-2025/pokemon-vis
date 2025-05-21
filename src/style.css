@@ -66,8 +66,28 @@ body {
 #cards-container {
     height: 100%;
     width: 100%;
-    background-color: rgb(255, 255, 255)
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-wrap: wrap;   
+    justify-content: center;          
+    gap: 10px;                  
+    overflow-y: auto;            
+    padding: 10px;
+    box-sizing: border-box;
 }
+
+.card {
+    width: 24%;
+    aspect-ratio: 2 / 3;
+    background-color: rgb(109, 7, 7);
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
 
 #select-container{
     width: 100%;

@@ -1,9 +1,11 @@
-import { loadRegions } from "./utils.js";
+import { loadRegions, loadCards } from "./utils.js";
 import { getRoutesByRegionId } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
 
 const regionsArray = await loadRegions();
+loadCards();
+
 let selectedRegion = {
   id: regionsSelect.value,
   name: regionsSelect.options[regionsSelect.selectedIndex].textContent
