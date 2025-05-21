@@ -7,3 +7,14 @@ export async function getRegions(){
 
     return data;
 }
+
+export async function getRoutesByRegionId(regionId) {
+    const data = await d3.csv('../data/csv/locations.csv', d => ({
+        route_id: +d.id,
+        route_name: d.identifier,
+        region_id: +d.region_id
+    }));
+    const filteredRoutes = data.filter(route => route.region_id === +regionId);
+
+    return filteredRoutes;
+}
