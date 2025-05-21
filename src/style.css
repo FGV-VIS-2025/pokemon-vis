@@ -1,0 +1,76 @@
+@font-face {
+    font-family: pokemon;
+    src: url("../assets/fonts/hollow.ttf") format("opentype");
+}
+
+@font-face {
+    font-family: pokemon_solid;
+    src: url("../assets/fonts/solid.ttf") format("opentype");
+}
+
+body {
+    background-color: #000000;
+    margin: 0;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+#top-nav-container {
+    width: 100%;
+    aspect-ratio: 16 / 1;
+    background-color: blueviolet;
+}
+
+#main-container{
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    background-color: aqua;
+    display: flex;
+    flex-direction: row;
+}
+
+#map-container {
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#map-select-container{
+    width: 100%;
+    aspect-ratio: 16 / 1;
+    background-color: aquamarine;
+    display: flex;
+    justify-content: center; 
+    align-items: center;   
+}
+
+#regions-select{
+    border-radius: 10px;
+    height: 60%;
+    aspect-ratio: 8 / 1;
+    min-height: 24px;
+}
+
+#map-real-container{
+    width: 100%;
+    aspect-ratio: 8 / 5;
+    background-color: rgb(248, 190, 0);
+}
+
+#cards-container {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(255, 255, 255)
+}
+
+#select-container{
+    width: 100%;
+    aspect-ratio: 16 / 1;
+    background-color: rgb(0, 81, 255);
+}
