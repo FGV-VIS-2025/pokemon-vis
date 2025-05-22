@@ -3,6 +3,7 @@ import { getRegions } from "./data.js";
 const regionsArray = await getRegions();
 const regionsSelect = document.getElementById("regions-select");
 const cardsContainer = document.getElementById("cards-container");
+const contentScreen = document.getElementById("content-container");
 
 export async function loadRegions() {
   for (const eachRegion of regionsArray) {
@@ -17,6 +18,12 @@ export async function loadRegions() {
   }
 
   return regionsArray;
+}
+
+const colors = {"region-screen": "#3EDB2A", "route-screen": "#2AD2DB", "pokemon-screen": "#A11F62"}
+
+export function changeContent(selectedButton){
+  contentScreen.style.backgroundColor = colors[selectedButton.id];
 }
 
 const pokemonsArray = [

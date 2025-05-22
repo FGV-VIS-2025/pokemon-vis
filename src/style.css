@@ -22,6 +22,30 @@ body {
     width: 100%;
     aspect-ratio: 16 / 1;
     background-color: blueviolet;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#empty-container{
+    height: 100%;
+    width: 95vw;
+    box-sizing: border-box;
+    background-color: blueviolet;
+}
+
+#github-container{
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#github-container img{
+    width: 80%;
+    height: auto;
 }
 
 #main-container{
@@ -133,4 +157,9 @@ body {
 
 .active {
     background-color: rgb(5, 60, 109) !important;
+}
+
+#content-container{
+    width: 100%;
+    height: 100vh;
 }
