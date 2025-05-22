@@ -1,5 +1,5 @@
 import { loadRegions, loadCards, changeContent } from "./utils.js";
-import { getRoutesByRegionId } from "./data.js";
+import { getLocationsByRegionId } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
 const regionButton = document.getElementById("region-screen");
@@ -19,7 +19,7 @@ let selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regio
 regionsSelect.addEventListener("change", async (event) => {
   selectedRegion.id = regionsSelect.value;
   selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
-  const routesArray = await getRoutesByRegionId(selectedRegion.id);
+  const routesArray = await getLocationsByRegionId(selectedRegion.id);
 });
 
 regionButton.addEventListener("click", (event) => {
