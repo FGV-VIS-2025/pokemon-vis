@@ -20,8 +20,8 @@ body {
 
 #top-nav-container {
     width: 100%;
-    aspect-ratio: 16 / 1;
-    background-color: blueviolet;
+    aspect-ratio: 16 / 1.15;
+    background-color: #0A3873;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -30,9 +30,20 @@ body {
 
 #empty-container{
     height: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+#logo-container{
+    height: 100%;
     width: 95vw;
-    box-sizing: border-box;
-    background-color: blueviolet;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#logo-container img{
+    height: 85%;
+    width: auto;
 }
 
 #github-container{
@@ -44,7 +55,7 @@ body {
 }
 
 #github-container img{
-    width: 80%;
+    width: 60%;
     height: auto;
 }
 
