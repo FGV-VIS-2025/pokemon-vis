@@ -1,5 +1,5 @@
 import { loadRegions, loadCards, changeContent } from "./utils.js";
-import { getLocationsByRegionId } from "./data.js";
+import { getLocationsByRegionId, getLocationAreaByLocation } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
 const regionButton = document.getElementById("region-screen");
@@ -12,14 +12,17 @@ const buttons = [pokemonButton, routeButton, regionButton];
 const regionsArray = await loadRegions();
 loadCards();
 changeContent(regionButton);
-
 let selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regionsSelect.selectedIndex].textContent};
+let locationsArray = await getLocationsByRegionId(selectedRegion.id);
+let locationsAreaArray = await getLocationAreaByLocation(locationsArray[0].location_id);
 
 // construção da página dinamicamente
 regionsSelect.addEventListener("change", async (event) => {
   selectedRegion.id = regionsSelect.value;
   selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
-  const routesArray = await getLocationsByRegionId(selectedRegion.id);
+  locationsArray = await getLocationsByRegionId(selectedRegion.id);
+  // tô usando a primeira pq não temos um filtro de location ainda
+  locationsAreaArray = await getLocationAreaByLocation(locationsArray[0].location_id);
 });
 
 regionButton.addEventListener("click", (event) => {
