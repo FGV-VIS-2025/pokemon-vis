@@ -14,7 +14,8 @@ loadCards();
 changeContent(regionButton);
 let selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regionsSelect.selectedIndex].textContent};
 let locationsArray = await getLocationsByRegionId(selectedRegion.id);
-let locationsAreaArray = await getLocationAreaByLocation(locationsArray[0].location_id);
+let selectedLocation = locationsArray[0];
+let locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
 
 // construção da página dinamicamente
 regionsSelect.addEventListener("change", async (event) => {
@@ -22,7 +23,8 @@ regionsSelect.addEventListener("change", async (event) => {
   selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
   locationsArray = await getLocationsByRegionId(selectedRegion.id);
   // tô usando a primeira pq não temos um filtro de location ainda
-  locationsAreaArray = await getLocationAreaByLocation(locationsArray[0].location_id);
+  selectedLocation = locationsArray[0];
+  locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
 });
 
 regionButton.addEventListener("click", (event) => {
