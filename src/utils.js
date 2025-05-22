@@ -42,29 +42,35 @@ const pokemonsArray = [
   { name: "Lunara", ataque: 98, defesa: 72, tipo: "Psíquico", regiao: "Astralis", nivel: 26, hp: 120 }
 ];
 
-
 export async function loadCards() {
+    cardsContainer.innerHTML = ""; 
 
     for (const eachPokemon of pokemonsArray) {
         const card = document.createElement("div");
         card.classList.add("card");
 
         const img = document.createElement("img");
-        img.src = "../assets/pokemon.png"
-        img.classList.add("card-img")
-        card.appendChild(img)
+        img.src = "../assets/pokemon.png";
+        img.classList.add("card-img");
+        card.appendChild(img);
 
         const p = document.createElement("p");
         p.innerHTML = `
-                        Nome: ${eachPokemon.name}<br>
-                        Ataque: ${eachPokemon.ataque}<br>
-                        Defesa: ${eachPokemon.defesa}<br>
-                        Tipo: ${eachPokemon.tipo}<br>
-                        Região: ${eachPokemon.regiao}<br>
-                        Nível: ${eachPokemon.nivel}<br>
-                        Hp: ${eachPokemon.hp}
-                    `;
+            Nome: ${eachPokemon.name}<br>
+            Ataque: ${eachPokemon.ataque}<br>
+            Defesa: ${eachPokemon.defesa}<br>
+            Tipo: ${eachPokemon.tipo}<br>
+            Região: ${eachPokemon.regiao}<br>
+            Nível: ${eachPokemon.nivel}<br>
+            Hp: ${eachPokemon.hp}
+        `;
         card.appendChild(p);
+
+        card.addEventListener("click", () => {
+            const allCards = document.querySelectorAll(".card");
+            allCards.forEach(c => c.classList.remove("card-active"));
+            card.classList.add("card-active");
+        });
 
         cardsContainer.appendChild(card);
     }
