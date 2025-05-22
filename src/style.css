@@ -9,7 +9,7 @@
 }
 
 body {
-    background-color: #000000;
+    background-color: #ffffff;
     margin: 0;
     width: 100vw;
     display: flex;
@@ -26,6 +26,7 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    margin-bottom: 5vh;
 }
 
 #empty-container{
@@ -94,7 +95,7 @@ body {
 
 #map-real-container{
     width: 100%;
-    aspect-ratio: 8 / 5;
+    height: 100%;
     background-color: rgb(248, 190, 0);
 }
 
@@ -148,6 +149,7 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    margin-top: 2.5vw;
 }
 
 #pokemon-screen, #route-screen, #region-screen {
