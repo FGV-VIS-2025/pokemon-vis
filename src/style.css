@@ -141,6 +141,31 @@ body {
     padding-bottom: 10px;
 }
 
+.top-nav-card {
+    display: flex;                
+    flex-direction: column; 
+    justify-content: space-between;
+    align-items: center;           
+    padding: 8px 12px;            
+}
+
+.pokemon-name-display {
+    font-size: 1.1em;  
+    text-transform: capitalize;
+}
+
+.pokemon-hp-icons {
+    display: flex;
+    align-items: center; 
+    gap: 4px; 
+    margin-top: 5px;
+}
+
+.hp-icon {
+    width: 20px;   
+    height: 20px;  
+}
+
 .card-img{
     width: 90%;
 }
