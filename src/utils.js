@@ -4,20 +4,29 @@ const regionsArray = await getRegions();
 const regionsSelect = document.getElementById("regions-select");
 const cardsContainer = document.getElementById("cards-container");
 const contentScreen = document.getElementById("content-container");
+const mapRealContainer = document.getElementById("map-real-container");
+
+const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova"];
 
 export async function loadRegions() {
   for (const eachRegion of regionsArray) {
 
-    // only names in english
-    if (eachRegion.local_lan_id == 9){
-        const option = document.createElement("option");
-        option.value = eachRegion.region_id;
-        option.textContent = eachRegion.name;
-        regionsSelect.appendChild(option);
+    if (eachRegion.local_lan_id === 9 && regions.includes(eachRegion.name)) {
+      const option = document.createElement("option");
+      option.value = eachRegion.region_id;
+      option.textContent = eachRegion.name;
+      regionsSelect.appendChild(option);
     }
   }
 
   return regionsArray;
+}
+
+export function buildMap(selectedRegion){
+  mapRealContainer.innerHTML = "";
+  const img = document.createElement("img");
+  img.src = `../assets/maps/${selectedRegion.name}.png`;
+  mapRealContainer.appendChild(img);
 }
 
 const colors = {"region-screen": "#3EDB2A", "route-screen": "#2AD2DB", "pokemon-screen": "#A11F62"}

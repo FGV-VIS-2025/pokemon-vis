@@ -1,4 +1,4 @@
-import { loadRegions, loadCards, changeContent } from "./utils.js";
+import { loadRegions, loadCards, changeContent, buildMap } from "./utils.js";
 import { getLocationsByRegionId, getLocationAreaByLocation } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
@@ -13,6 +13,7 @@ const regionsArray = await loadRegions();
 loadCards();
 changeContent(regionButton);
 let selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regionsSelect.selectedIndex].textContent};
+buildMap(selectedRegion);
 let locationsArray = await getLocationsByRegionId(selectedRegion.id);
 let selectedLocation = locationsArray[0];
 let locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
@@ -21,6 +22,7 @@ let locationsAreaArray = await getLocationAreaByLocation(selectedLocation.locati
 regionsSelect.addEventListener("change", async (event) => {
   selectedRegion.id = regionsSelect.value;
   selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
+  buildMap(selectedRegion);
   locationsArray = await getLocationsByRegionId(selectedRegion.id);
   // tô usando a primeira pq não temos um filtro de location ainda
   selectedLocation = locationsArray[0];
