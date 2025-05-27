@@ -168,6 +168,7 @@ body {
 
 .card {
     width: 24%;
+    max-height: 350px;
     min-width: 200px;
     aspect-ratio: 2 / 3;
     border-radius: var(--border-radius-default);

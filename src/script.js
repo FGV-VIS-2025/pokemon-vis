@@ -8,28 +8,40 @@ const pokemonButton = document.getElementById("pokemon-screen");
 
 const buttons = [pokemonButton, routeButton, regionButton];
 
+// Declare these variables globally 
+let selectedRegion;
+let locationsArray;
+let selectedLocation;
+let locationsAreaArray;
+let selectedLocationArea;
+let pokemonsArray; 
+
 // construção da página inicial
-const regionsArray = await loadRegions();
-changeContent(regionButton);
-let selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regionsSelect.selectedIndex].textContent};
-buildMap(selectedRegion);
-let locationsArray = await getLocationsByRegionId(selectedRegion.id);
-let selectedLocation = locationsArray[0];
-let locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-let selectedLocationArea = locationsAreaArray[0].locationAreaId;
-let pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
-loadCards(pokemonsArray);
+(async () => { 
+    const regions = await loadRegions();
+    selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regionsSelect.selectedIndex].textContent};
+
+    changeContent(regionButton);
+    buildMap(selectedRegion);
+
+    locationsArray = await getLocationsByRegionId(selectedRegion.id);
+    selectedLocation = locationsArray[Math.floor(Math.random() * locationsArray.length)];
+    locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
+    selectedLocationArea = locationsAreaArray[Math.floor(Math.random() * locationsAreaArray.length)].locationAreaId;
+    pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
+    loadCards(pokemonsArray);
+})();
 
 // construção da página dinamicamente
 regionsSelect.addEventListener("change", async (event) => {
   selectedRegion.id = regionsSelect.value;
   selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
   buildMap(selectedRegion);
+
   locationsArray = await getLocationsByRegionId(selectedRegion.id);
-  // tô usando a primeira pq não temos um filtro de location ainda
-  selectedLocation = locationsArray[0];
+  selectedLocation = locationsArray[Math.floor(Math.random() * locationsArray.length)];
   locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-  selectedLocationArea = locationsAreaArray[0].locationAreaId;
+  selectedLocationArea = locationsAreaArray[Math.floor(Math.random() * locationsAreaArray.length)].locationAreaId;
   pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
   loadCards(pokemonsArray);
 });
