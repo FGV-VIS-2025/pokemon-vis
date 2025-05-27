@@ -1,5 +1,5 @@
 import { loadRegions, loadCards, changeContent, buildMap } from "./utils.js";
-import { getLocationsByRegionId, getLocationAreaByLocation } from "./data.js";
+import { getLocationsByRegionId, getLocationAreaByLocation, getPokemonsIdByLocationAreaId } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
 const regionButton = document.getElementById("region-screen");
@@ -10,13 +10,15 @@ const buttons = [pokemonButton, routeButton, regionButton];
 
 // construção da página inicial
 const regionsArray = await loadRegions();
-loadCards();
 changeContent(regionButton);
 let selectedRegion = {id: regionsSelect.value, name: regionsSelect.options[regionsSelect.selectedIndex].textContent};
 buildMap(selectedRegion);
 let locationsArray = await getLocationsByRegionId(selectedRegion.id);
 let selectedLocation = locationsArray[0];
 let locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
+let selectedLocationArea = locationsAreaArray[0].locationAreaId;
+let pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
+loadCards(pokemonsArray);
 
 // construção da página dinamicamente
 regionsSelect.addEventListener("change", async (event) => {
@@ -27,6 +29,9 @@ regionsSelect.addEventListener("change", async (event) => {
   // tô usando a primeira pq não temos um filtro de location ainda
   selectedLocation = locationsArray[0];
   locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
+  selectedLocationArea = locationsAreaArray[0].locationAreaId;
+  pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
+  loadCards(pokemonsArray);
 });
 
 regionButton.addEventListener("click", (event) => {

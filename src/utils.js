@@ -84,7 +84,7 @@ const pokemonTypeColors = {
     steel: { primary: '#B7B7CE', hover: '#8E8EAA' },
 };
 
-export async function loadCards() {
+export async function loadCards(pokemonsArray) {
     cardsContainer.innerHTML = "";
 
     for (const eachPokemon of pokemonsArray) {
@@ -92,7 +92,8 @@ export async function loadCards() {
         card.classList.add("card");
 
         // Determina a chave do tipo e obtém as cores
-        const typeKey = eachPokemon.tipo_1.toLowerCase();
+        const typeKey = eachPokemon.types[0].type_name;
+
         // Fallback para 'normal' se o tipo não for encontrado no dicionário
         const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal; 
 
@@ -116,8 +117,8 @@ export async function loadCards() {
         const hpPerHeart = 20; 
         const maxHearts = 5; 
 
-        const fullHearts = Math.floor(eachPokemon.hp / hpPerHeart);
-        const hasHalfHeart = (eachPokemon.hp % hpPerHeart) > 0;
+        const fullHearts = Math.floor(75 / hpPerHeart);
+        const hasHalfHeart = (75 % hpPerHeart) > 0;
 
         for (let i = 0; i < fullHearts; i++) {
             const heartImg = document.createElement("img");
@@ -155,7 +156,7 @@ export async function loadCards() {
 
 
         const img = document.createElement("img");
-        img.src = `../assets/pokemons/${eachPokemon.id}.png`;
+        img.src = `../assets/pokemons/${1}.png`;
         img.classList.add("card-img");
 
         imgWrapper.appendChild(img);
@@ -166,12 +167,11 @@ export async function loadCards() {
         contentDiv.classList.add("card-content");
         contentDiv.innerHTML = `
             <div class="types-container">
-                <img class="type-img" src="../assets/types/${eachPokemon.tipo_1}.png" />
-                ${eachPokemon.tipo_2 ? `<img class="type-img" src="../assets/types/${eachPokemon.tipo_2}.png" />` : ''}
+                <img class="type-img" src="../assets/types/${eachPokemon.types[0].type_name}.png" />
+                ${eachPokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${eachPokemon.types[1].type_name}.png" />` : ''}
             </div>
-            Região: ${eachPokemon.regiao}<br>
-            Nível: ${eachPokemon.nivel}<br>
-            Hp: ${eachPokemon.hp}
+            Min Level: ${eachPokemon.overall_min_level}<br>
+            Max Level: ${eachPokemon.overall_max_level}<br>
         `;
         card.appendChild(contentDiv);
 
