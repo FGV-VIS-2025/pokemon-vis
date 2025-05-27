@@ -131,24 +131,33 @@ body {
     min-width: 200px;
     aspect-ratio: 2 / 3;
     background-color: rgb(175, 12, 12);
-    border-radius: 20px;
+    border-radius: 10px;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: 100%;
-    padding-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .card-img{
-    background-color: #ffffff;
-    border-radius: 20px;
+    width: 90%;
+}
+
+.pokemon-img-wrapper{
+    width: 85%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
     margin-bottom: 10px;
 }
 
 .type-img{
-    width: 45%;
+    width: 40%;
 }
 
 .card-content {
@@ -171,12 +180,6 @@ body {
 
 .card-active{
     background-color: rgb(82, 7, 7);
-}
-
-.card-img{
-    margin-top: 10%;
-    width: 80%;
-    aspect-ratio: 1 / 1;
 }
 
 #select-container{

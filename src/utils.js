@@ -63,17 +63,65 @@ const pokemonsArray = [
         { id: 10015, name: "Larvitar", tipo_1: "rock", tipo_2: "ground", regiao: "Johto", nivel: 27, hp: 90 },
         { id: 10021, name: "Ho-Oh", tipo_1: "fire", tipo_2: "flying", regiao: "Johto", nivel: 50, hp: 240 }];
 
+const pokemonTypeColors = {
+    water: { primary: '#4A90E2', hover: '#2E6DA4' },    
+    grass: { primary: '#7ED321', hover: '#5C9E18' },     
+    normal: { primary: '#9B9B9B', hover: '#696969' },   
+    fire: { primary: '#F5A623', hover: '#C7841C' },     
+    psychic: { primary: '#F366B9', hover: '#C44793' },   
+    ice: { primary: '#5BC8E5', hover: '#3D93AD' },       
+    dragon: { primary: '#7B62F0', hover: '#452AB1' },    
+    dark: { primary: '#6F6F6F', hover: '#3D3D3D' },      
+    fairy: { primary: '#EE99AC', hover: '#C27385' },     
+    fighting: { primary: '#C22E28', hover: '#821E1B' },  
+    electric: { primary: '#F7D02C', hover: '#C8AB1D' }, 
+    poison: { primary: '#A33EA1', hover: '#702A6F' },
+    ground: { primary: '#E2BF65', hover: '#B7994E' },
+    flying: { primary: '#A98FF3', hover: '#816AC7' },
+    bug: { primary: '#A6B91A', hover: '#647012' },
+    rock: { primary: '#B6A136', hover: '#7B6F23' },
+    ghost: { primary: '#735797', hover: '#4B3762' },
+    steel: { primary: '#B7B7CE', hover: '#8E8EAA' },
+};
+
 export async function loadCards() {
-    cardsContainer.innerHTML = ""; 
+    cardsContainer.innerHTML = "";
 
     for (const eachPokemon of pokemonsArray) {
         const card = document.createElement("div");
         card.classList.add("card");
 
+        // Determina a chave do tipo e obtém as cores
+        const typeKey = eachPokemon.tipo_1.toLowerCase();
+        // Fallback para 'normal' se o tipo não for encontrado no dicionário
+        const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal; 
+
+        // Armazena o tipo da carta no dataset para fácil recuperação ao resetar
+        card.dataset.type = typeKey;
+
+        // Define a cor de fundo inicial da carta com base na cor primária do tipo
+        card.style.backgroundColor = colors.primary;
+
+        const topNav = document.createElement("div");
+        topNav.classList.add("top-nav-card");
+        topNav.innerHTML = `${eachPokemon.name}`;
+        card.appendChild(topNav);
+
+        const imgWrapper = document.createElement("div");
+        imgWrapper.classList.add("pokemon-img-wrapper");
+        imgWrapper.style.backgroundImage = `url('../assets/background.png')`;
+        imgWrapper.style.backgroundSize = `cover`; 
+        imgWrapper.style.backgroundPosition = `center`; 
+        imgWrapper.style.backgroundRepeat = `no-repeat`;
+
+
         const img = document.createElement("img");
         img.src = `../assets/pokemons/${eachPokemon.id}.png`;
         img.classList.add("card-img");
-        card.appendChild(img);
+
+        imgWrapper.appendChild(img);
+        card.appendChild(imgWrapper);
+
 
         const contentDiv = document.createElement("div");
         contentDiv.classList.add("card-content");
@@ -82,17 +130,60 @@ export async function loadCards() {
                 <img class="type-img" src="../assets/types/${eachPokemon.tipo_1}.png" />
                 ${eachPokemon.tipo_2 ? `<img class="type-img" src="../assets/types/${eachPokemon.tipo_2}.png" />` : ''}
             </div>
-            Nome: ${eachPokemon.name}<br>
             Região: ${eachPokemon.regiao}<br>
             Nível: ${eachPokemon.nivel}<br>
             Hp: ${eachPokemon.hp}
         `;
         card.appendChild(contentDiv);
 
+        // --- Event Listeners para Cores de Hover e Clique ---
+
+        // Mouse Enter (Mouse entra na carta)
+        card.addEventListener("mouseenter", () => {
+            // Aplica a cor de hover SOMENTE se a carta NÃO estiver ativa (selecionada)
+            if (!card.classList.contains("card-active")) {
+                card.style.backgroundColor = colors.hover;
+            }
+        });
+
+        // Mouse Leave (Mouse sai da carta)
+        card.addEventListener("mouseleave", () => {
+            // Volta para a cor primária SOMENTE se a carta NÃO estiver ativa (selecionada)
+            if (!card.classList.contains("card-active")) {
+                card.style.backgroundColor = colors.primary;
+            }
+        });
+
+        // Evento de Clique
         card.addEventListener("click", () => {
+            // PROBLEMA 1: Se a carta clicada já está ativa, o usuário quer desmarcá-la
+            if (card.classList.contains("card-active")) {
+                // Remove a seleção de TODAS as cartas
+                const allCards = document.querySelectorAll(".card");
+                allCards.forEach(c => {
+                    c.classList.remove("card-active");
+                    // Volta a cor de todas as cartas para a primária, usando o tipo armazenado no dataset
+                    const cardTypeKey = c.dataset.type || 'normal';
+                    const cardColors = pokemonTypeColors[cardTypeKey] || pokemonTypeColors.normal;
+                    c.style.backgroundColor = cardColors.primary;
+                });
+                return; // Encerra a função, pois a deseleção foi concluída
+            }
+
+            // Se chegamos aqui, uma NOVA carta está sendo selecionada (ou uma diferente da anterior)
             const allCards = document.querySelectorAll(".card");
-            allCards.forEach(c => c.classList.remove("card-active"));
+            allCards.forEach(c => {
+                c.classList.remove("card-active");
+                // Volta as cartas anteriormente ativas/hovered para a cor primária
+                const cardTypeKey = c.dataset.type || 'normal';
+                const cardColors = pokemonTypeColors[cardTypeKey] || pokemonTypeColors.normal;
+                c.style.backgroundColor = cardColors.primary;
+            });
+
+            // Define a carta clicada como ativa
             card.classList.add("card-active");
+            // Define sua cor de fundo para a cor de hover (ela permanecerá assim enquanto ativa)
+            card.style.backgroundColor = colors.hover;
         });
 
         cardsContainer.appendChild(card);
