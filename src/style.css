@@ -131,13 +131,37 @@ body {
     min-width: 200px;
     aspect-ratio: 2 / 3;
     background-color: rgb(175, 12, 12);
-    border-radius: 8px;
+    border-radius: 20px;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: 100%;
+    padding-bottom: 20px;
+}
+
+.card-img{
+    background-color: #ffffff;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.type-img{
+    width: 45%;
+}
+
+.card-content {
+    width: 100%;
+    text-align: center;
+}
+
+.types-container {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 8px;
 }
 
 .card:hover{

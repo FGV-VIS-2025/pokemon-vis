@@ -36,27 +36,32 @@ export function changeContent(selectedButton){
 }
 
 const pokemonsArray = [
-  { name: "Pikachu", ataque: 100, defesa: 50, tipo: "Raio", regiao: "Raiolândia", nivel: 25, hp: 120 },
-  { name: "Balinha", ataque: 70, defesa: 40, tipo: "Fada", regiao: "Doçurópolis", nivel: 18, hp: 90 },
-  { name: "Zézinho", ataque: 90, defesa: 60, tipo: "Normal", regiao: "Zezelândia", nivel: 22, hp: 110 },
-  { name: "Huguinho", ataque: 85, defesa: 55, tipo: "Água", regiao: "Lagoa Azul", nivel: 20, hp: 105 },
-  { name: "Yuri Saporito", ataque: 110, defesa: 80, tipo: "Fogo", regiao: "Sapora", nivel: 28, hp: 130 },
-  { name: "Camacho", ataque: 95, defesa: 45, tipo: "Lutador", regiao: "Pancadópolis", nivel: 24, hp: 115 },
-  { name: "Thiago", ataque: 75, defesa: 85, tipo: "Aço", regiao: "Metalúrgia", nivel: 23, hp: 125 },
-  { name: "Pinho", ataque: 60, defesa: 70, tipo: "Grama", regiao: "Pinheiral", nivel: 19, hp: 100 },
-  { name: "Flávio", ataque: 88, defesa: 77, tipo: "Terra", regiao: "Terranópolis", nivel: 21, hp: 108 },
-  { name: "Marola", ataque: 92, defesa: 66, tipo: "Água", regiao: "Praialândia", nivel: 24, hp: 112 },
-  { name: "Drakno", ataque: 120, defesa: 90, tipo: "Dragão", regiao: "Montedragão", nivel: 30, hp: 140 },
-  { name: "Ventus", ataque: 80, defesa: 50, tipo: "Voador", regiao: "Altos Ventos", nivel: 22, hp: 105 },
-  { name: "Nocturno", ataque: 95, defesa: 60, tipo: "Noturno", regiao: "Sombrolândia", nivel: 26, hp: 115 },
-  { name: "Cactu", ataque: 70, defesa: 90, tipo: "Grama", regiao: "Desertópolis", nivel: 20, hp: 100 },
-  { name: "Geleião", ataque: 60, defesa: 40, tipo: "Gelo", regiao: "Gelolândia", nivel: 18, hp: 85 },
-  { name: "Voltran", ataque: 105, defesa: 70, tipo: "Elétrico", regiao: "Voltagem", nivel: 27, hp: 125 },
-  { name: "Pedregulho", ataque: 85, defesa: 95, tipo: "Rocha", regiao: "Pedrália", nivel: 23, hp: 118 },
-  { name: "Sombrio", ataque: 90, defesa: 65, tipo: "Fantasma", regiao: "Necrópole", nivel: 25, hp: 110 },
-  { name: "Pluminha", ataque: 50, defesa: 60, tipo: "Voador", regiao: "Aerolândia", nivel: 17, hp: 95 },
-  { name: "Lunara", ataque: 98, defesa: 72, tipo: "Psíquico", regiao: "Astralis", nivel: 26, hp: 120 }
-];
+        { id: 1, id: 1, name: "Bulbasaur", tipo_1: "grass", tipo_2: "poison", regiao: "Kanto", nivel: 20, hp: 100 },
+        { id: 10, name: "Charmander", tipo_1: "fire", tipo_2: "", regiao: "Kanto", nivel: 18, hp: 90 },
+        { id: 100, name: "Squirtle", tipo_1: "water", tipo_2: "", regiao: "Kanto", nivel: 19, hp: 95 },
+        { id: 1000, name: "Pikachu", tipo_1: "electric", tipo_2: "", regiao: "Kanto", nivel: 22, hp: 85 },
+        { id: 1001, name: "Jigglypuff", tipo_1: "normal", tipo_2: "fairy", regiao: "Kanto", nivel: 15, hp: 120 },
+        { id: 10001, name: "Meowth", tipo_1: "normal", tipo_2: "", regiao: "Kanto", nivel: 17, hp: 70 },
+        { id: 10002, name: "Psyduck", tipo_1: "water", tipo_2: "", regiao: "Kanto", nivel: 21, hp: 88 },
+        { id: 10003, name: "Machop", tipo_1: "fighting", tipo_2: "", regiao: "Kanto", nivel: 25, hp: 110 },
+        { id: 10004, name: "Geodude", tipo_1: "rock", tipo_2: "ground", regiao: "Kanto", nivel: 23, hp: 92 },
+        { id: 10005, name: "Gengar", tipo_1: "ghost", tipo_2: "poison", regiao: "Kanto", nivel: 30, hp: 130 },
+        { id: 10006, name: "Onix", tipo_1: "rock", tipo_2: "ground", regiao: "Kanto", nivel: 28, hp: 150 },
+        { id: 10007, name: "Magikarp", tipo_1: "water", tipo_2: "", regiao: "Kanto", nivel: 10, hp: 50 },
+        { id: 10008, name: "Eevee", tipo_1: "normal", tipo_2: "", regiao: "Kanto", nivel: 16, hp: 75 },
+        { id: 10009, name: "Snorlax", tipo_1: "normal", tipo_2: "", regiao: "Kanto", nivel: 35, hp: 200 },
+        { id: 10010, name: "Dratini", tipo_1: "dragon", tipo_2: "", regiao: "Kanto", nivel: 26, hp: 98 },
+        { id: 10011, name: "Mewtwo", tipo_1: "psychic", tipo_2: "", regiao: "Kanto", nivel: 50, hp: 250 },
+        { id: 10012, name: "Chikorita", tipo_1: "grass", tipo_2: "", regiao: "Johto", nivel: 20, hp: 95 },
+        { id: 10013, name: "Cyndaquil", tipo_1: "fire", tipo_2: "", regiao: "Johto", nivel: 18, hp: 88 },
+        { id: 10014, name: "Totodile", tipo_1: "water", tipo_2: "", regiao: "Johto", nivel: 19, hp: 92 },
+        { id: 10016, name: "Mareep", tipo_1: "electric", tipo_2: "", regiao: "Johto", nivel: 17, hp: 80 },
+        { id: 10017, name: "Sudowoodo", tipo_1: "rock", tipo_2: "", regiao: "Johto", nivel: 24, hp: 105 },
+        { id: 10018, name: "Togepi", tipo_1: "fairy", tipo_2: "", regiao: "Johto", nivel: 15, hp: 60 },
+        { id: 10019, name: "Murkrow", tipo_1: "dark", tipo_2: "flying", regiao: "Johto", nivel: 22, hp: 78 },
+        { id: 10020, name: "Wobbuffet", tipo_1: "psychic", tipo_2: "", regiao: "Johto", nivel: 28, hp: 180 },
+        { id: 10015, name: "Larvitar", tipo_1: "rock", tipo_2: "ground", regiao: "Johto", nivel: 27, hp: 90 },
+        { id: 10021, name: "Ho-Oh", tipo_1: "fire", tipo_2: "flying", regiao: "Johto", nivel: 50, hp: 240 }];
 
 export async function loadCards() {
     cardsContainer.innerHTML = ""; 
@@ -66,21 +71,23 @@ export async function loadCards() {
         card.classList.add("card");
 
         const img = document.createElement("img");
-        img.src = "../assets/pokemon.png";
+        img.src = `../assets/pokemons/${eachPokemon.id}.png`;
         img.classList.add("card-img");
         card.appendChild(img);
 
-        const p = document.createElement("p");
-        p.innerHTML = `
+        const contentDiv = document.createElement("div");
+        contentDiv.classList.add("card-content");
+        contentDiv.innerHTML = `
+            <div class="types-container">
+                <img class="type-img" src="../assets/types/${eachPokemon.tipo_1}.png" />
+                ${eachPokemon.tipo_2 ? `<img class="type-img" src="../assets/types/${eachPokemon.tipo_2}.png" />` : ''}
+            </div>
             Nome: ${eachPokemon.name}<br>
-            Ataque: ${eachPokemon.ataque}<br>
-            Defesa: ${eachPokemon.defesa}<br>
-            Tipo: ${eachPokemon.tipo}<br>
             Região: ${eachPokemon.regiao}<br>
             Nível: ${eachPokemon.nivel}<br>
             Hp: ${eachPokemon.hp}
         `;
-        card.appendChild(p);
+        card.appendChild(contentDiv);
 
         card.addEventListener("click", () => {
             const allCards = document.querySelectorAll(".card");
