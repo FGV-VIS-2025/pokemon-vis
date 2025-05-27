@@ -173,5 +173,8 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId){
 
     const uniquePokemons = Array.from(uniquePokemonsMap.values());
 
+    uniquePokemons.sort((a, b) => a.name.localeCompare(b.name));
+    uniquePokemons.sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
+
     return uniquePokemons;
 }
