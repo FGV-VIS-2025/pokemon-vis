@@ -59,40 +59,40 @@ export async function loadCards(pokemonsArray) {
         nameDisplay.textContent = eachPokemon.name; 
         topNav.appendChild(nameDisplay);
 
-        const hpDisplay = document.createElement("div");
-        hpDisplay.classList.add("pokemon-hp-icons");
+        // const hpDisplay = document.createElement("div");
+        // hpDisplay.classList.add("pokemon-hp-icons");
 
-        const hpPerHeart = 20; 
-        const maxHearts = 5; 
+        // const hpPerHeart = 20; 
+        // const maxHearts = 5; 
 
-        const fullHearts = Math.floor(75 / hpPerHeart);
-        const hasHalfHeart = (75 % hpPerHeart) > 0;
+        // const fullHearts = Math.floor(75 / hpPerHeart);
+        // const hasHalfHeart = (75 % hpPerHeart) > 0;
 
-        for (let i = 0; i < fullHearts; i++) {
-            const heartImg = document.createElement("img");
-            heartImg.src = `../assets/heart.png`; 
-            heartImg.classList.add("hp-icon");
-            hpDisplay.appendChild(heartImg);
-        }
+        // for (let i = 0; i < fullHearts; i++) {
+        //     const heartImg = document.createElement("img");
+        //     heartImg.src = `../assets/heart.png`; 
+        //     heartImg.classList.add("hp-icon");
+        //     hpDisplay.appendChild(heartImg);
+        // }
 
-        if (hasHalfHeart) {
-            const halfHeartImg = document.createElement("img");
-            halfHeartImg.src = `../assets/half_heart.png`;
-            halfHeartImg.classList.add("hp-icon");
-            hpDisplay.appendChild(halfHeartImg);
-        }
+        // if (hasHalfHeart) {
+        //     const halfHeartImg = document.createElement("img");
+        //     halfHeartImg.src = `../assets/half_heart.png`;
+        //     halfHeartImg.classList.add("hp-icon");
+        //     hpDisplay.appendChild(halfHeartImg);
+        // }
 
-        const currentHeartsDisplayed = fullHearts + (hasHalfHeart ? 1 : 0);
-        const emptyHearts = maxHearts - currentHeartsDisplayed;
+        // const currentHeartsDisplayed = fullHearts + (hasHalfHeart ? 1 : 0);
+        // const emptyHearts = maxHearts - currentHeartsDisplayed;
 
-        for (let i = 0; i < emptyHearts; i++) {
-            const emptyHeartImg = document.createElement("img");
-            emptyHeartImg.src = `../assets/empty_heart.png`;
-            emptyHeartImg.classList.add("hp-icon");
-            hpDisplay.appendChild(emptyHeartImg);
-        }
+        // for (let i = 0; i < emptyHearts; i++) {
+        //     const emptyHeartImg = document.createElement("img");
+        //     emptyHeartImg.src = `../assets/empty_heart.png`;
+        //     emptyHeartImg.classList.add("hp-icon");
+        //     hpDisplay.appendChild(emptyHeartImg);
+        // }
 
-        topNav.appendChild(hpDisplay);
+        // topNav.appendChild(hpDisplay);
         card.appendChild(topNav);
 
         const imgWrapper = document.createElement("div");
