@@ -57,42 +57,9 @@ export async function loadCards(pokemonsArray) {
         const nameDisplay = document.createElement("div");
         nameDisplay.classList.add("pokemon-name-display");
         nameDisplay.textContent = eachPokemon.name; 
+        nameDisplay.style.fontWeight = "bold";
         topNav.appendChild(nameDisplay);
 
-        // const hpDisplay = document.createElement("div");
-        // hpDisplay.classList.add("pokemon-hp-icons");
-
-        // const hpPerHeart = 20; 
-        // const maxHearts = 5; 
-
-        // const fullHearts = Math.floor(75 / hpPerHeart);
-        // const hasHalfHeart = (75 % hpPerHeart) > 0;
-
-        // for (let i = 0; i < fullHearts; i++) {
-        //     const heartImg = document.createElement("img");
-        //     heartImg.src = `../assets/heart.png`; 
-        //     heartImg.classList.add("hp-icon");
-        //     hpDisplay.appendChild(heartImg);
-        // }
-
-        // if (hasHalfHeart) {
-        //     const halfHeartImg = document.createElement("img");
-        //     halfHeartImg.src = `../assets/half_heart.png`;
-        //     halfHeartImg.classList.add("hp-icon");
-        //     hpDisplay.appendChild(halfHeartImg);
-        // }
-
-        // const currentHeartsDisplayed = fullHearts + (hasHalfHeart ? 1 : 0);
-        // const emptyHearts = maxHearts - currentHeartsDisplayed;
-
-        // for (let i = 0; i < emptyHearts; i++) {
-        //     const emptyHeartImg = document.createElement("img");
-        //     emptyHeartImg.src = `../assets/empty_heart.png`;
-        //     emptyHeartImg.classList.add("hp-icon");
-        //     hpDisplay.appendChild(emptyHeartImg);
-        // }
-
-        // topNav.appendChild(hpDisplay);
         card.appendChild(topNav);
 
         const imgWrapper = document.createElement("div");
@@ -117,6 +84,7 @@ export async function loadCards(pokemonsArray) {
                 <img class="type-img" src="../assets/types/${eachPokemon.types[0].type_name}.png" />
                 ${eachPokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${eachPokemon.types[1].type_name}.png" />` : ''}
             </div>
+            ${eachPokemon.genus}<br>
             Min Level: ${eachPokemon.overall_min_level}<br>
             Max Level: ${eachPokemon.overall_max_level}<br>
         `;
@@ -129,6 +97,8 @@ export async function loadCards(pokemonsArray) {
             // Aplica a cor de hover SOMENTE se a carta NÃO estiver ativa (selecionada)
             if (!card.classList.contains("card-active")) {
                 card.style.backgroundColor = colors.hover;
+                card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
+                card.style.transform = "translateY(-5px)";
                 img.src = `../assets/pokemons/official-artwork/shiny/${eachPokemon.pokemon_id}.png`;
             }
         });
@@ -138,6 +108,8 @@ export async function loadCards(pokemonsArray) {
             // Volta para a cor primária SOMENTE se a carta NÃO estiver ativa (selecionada)
             if (!card.classList.contains("card-active")) {
                 card.style.backgroundColor = colors.primary;
+                card.style.boxShadow = "none";
+                card.style.transform = "translateY(+5px)";
                 img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
             }
         });
@@ -154,6 +126,8 @@ export async function loadCards(pokemonsArray) {
                     const cardTypeKey = c.dataset.type || 'normal';
                     const cardColors = pokemonTypeColors[cardTypeKey] || pokemonTypeColors.normal;
                     c.style.backgroundColor = cardColors.primary;
+                    c.style.boxShadow = "none";
+                    c.style.transform = "translateY(+5px)";
                     img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
                 });
                 return; // Encerra a função, pois a deseleção foi concluída
@@ -167,6 +141,8 @@ export async function loadCards(pokemonsArray) {
                 const cardTypeKey = c.dataset.type || 'normal';
                 const cardColors = pokemonTypeColors[cardTypeKey] || pokemonTypeColors.normal;
                 c.style.backgroundColor = cardColors.primary;
+                c.style.boxShadow = "none";
+                c.style.transform = "translateY(+5px)";
                 img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
             });
 
@@ -174,6 +150,8 @@ export async function loadCards(pokemonsArray) {
             card.classList.add("card-active");
             // Define sua cor de fundo para a cor de hover (ela permanecerá assim enquanto ativa)
             card.style.backgroundColor = colors.hover;
+            card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
+            card.style.transform = "translateY(-5px)";
             img.src = `../assets/pokemons/official-artwork/shiny/${eachPokemon.pokemon_id}.png`;
         });
 
