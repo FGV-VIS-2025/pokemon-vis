@@ -71,6 +71,23 @@ function createPokemonScreen(){
         pokemonsSelect.appendChild(pokemonCard);
     }
 
+    const pokemonsDescriptionArea = document.createElement("div");
+    pokemonsDescriptionArea.classList.add("pokemons-description-area");
+
+    for (let i = 0; i < 4; i++){
+        const pokemonDescription = document.createElement("div");
+        pokemonDescription.classList.add("pokemon-description");
+
+        pokemonDescription.innerHTML = `Nome: blá blá bla <br>
+                                        Peso: blá blá bla <br>
+                                        Altura: blá blá bla <br>
+                                        Genero: blá blá bla <br>
+                                        Espécime: blá blá bla <br>
+                                        Tipo: blá blá bla <br>`
+
+        pokemonsDescriptionArea.appendChild(pokemonDescription);
+    }
+
     const sgvChart1 = document.createElement("svg");
     sgvChart1.classList.add("svg-chart-1");
 
@@ -86,6 +103,7 @@ function createPokemonScreen(){
     sgvChart2.appendChild(svgChart2Rect1);
 
     contentScreen.appendChild(pokemonsSelect);
+    contentScreen.appendChild(pokemonsDescriptionArea);
     contentScreen.appendChild(sgvChart1);
     contentScreen.appendChild(sgvChart2);
 }
