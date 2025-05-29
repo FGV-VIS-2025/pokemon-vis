@@ -393,6 +393,7 @@ body {
 .info-blocks img{
     height: 30%;
     aspect-ratio: 1/1;
+    margin-bottom: 5px;
 }
 
 .info-rows-2{

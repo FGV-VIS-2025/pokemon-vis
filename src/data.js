@@ -173,8 +173,59 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId){
 
     const uniquePokemons = Array.from(uniquePokemonsMap.values());
 
-    uniquePokemons.sort((a, b) => a.name.localeCompare(b.name));
-    uniquePokemons.sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
+    const pokemonsSpeciesArray = await d3.csv('../data/pokemon_species.csv', d => ({
+        pokemon_id: +d.id,
+        identifier: d.identifier,
+        generation_id: +d.generation_id,
+        evolves_from_species_id: +d.evolves_from_species_id,
+        evolution_chain_id: +d.evolution_chain_id,
+        color_id: +d.color_id,
+        shape_id: +d.shape_id,
+        habitat_id: +d.habitat_id,
+        gender_rate: +d.gender_rate,
+        capture_rate: +d.capture_rate,
+        base_happiness: +d.base_happiness,
+        is_baby: +d.is_baby,
+        hatch_counter: +d.hatch_counter,
+        has_gender_differences: +d.has_gender_differences,
+        growth_rate_id: +d.growth_rate_id,
+        forms_switchable: +d.forms_switchable,
+        is_legendary: +d.is_legendary,
+        is_mythical: +d.is_mythical,
+        order: +d.order,
+        conquest_order: +d.conquest_order
+    }));
 
-    return uniquePokemons;
+    const speciesMap = new Map(
+        pokemonsSpeciesArray.map(species => [species.pokemon_id, species])
+    );
+
+    const mergedPokemons = uniquePokemons.map(pokemon => ({
+        ...pokemon,
+        ...(speciesMap.get(pokemon.pokemon_id) || {})
+    }));
+
+    const pokemonsArray2 = await d3.csv('../data/pokemon.csv', d => ({
+        pokemon_id: +d.id,
+        identifier: d.identifier,
+        height: +d.height,
+        weight: +d.weight,
+        base_experience: +d.base_experience,
+        order: +d.order,
+        is_default: +d.is_default,
+    }));
+
+    const pokemonsMap2 = new Map(
+        pokemonsArray2.map(pokemons => [pokemons.pokemon_id, pokemons])
+    );
+
+    const mergedPokemons2 = mergedPokemons.map(pokemon => ({
+        ...pokemon,
+        ...(pokemonsMap2.get(pokemon.pokemon_id) || {})
+    }));
+
+    mergedPokemons2.sort((a, b) => a.name.localeCompare(b.name));
+    mergedPokemons2.sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
+
+    return mergedPokemons2;
 }

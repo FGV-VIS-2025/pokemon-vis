@@ -1,6 +1,6 @@
 // Importações
 import { getRegions } from "./data.js";
-import { pokemonTypeColors } from "./consts.js";
+import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap } from "./consts.js";
 
 // Elementos do DOM
 const regionsSelect = document.getElementById("regions-select");
@@ -121,6 +121,7 @@ function createEmptyDescription(){
 }
 
 function createSelectedPokemonDescription(selectedPokemon){
+    console.log(selectedPokemon);
     const desc = document.createElement("div");
     desc.classList.add("pokemon-description");
     desc.innerHTML = `
@@ -131,43 +132,47 @@ function createSelectedPokemonDescription(selectedPokemon){
                     <div class="info-rows">
                         <div class="info-blocks">
                             <img src="../assets/block-info/governante.png" ></img>
-                            0.7 m
+                            ${selectedPokemon.height/10} m
                         </div>
                         <div class="info-blocks">
                             <img src="../assets/block-info/regua.png" ></img>
-                            6.9 kg
+                            ${selectedPokemon.weight/10} kg
                         </div>
                     </div>
                     <div class="info-rows">
                         <div class="info-blocks">
                             <img src="../assets/block-info/genders.png" ></img>
-                            1 : 7
+                            ${genderRateMap[selectedPokemon.gender_rate]}
                         </div>
                         <div class="info-blocks">
                             <img src="../assets/block-info/relogio.png" ></img>
-                            20 ciclos
+                            ${selectedPokemon.hatch_counter} ciclos
                         </div>
                     </div>
                     <div class="info-rows-2">
                         <div class="info-blocks-2-menor">
-                            Nome:<br>
+                            Name:<br>
+                            Genus:<br>
                             Generation:<br>
                             Habitat:<br>
                             Capture Rate:<br>
                             Growth Rate:<br>
-                            EV Yield:<br>
-                            B. Exp:<br>
                             B. Happiness:<br>
+                            Is Baby:<br>
+                            Is Legendary:<br>
+                            Is Mythical:<br>
                         </div>
                         <div class="info-blocks-2-maior">
                             ${selectedPokemon.name}<br>
-                            I<br>
-                            Grassland<br>
-                            45<br>
-                            Medium-slow<br>
-                            1 Sp. Attack<br>
-                            64<br>
-                            50<br>
+                            ${selectedPokemon.genus.split(" Pokémon")[0]}<br>
+                            ${generationMap[selectedPokemon.generation_id]}<br>
+                            ${habitatMap[selectedPokemon.habitat_id]}<br>
+                            ${selectedPokemon.capture_rate}<br>
+                            ${growthRateMap[selectedPokemon.growth_rate_id].name}<br>
+                            ${selectedPokemon.base_happiness}<br>
+                            ${selectedPokemon.is_baby == 0 ? "No" : "Yes"}<br>
+                            ${selectedPokemon.is_legendary == 0 ? "No" : "Yes"}<br>
+                            ${selectedPokemon.is_mythical == 0 ? "No" : "Yes"}<br>
                         </div>
                     </div>`;
 
@@ -319,20 +324,20 @@ function createPokemonCard(pokemon) {
         const isActive = card.classList.toggle("card-active");
 
         if (isActive) {
-        if (selectedPokemons.length >= 4) {
-            alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
-            card.classList.remove("card-active");
-            return;
-        }
+            if (selectedPokemons.length >= 4) {
+                alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
+                card.classList.remove("card-active");
+                return;
+            }
 
-        card.style.backgroundColor = colors.hover;
-        img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
-        selectedPokemons.push(pokemon);
+            card.style.backgroundColor = colors.hover;
+            img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+            selectedPokemons.push(pokemon);
 
         } else {
-        selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== pokemon.pokemon_id);
-        card.style.backgroundColor = colors.primary;
-        img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+            selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== pokemon.pokemon_id);
+            card.style.backgroundColor = colors.primary;
+            img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
         }
 
         editPokemonsCard();
