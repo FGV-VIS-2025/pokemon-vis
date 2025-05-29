@@ -354,14 +354,70 @@ body {
 
 .pokemon-description{
     width: 25%;
-    aspect-ratio: 2 / 1.5;
-    background-color: #585858;
+    padding: 10px;
+    background-color: #1b1b1b;
     border-radius: 10px;
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     font-size: 1.5em;
     overflow-y: auto;
+}
+
+.info-rows{
+    margin-top: 10px;
+    width: 90%;
+    aspect-ratio:  2 / 1;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.info-blocks{
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 5px;
+    background-color: rgb(49, 49, 49);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: .8em;;
+}
+
+.info-blocks img{
+    height: 30%;
+    aspect-ratio: 1/1;
+}
+
+.info-rows-2{
+    width: 90%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    justify-content: center;
+    flex-direction: row;
+    background-color: rgb(49, 49, 49);
+    gap: 10px;
+    padding: 10px;
+    font-size: .65em;;
+}
+
+.info-blocks-2-menor{
+    width: 45%;
+    padding: 5px;
+}
+
+.info-blocks-2-maior{
+    padding: 5px;
+    width: 55%;
 }
 
 .svg-chart-1{

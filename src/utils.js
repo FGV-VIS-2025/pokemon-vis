@@ -1,308 +1,342 @@
+// Importações
 import { getRegions } from "./data.js";
-import { pokemonTypeColors } from "./consts.js"
+import { pokemonTypeColors } from "./consts.js";
 
-const regionsArray = await getRegions();
+// Elementos do DOM
 const regionsSelect = document.getElementById("regions-select");
 const cardsContainer = document.getElementById("cards-container");
 const contentScreen = document.getElementById("content-container");
 const mapRealContainer = document.getElementById("map-real-container");
 
+// Variáveis globais
+const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova"];
+const colors = {
+  "region-screen": "#3EDB2A",
+  "route-screen": "#2AD2DB",
+  "pokemon-screen": "#A11F62"
+};
+
 let selectedPokemons = [];
 let pokemonArrayGlobal;
 
-const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova"];
-
+// Funções Principais
 export async function loadRegions() {
-  for (const eachRegion of regionsArray) {
+    const regionsArray = await getRegions();
 
-    if (eachRegion.local_lan_id === 9 && regions.includes(eachRegion.name)) {
-      const option = document.createElement("option");
-      option.value = eachRegion.region_id;
-      option.textContent = eachRegion.name;
-      regionsSelect.appendChild(option);
+    for (const eachRegion of regionsArray) {
+        if (eachRegion.local_lan_id === 9 && regions.includes(eachRegion.name)) {
+        const option = document.createElement("option");
+        option.value = eachRegion.region_id;
+        option.textContent = eachRegion.name;
+        regionsSelect.appendChild(option);
+        }
     }
-  }
 
-  return regionsArray;
+    return regionsArray;
 }
 
-export function buildMap(selectedRegion){
-  mapRealContainer.innerHTML = "";
-  const img = document.createElement("img");
-  img.src = `../assets/maps/${selectedRegion.name}.png`;
-  mapRealContainer.appendChild(img);
+export function buildMap(selectedRegion) {
+    mapRealContainer.innerHTML = "";
+    const img = document.createElement("img");
+    img.src = `../assets/maps/${selectedRegion.name}.png`;
+    mapRealContainer.appendChild(img);
 }
 
-function createPokemonScreen(){
+export function changeContent(selectedButton) {
+    if (selectedButton.id === "pokemon-screen") {
+        createPokemonScreen();
+        editPokemonsCard();
+    } else {
+        contentScreen.innerHTML = ``;
+        contentScreen.style.backgroundColor = colors[selectedButton.id];
+    }
+}
+
+// Quando a aba pokemon é selecionada, cria o conteúdo dela
+function createPokemonScreen() {
     contentScreen.innerHTML = ``;
     contentScreen.style.backgroundColor = "black";
+
     const pokemonsSelect = document.createElement("div");
     pokemonsSelect.classList.add("pokemons-select");
 
-    for (let i = 0; i < 4; i++){
-        const pokemonCard = document.createElement("div");
-        pokemonCard.classList.add("pokemon-card-select");
-
-        pokemonCard.addEventListener("mouseenter", () => {
-            pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
-            pokemonCard.style.transform = "translateY(-5px)";
-        });
-
-        pokemonCard.addEventListener("mouseout", () => {
-            pokemonCard.style.boxShadow = "none";
-            pokemonCard.style.transform = "translateY(+5px)";
-        });
-
-        const plusButton = document.createElement("div");
-        plusButton.classList.add("plus-button");
-
-        plusButton.addEventListener("mouseenter", () => {
-            pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
-            pokemonCard.style.transform = "translateY(-5px)";
-        });
-
-        plusButton.addEventListener("mouseout", () => {
-            pokemonCard.style.boxShadow = "none";
-            pokemonCard.style.transform = "translateY(+5px)";
-        });
-
-        const img = document.createElement("img");
-        img.src = "../assets/plus_button.png"
-
-        plusButton.appendChild(img);
-        pokemonCard.appendChild(plusButton);
-        pokemonsSelect.appendChild(pokemonCard);
+    for (let i = 0; i < 4; i++) {
+        pokemonsSelect.appendChild(createEmptyPokemonCard());
     }
 
     const pokemonsDescriptionArea = document.createElement("div");
     pokemonsDescriptionArea.classList.add("pokemons-description-area");
 
-    for (let i = 0; i < 4; i++){
-        const pokemonDescription = document.createElement("div");
-        pokemonDescription.classList.add("pokemon-description");
-
-        pokemonDescription.innerHTML = `Nome: blá blá bla <br>
-                                        Peso: blá blá bla <br>
-                                        Altura: blá blá bla <br>
-                                        Genero: blá blá bla <br>
-                                        Espécime: blá blá bla <br>
-                                        Tipo: blá blá bla <br>`
-
-        pokemonsDescriptionArea.appendChild(pokemonDescription);
+    for (let i = 0; i < 4; i++) {
+        const desc = document.createElement("div");
+        desc.classList.add("pokemon-description");
+        desc.innerHTML = `Nome: blá blá bla <br>
+                        Peso: blá blá bla <br>
+                        Altura: blá blá bla <br>
+                        Genero: blá blá bla <br>
+                        Espécime: blá blá bla <br>
+                        Tipo: blá blá bla <br>`;
+        pokemonsDescriptionArea.appendChild(desc);
     }
 
-    const sgvChart1 = document.createElement("svg");
-    sgvChart1.classList.add("svg-chart-1");
+    const svg1 = document.createElement("svg");
+    svg1.classList.add("svg-chart-1");
+    svg1.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
 
-    const svgChart1Rect1 = document.createElement("rect");
-    svgChart1Rect1.classList.add("svg-chart-1-rect-1");
-    sgvChart1.appendChild(svgChart1Rect1);
-
-    const sgvChart2 = document.createElement("svg");
-    sgvChart2.classList.add("svg-chart-2");
-
-    const svgChart2Rect1 = document.createElement("rect");
-    svgChart2Rect1.classList.add("svg-chart-1-rect-1");
-    sgvChart2.appendChild(svgChart2Rect1);
+    const svg2 = document.createElement("svg");
+    svg2.classList.add("svg-chart-2");
+    svg2.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
 
     contentScreen.appendChild(pokemonsSelect);
     contentScreen.appendChild(pokemonsDescriptionArea);
-    contentScreen.appendChild(sgvChart1);
-    contentScreen.appendChild(sgvChart2);
+    contentScreen.appendChild(svg1);
+    contentScreen.appendChild(svg2);
 }
 
-function editPokemonsCard(){
+// Atualiza as Cartas Após alguma Seleção
+function editPokemonsCard() {
     const pokemonsCardSelect = document.getElementsByClassName("pokemons-select")[0];
     pokemonsCardSelect.innerHTML = "";
-    const numberSelectedPokemons = selectedPokemons.length;
 
-    for (let i = 1; i <= 4; i++){
-        if (i <= numberSelectedPokemons){
-            const selectedPokemon = selectedPokemons[i - 1];
+    const pokemonsDescription = document.getElementsByClassName("pokemons-description-area")[0];
+    pokemonsDescription.innerHTML = "";
 
-            const typeKey = selectedPokemon.types[0].type_name;
-            const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
-
-            const pokemonCard = document.createElement("div");
-            pokemonCard.classList.add("pokemon-card-selected");
-
-            pokemonCard.addEventListener("mouseenter", () => {
-                pokemonCard.style.boxShadow = `0 8px 16px ${colors.primary}`;
-                pokemonCard.style.transform = "translateY(-5px)";
-            });
-
-            pokemonCard.addEventListener("mouseout", () => {
-                pokemonCard.style.boxShadow = "none";
-                pokemonCard.style.transform = "translateY(+5px)";
-            });
-            
-            pokemonCard.style.backgroundColor = colors.primary;
-
-            const img = document.createElement("img");
-            img.src = `../assets/pokemons/official-artwork/${selectedPokemon.pokemon_id}.png`;
-
-            img.addEventListener("mouseenter", () => {
-                pokemonCard.style.boxShadow = `0 8px 16px ${colors.primary}`;
-                pokemonCard.style.transform = "translateY(-5px)";
-            });
-
-            pokemonCard.appendChild(img);
-
-            pokemonCard.addEventListener("click", () => {
-                selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== selectedPokemon.pokemon_id);
-                loadCards(pokemonArrayGlobal);
-                editPokemonsCard();
-            });
-
-            pokemonsCardSelect.appendChild(pokemonCard);
-
-        } else{
-            const pokemonCard = document.createElement("div");
-            pokemonCard.classList.add("pokemon-card-select");
-
-            pokemonCard.addEventListener("mouseenter", () => {
-                pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
-                pokemonCard.style.transform = "translateY(-5px)";
-            });
-
-            pokemonCard.addEventListener("mouseout", () => {
-                pokemonCard.style.boxShadow = "none";
-                pokemonCard.style.transform = "translateY(+5px)";
-            });
-
-            const plusButton = document.createElement("div");
-            plusButton.classList.add("plus-button");
-
-            plusButton.addEventListener("mouseenter", () => {
-                pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
-                pokemonCard.style.transform = "translateY(-5px)";
-            });
-
-            const img = document.createElement("img");
-            img.src = "../assets/plus_button.png"
-
-            plusButton.appendChild(img);
-            pokemonCard.appendChild(plusButton);
-            pokemonsCardSelect.appendChild(pokemonCard);
+    for (let i = 1; i <= 4; i++) {
+        if (i <= selectedPokemons.length) {
+        const selectedPokemon = selectedPokemons[i - 1];
+            pokemonsCardSelect.appendChild(createSelectedPokemonCard(selectedPokemon));
+            pokemonsDescription.appendChild(createSelectedPokemonDescription(selectedPokemon));
+        } else {
+            pokemonsCardSelect.appendChild(createEmptyPokemonCard());
+            pokemonsDescription.appendChild(createEmptyDescription());
         }
     }
 }
 
-const colors = {"region-screen": "#3EDB2A", "route-screen": "#2AD2DB", "pokemon-screen": "#A11F62"}
-
-export function changeContent(selectedButton){
-  if (selectedButton.id == "pokemon-screen"){
-    createPokemonScreen();
-  } else {
-    contentScreen.innerHTML = ``;
-    contentScreen.style.backgroundColor = colors[selectedButton.id];
-  }
+function createEmptyDescription(){
+    const desc = document.createElement("div");
+    desc.classList.add("pokemon-description");
+    desc.innerHTML = ``;
+    return desc;
 }
 
+function createSelectedPokemonDescription(selectedPokemon){
+    const desc = document.createElement("div");
+    desc.classList.add("pokemon-description");
+    desc.innerHTML = `
+                    <div class="types-container">
+                        <img class="type-img" src="../assets/description-types/${selectedPokemon.types[0].type_name}.png" />
+                        ${selectedPokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}
+                    </div>
+                    <div class="info-rows">
+                        <div class="info-blocks">
+                            <img src="../assets/block-info/governante.png" ></img>
+                            0.7 m
+                        </div>
+                        <div class="info-blocks">
+                            <img src="../assets/block-info/regua.png" ></img>
+                            6.9 kg
+                        </div>
+                    </div>
+                    <div class="info-rows">
+                        <div class="info-blocks">
+                            <img src="../assets/block-info/genders.png" ></img>
+                            1 : 7
+                        </div>
+                        <div class="info-blocks">
+                            <img src="../assets/block-info/relogio.png" ></img>
+                            20 ciclos
+                        </div>
+                    </div>
+                    <div class="info-rows-2">
+                        <div class="info-blocks-2-menor">
+                            Nome:<br>
+                            Generation:<br>
+                            Habitat:<br>
+                            Capture Rate:<br>
+                            Growth Rate:<br>
+                            EV Yield:<br>
+                            B. Exp:<br>
+                            B. Happiness:<br>
+                        </div>
+                        <div class="info-blocks-2-maior">
+                            ${selectedPokemon.name}<br>
+                            I<br>
+                            Grassland<br>
+                            45<br>
+                            Medium-slow<br>
+                            1 Sp. Attack<br>
+                            64<br>
+                            50<br>
+                        </div>
+                    </div>`;
+
+    return desc;
+}
+
+// Cria as Cartas Vazias
+function createEmptyPokemonCard() {
+    const card = document.createElement("div");
+    card.classList.add("pokemon-card-select");
+
+    const plusButton = document.createElement("div");
+    plusButton.classList.add("plus-button");
+
+    const img = document.createElement("img");
+    img.src = "../assets/plus_button.png";
+
+    plusButton.appendChild(img);
+    card.appendChild(plusButton);
+
+    [card, plusButton].forEach(elem => {
+        elem.addEventListener("mouseenter", () => {
+        card.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
+        card.style.transform = "translateY(-5px)";
+        });
+        elem.addEventListener("mouseout", () => {
+        card.style.boxShadow = "none";
+        card.style.transform = "translateY(+5px)";
+        });
+    });
+
+    return card;
+}
+
+// Cria as Cartas Após a Seleção
+function createSelectedPokemonCard(pokemon) {
+    const typeKey = pokemon.types[0].type_name;
+    const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
+
+    const card = document.createElement("div");
+    card.classList.add("pokemon-card-selected");
+    card.style.backgroundColor = colors.primary;
+
+    const img = document.createElement("img");
+    img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+
+    card.appendChild(img);
+
+    [card, img].forEach(elem => {
+        elem.addEventListener("mouseenter", () => {
+        card.style.boxShadow = `0 8px 16px ${colors.primary}`;
+        card.style.transform = "translateY(-5px)";
+        });
+        elem.addEventListener("mouseout", () => {
+        card.style.boxShadow = "none";
+        card.style.transform = "translateY(+5px)";
+        });
+    });
+
+    card.addEventListener("click", () => {
+        selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== pokemon.pokemon_id);
+        loadCards(pokemonArrayGlobal);
+        editPokemonsCard();
+    });
+
+    return card;
+}
+
+// Joga na Página as Cartas da Região
 export async function loadCards(pokemonsArray) {
     pokemonArrayGlobal = pokemonsArray;
     cardsContainer.innerHTML = "";
 
-    for (const eachPokemon of pokemonsArray) {
-        const card = document.createElement("div");
-        card.classList.add("card");
-
-        const typeKey = eachPokemon.types[0].type_name;
-        const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
-
-        card.dataset.type = typeKey;
-        card.style.backgroundColor = colors.primary;
-
-        const topNav = document.createElement("div");
-        topNav.classList.add("top-nav-card");
-
-        const nameDisplay = document.createElement("div");
-        nameDisplay.classList.add("pokemon-name-display");
-        nameDisplay.textContent = eachPokemon.name;
-        nameDisplay.style.fontWeight = "bold";
-        topNav.appendChild(nameDisplay);
-        card.appendChild(topNav);
-
-        const imgWrapper = document.createElement("div");
-        imgWrapper.classList.add("pokemon-img-wrapper");
-        imgWrapper.style.backgroundImage = `url('../assets/background.png')`;
-        imgWrapper.style.backgroundSize = `cover`;
-        imgWrapper.style.backgroundPosition = `center`;
-        imgWrapper.style.backgroundRepeat = `no-repeat`;
-
-        const img = document.createElement("img");
-        img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
-        img.classList.add("card-img");
-
-        imgWrapper.appendChild(img);
-        card.appendChild(imgWrapper);
-
-        const contentDiv = document.createElement("div");
-        contentDiv.classList.add("card-content");
-        contentDiv.innerHTML = `
-            <div class="types-container">
-                <img class="type-img" src="../assets/types/${eachPokemon.types[0].type_name}.png" />
-                ${eachPokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${eachPokemon.types[1].type_name}.png" />` : ''}
-            </div>
-            ${eachPokemon.genus}<br>
-            Min Level: ${eachPokemon.overall_min_level}<br>
-            Max Level: ${eachPokemon.overall_max_level}<br>
-        `;
-        card.appendChild(contentDiv);
-
-        // Hover Events
-        card.addEventListener("mouseenter", () => {
-            if (!card.classList.contains("card-active")) {
-                card.style.backgroundColor = colors.hover;
-                card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
-                card.style.transform = "translateY(-5px)";
-                img.src = `../assets/pokemons/official-artwork/shiny/${eachPokemon.pokemon_id}.png`;
-            }
-        });
-
-        card.addEventListener("mouseleave", () => {
-            if (!card.classList.contains("card-active")) {
-                card.style.backgroundColor = colors.primary;
-                card.style.boxShadow = "none";
-                card.style.transform = "translateY(+5px)";
-                img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
-            }
-        });
-
-        // Click Event
-        card.addEventListener("click", () => {
-            const isActive = card.classList.contains("card-active");
-
-            if (isActive) {
-                // Deseleciona o card
-                card.classList.remove("card-active");
-                card.style.backgroundColor = colors.primary;
-                card.style.boxShadow = "none";
-                card.style.transform = "translateY(+5px)";
-                img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
-
-                // Remove do array
-                selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== eachPokemon.pokemon_id);
-            } else {
-                if (selectedPokemons.length >= 4) {
-                    alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
-                    return;
-                }
-
-                // Seleciona o card
-                card.classList.add("card-active");
-                card.style.backgroundColor = colors.hover;
-                card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
-                card.style.transform = "translateY(-5px)";
-                img.src = `../assets/pokemons/official-artwork/shiny/${eachPokemon.pokemon_id}.png`;
-
-                // Adiciona ao array
-                selectedPokemons.push(eachPokemon);
-            }
-
-            editPokemonsCard();
-        });
-
+    for (const pokemon of pokemonsArray) {
+        const card = createPokemonCard(pokemon);
         cardsContainer.appendChild(card);
     }
+}
+
+// Cartas da Localização Específica
+function createPokemonCard(pokemon) {
+    const typeKey = pokemon.types[0].type_name;
+    const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
+
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.type = typeKey;
+    card.style.backgroundColor = colors.primary;
+
+    // Top nav
+    const topNav = document.createElement("div");
+    topNav.classList.add("top-nav-card");
+
+    const nameDisplay = document.createElement("div");
+    nameDisplay.classList.add("pokemon-name-display");
+    nameDisplay.textContent = pokemon.name;
+    nameDisplay.style.fontWeight = "bold";
+
+    topNav.appendChild(nameDisplay);
+    card.appendChild(topNav);
+
+    // Imagem
+    const imgWrapper = document.createElement("div");
+    imgWrapper.classList.add("pokemon-img-wrapper");
+    imgWrapper.style.background = "url('../assets/background.png') center/cover no-repeat";
+
+    const img = document.createElement("img");
+    img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+    img.classList.add("card-img");
+
+    imgWrapper.appendChild(img);
+    card.appendChild(imgWrapper);
+
+    // Conteúdo
+    const content = document.createElement("div");
+    content.classList.add("card-content");
+    content.innerHTML = `
+        <div class="types-container">
+        <img class="type-img" src="../assets/types/${pokemon.types[0].type_name}.png" />
+        ${pokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${pokemon.types[1].type_name}.png" />` : ''}
+        </div>
+        ${pokemon.genus}<br>
+        Min Level: ${pokemon.overall_min_level}<br>
+        Max Level: ${pokemon.overall_max_level}<br>
+    `;
+    card.appendChild(content);
+
+    // Hover
+    card.addEventListener("mouseenter", () => {
+        if (!card.classList.contains("card-active")) {
+        card.style.backgroundColor = colors.hover;
+        card.style.boxShadow = "0 8px 16px rgba(0,0,0,0.4)";
+        card.style.transform = "translateY(-5px)";
+        img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+        }
+    });
+
+    card.addEventListener("mouseleave", () => {
+        if (!card.classList.contains("card-active")) {
+        card.style.backgroundColor = colors.primary;
+        card.style.boxShadow = "none";
+        card.style.transform = "translateY(+5px)";
+        img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+        }
+    });
+
+    // Seleção
+    card.addEventListener("click", () => {
+        const isActive = card.classList.toggle("card-active");
+
+        if (isActive) {
+        if (selectedPokemons.length >= 4) {
+            alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
+            card.classList.remove("card-active");
+            return;
+        }
+
+        card.style.backgroundColor = colors.hover;
+        img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+        selectedPokemons.push(pokemon);
+
+        } else {
+        selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== pokemon.pokemon_id);
+        card.style.backgroundColor = colors.primary;
+        img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+        }
+
+        editPokemonsCard();
+    });
+
+    return card;
 }
