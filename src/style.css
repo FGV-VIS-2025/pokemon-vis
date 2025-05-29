@@ -293,7 +293,6 @@ body {
 .pokemons-select{
     margin-top: 20px;
     width: 80%;
-    aspect-ratio: 3 / 1;
     background-color: rgb(0, 0, 0);
     display: flex;
     align-items: center;
@@ -304,8 +303,8 @@ body {
 
 .pokemon-card-select{
     width: 25%;
-    aspect-ratio: 2 / 3;
-    background-color: #ffffff;
+    aspect-ratio: 1/1;
+    background-color: #d8d8d8;
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -323,6 +322,24 @@ body {
 }
 
 .pokemon-card-select:hover{
+    cursor: pointer;
+}
+
+.pokemon-card-selected{
+    width: 25%;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pokemon-card-selected img{
+    width: 80%;
+    height: auto;
+}
+
+.pokemon-card-selected:hover{
     cursor: pointer;
 }
 
@@ -357,4 +374,5 @@ body {
     width: 80%;
     aspect-ratio: 3 / 1;
     background-color: rgb(240, 0, 240);
+    margin-bottom: 20px;
 }

@@ -7,6 +7,9 @@ const cardsContainer = document.getElementById("cards-container");
 const contentScreen = document.getElementById("content-container");
 const mapRealContainer = document.getElementById("map-real-container");
 
+let selectedPokemons = [];
+let pokemonArrayGlobal;
+
 const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova"];
 
 export async function loadRegions() {
@@ -108,6 +111,83 @@ function createPokemonScreen(){
     contentScreen.appendChild(sgvChart2);
 }
 
+function editPokemonsCard(){
+    const pokemonsCardSelect = document.getElementsByClassName("pokemons-select")[0];
+    pokemonsCardSelect.innerHTML = "";
+    const numberSelectedPokemons = selectedPokemons.length;
+
+    for (let i = 1; i <= 4; i++){
+        if (i <= numberSelectedPokemons){
+            const selectedPokemon = selectedPokemons[i - 1];
+
+            const typeKey = selectedPokemon.types[0].type_name;
+            const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
+
+            const pokemonCard = document.createElement("div");
+            pokemonCard.classList.add("pokemon-card-selected");
+
+            pokemonCard.addEventListener("mouseenter", () => {
+                pokemonCard.style.boxShadow = `0 8px 16px ${colors.primary}`;
+                pokemonCard.style.transform = "translateY(-5px)";
+            });
+
+            pokemonCard.addEventListener("mouseout", () => {
+                pokemonCard.style.boxShadow = "none";
+                pokemonCard.style.transform = "translateY(+5px)";
+            });
+            
+            pokemonCard.style.backgroundColor = colors.primary;
+
+            const img = document.createElement("img");
+            img.src = `../assets/pokemons/official-artwork/${selectedPokemon.pokemon_id}.png`;
+
+            img.addEventListener("mouseenter", () => {
+                pokemonCard.style.boxShadow = `0 8px 16px ${colors.primary}`;
+                pokemonCard.style.transform = "translateY(-5px)";
+            });
+
+            pokemonCard.appendChild(img);
+
+            pokemonCard.addEventListener("click", () => {
+                selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== selectedPokemon.pokemon_id);
+                loadCards(pokemonArrayGlobal);
+                editPokemonsCard();
+            });
+
+            pokemonsCardSelect.appendChild(pokemonCard);
+
+        } else{
+            const pokemonCard = document.createElement("div");
+            pokemonCard.classList.add("pokemon-card-select");
+
+            pokemonCard.addEventListener("mouseenter", () => {
+                pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
+                pokemonCard.style.transform = "translateY(-5px)";
+            });
+
+            pokemonCard.addEventListener("mouseout", () => {
+                pokemonCard.style.boxShadow = "none";
+                pokemonCard.style.transform = "translateY(+5px)";
+            });
+
+            const plusButton = document.createElement("div");
+            plusButton.classList.add("plus-button");
+
+            plusButton.addEventListener("mouseenter", () => {
+                pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
+                pokemonCard.style.transform = "translateY(-5px)";
+            });
+
+            const img = document.createElement("img");
+            img.src = "../assets/plus_button.png"
+
+            plusButton.appendChild(img);
+            pokemonCard.appendChild(plusButton);
+            pokemonsCardSelect.appendChild(pokemonCard);
+        }
+    }
+}
+
 const colors = {"region-screen": "#3EDB2A", "route-screen": "#2AD2DB", "pokemon-screen": "#A11F62"}
 
 export function changeContent(selectedButton){
@@ -120,6 +200,7 @@ export function changeContent(selectedButton){
 }
 
 export async function loadCards(pokemonsArray) {
+    pokemonArrayGlobal = pokemonsArray;
     cardsContainer.innerHTML = "";
 
     for (const eachPokemon of pokemonsArray) {
@@ -127,29 +208,26 @@ export async function loadCards(pokemonsArray) {
         card.classList.add("card");
 
         const typeKey = eachPokemon.types[0].type_name;
-
-        const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal; 
+        const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
 
         card.dataset.type = typeKey;
-
         card.style.backgroundColor = colors.primary;
 
         const topNav = document.createElement("div");
-        topNav.classList.add("top-nav-card"); 
+        topNav.classList.add("top-nav-card");
 
         const nameDisplay = document.createElement("div");
         nameDisplay.classList.add("pokemon-name-display");
-        nameDisplay.textContent = eachPokemon.name; 
+        nameDisplay.textContent = eachPokemon.name;
         nameDisplay.style.fontWeight = "bold";
         topNav.appendChild(nameDisplay);
-
         card.appendChild(topNav);
 
         const imgWrapper = document.createElement("div");
         imgWrapper.classList.add("pokemon-img-wrapper");
         imgWrapper.style.backgroundImage = `url('../assets/background.png')`;
-        imgWrapper.style.backgroundSize = `cover`; 
-        imgWrapper.style.backgroundPosition = `center`; 
+        imgWrapper.style.backgroundSize = `cover`;
+        imgWrapper.style.backgroundPosition = `center`;
         imgWrapper.style.backgroundRepeat = `no-repeat`;
 
         const img = document.createElement("img");
@@ -158,7 +236,6 @@ export async function loadCards(pokemonsArray) {
 
         imgWrapper.appendChild(img);
         card.appendChild(imgWrapper);
-
 
         const contentDiv = document.createElement("div");
         contentDiv.classList.add("card-content");
@@ -173,11 +250,8 @@ export async function loadCards(pokemonsArray) {
         `;
         card.appendChild(contentDiv);
 
-        // --- Event Listeners para Cores de Hover e Clique ---
-
-        // Mouse Enter (Mouse entra na carta)
+        // Hover Events
         card.addEventListener("mouseenter", () => {
-            // Aplica a cor de hover SOMENTE se a carta NÃO estiver ativa (selecionada)
             if (!card.classList.contains("card-active")) {
                 card.style.backgroundColor = colors.hover;
                 card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
@@ -186,9 +260,7 @@ export async function loadCards(pokemonsArray) {
             }
         });
 
-        // Mouse Leave (Mouse sai da carta)
         card.addEventListener("mouseleave", () => {
-            // Volta para a cor primária SOMENTE se a carta NÃO estiver ativa (selecionada)
             if (!card.classList.contains("card-active")) {
                 card.style.backgroundColor = colors.primary;
                 card.style.boxShadow = "none";
@@ -197,45 +269,38 @@ export async function loadCards(pokemonsArray) {
             }
         });
 
-        // Evento de Clique
+        // Click Event
         card.addEventListener("click", () => {
-            // PROBLEMA 1: Se a carta clicada já está ativa, o usuário quer desmarcá-la
-            if (card.classList.contains("card-active")) {
-                // Remove a seleção de TODAS as cartas
-                const allCards = document.querySelectorAll(".card");
-                allCards.forEach(c => {
-                    c.classList.remove("card-active");
-                    // Volta a cor de todas as cartas para a primária, usando o tipo armazenado no dataset
-                    const cardTypeKey = c.dataset.type || 'normal';
-                    const cardColors = pokemonTypeColors[cardTypeKey] || pokemonTypeColors.normal;
-                    c.style.backgroundColor = cardColors.primary;
-                    c.style.boxShadow = "none";
-                    c.style.transform = "translateY(+5px)";
-                    img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
-                });
-                return; // Encerra a função, pois a deseleção foi concluída
+            const isActive = card.classList.contains("card-active");
+
+            if (isActive) {
+                // Deseleciona o card
+                card.classList.remove("card-active");
+                card.style.backgroundColor = colors.primary;
+                card.style.boxShadow = "none";
+                card.style.transform = "translateY(+5px)";
+                img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
+
+                // Remove do array
+                selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== eachPokemon.pokemon_id);
+            } else {
+                if (selectedPokemons.length >= 4) {
+                    alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
+                    return;
+                }
+
+                // Seleciona o card
+                card.classList.add("card-active");
+                card.style.backgroundColor = colors.hover;
+                card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
+                card.style.transform = "translateY(-5px)";
+                img.src = `../assets/pokemons/official-artwork/shiny/${eachPokemon.pokemon_id}.png`;
+
+                // Adiciona ao array
+                selectedPokemons.push(eachPokemon);
             }
 
-            // Se chegamos aqui, uma NOVA carta está sendo selecionada (ou uma diferente da anterior)
-            const allCards = document.querySelectorAll(".card");
-            allCards.forEach(c => {
-                c.classList.remove("card-active");
-                // Volta as cartas anteriormente ativas/hovered para a cor primária
-                const cardTypeKey = c.dataset.type || 'normal';
-                const cardColors = pokemonTypeColors[cardTypeKey] || pokemonTypeColors.normal;
-                c.style.backgroundColor = cardColors.primary;
-                c.style.boxShadow = "none";
-                c.style.transform = "translateY(+5px)";
-                img.src = `../assets/pokemons/official-artwork/${eachPokemon.pokemon_id}.png`;
-            });
-
-            // Define a carta clicada como ativa
-            card.classList.add("card-active");
-            // Define sua cor de fundo para a cor de hover (ela permanecerá assim enquanto ativa)
-            card.style.backgroundColor = colors.hover;
-            card.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.4)";
-            card.style.transform = "translateY(-5px)";
-            img.src = `../assets/pokemons/official-artwork/shiny/${eachPokemon.pokemon_id}.png`;
+            editPokemonsCard();
         });
 
         cardsContainer.appendChild(card);
