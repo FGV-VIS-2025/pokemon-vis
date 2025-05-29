@@ -30,10 +30,75 @@ export function buildMap(selectedRegion){
   mapRealContainer.appendChild(img);
 }
 
+function createPokemonScreen(){
+    contentScreen.innerHTML = ``;
+    contentScreen.style.backgroundColor = "black";
+    const pokemonsSelect = document.createElement("div");
+    pokemonsSelect.classList.add("pokemons-select");
+
+    for (let i = 0; i < 4; i++){
+        const pokemonCard = document.createElement("div");
+        pokemonCard.classList.add("pokemon-card-select");
+
+        pokemonCard.addEventListener("mouseenter", () => {
+            pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
+            pokemonCard.style.transform = "translateY(-5px)";
+        });
+
+        pokemonCard.addEventListener("mouseout", () => {
+            pokemonCard.style.boxShadow = "none";
+            pokemonCard.style.transform = "translateY(+5px)";
+        });
+
+        const plusButton = document.createElement("div");
+        plusButton.classList.add("plus-button");
+
+        plusButton.addEventListener("mouseenter", () => {
+            pokemonCard.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
+            pokemonCard.style.transform = "translateY(-5px)";
+        });
+
+        plusButton.addEventListener("mouseout", () => {
+            pokemonCard.style.boxShadow = "none";
+            pokemonCard.style.transform = "translateY(+5px)";
+        });
+
+        const img = document.createElement("img");
+        img.src = "../assets/plus_button.png"
+
+        plusButton.appendChild(img);
+        pokemonCard.appendChild(plusButton);
+        pokemonsSelect.appendChild(pokemonCard);
+    }
+
+    const sgvChart1 = document.createElement("svg");
+    sgvChart1.classList.add("svg-chart-1");
+
+    const svgChart1Rect1 = document.createElement("rect");
+    svgChart1Rect1.classList.add("svg-chart-1-rect-1");
+    sgvChart1.appendChild(svgChart1Rect1);
+
+    const sgvChart2 = document.createElement("svg");
+    sgvChart2.classList.add("svg-chart-2");
+
+    const svgChart2Rect1 = document.createElement("rect");
+    svgChart2Rect1.classList.add("svg-chart-1-rect-1");
+    sgvChart2.appendChild(svgChart2Rect1);
+
+    contentScreen.appendChild(pokemonsSelect);
+    contentScreen.appendChild(sgvChart1);
+    contentScreen.appendChild(sgvChart2);
+}
+
 const colors = {"region-screen": "#3EDB2A", "route-screen": "#2AD2DB", "pokemon-screen": "#A11F62"}
 
 export function changeContent(selectedButton){
-  contentScreen.style.backgroundColor = colors[selectedButton.id];
+  if (selectedButton.id == "pokemon-screen"){
+    createPokemonScreen();
+  } else {
+    contentScreen.innerHTML = ``;
+    contentScreen.style.backgroundColor = colors[selectedButton.id];
+  }
 }
 
 export async function loadCards(pokemonsArray) {
