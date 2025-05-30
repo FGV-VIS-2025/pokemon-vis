@@ -16,5 +16,6 @@ export function createRegionScreen(id_region) {
 
     // Supondo que você exporte da types.js uma função chamada renderRegionChart que
     // recebe o id do container onde desenhar o gráfico:
-    updateTypeChordByRegion(5);
+    console.log(id_region);
+    updateTypeChordByRegion(id_region);
 }
