@@ -127,7 +127,6 @@ function createRadarChart(){
     // formatação dos dados
     var data = buildRadarDataFromPokemons(selectedPokemons);
 
-    // TODO criação de uma função que determina as cores com base nos tipos dos pokemóns selecionados
     // cores que vão ser usadas
     var color = d3.scaleOrdinal()
         .range(getColorRadarChart(selectedPokemons));
