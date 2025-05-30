@@ -40,10 +40,15 @@ export function createPokemonScreen() {
     const pokemonsDescriptionArea = document.createElement("div");
     pokemonsDescriptionArea.classList.add("pokemons-description-area");
 
+    // área externa para o primeiro gráfico
+    const svgPai1 = document.createElement("svg");
+    svgPai1.classList.add("svg-pai-chart-1");
+
     // área para o primeiro gráfico (radar)
     const svg1 = document.createElement("svg");
     svg1.classList.add("svg-chart-1");
     svg1.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
+    svgPai1.appendChild(svg1);
 
     // área para o segundo gráfico
     const svg2 = document.createElement("svg");
@@ -52,7 +57,7 @@ export function createPokemonScreen() {
 
     contentScreen.appendChild(pokemonsSelect);
     contentScreen.appendChild(pokemonsDescriptionArea);
-    contentScreen.appendChild(svg1);
+    contentScreen.appendChild(svgPai1);
     contentScreen.appendChild(svg2);
 }
 
@@ -113,13 +118,17 @@ function getColorRadarChart(selectedPokemons) {
 function createRadarChart(){
     // seleção do svg-pai onde vai ser construido o gráfico
     const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
+    const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
+
+    radarSvg.style.border = "1px solid rgb(255, 255, 255)";
+    radarPaiSvg.style.padding = "15px";
+    radarPaiSvg.style.marginBottom = "20px";
 
     // valores de margem
     var margin = {top: 250, right: 250, bottom: 250, left: 250};
 
     // definição das dimensões do gráfico com base no svg-pai
     const svgWidth = radarSvg.clientWidth;
-    const svgHeight = radarSvg.clientHeight;
 
     var width = svgWidth - margin.left - margin.right;
     var height = svgWidth - margin.top - margin.bottom;
@@ -161,6 +170,8 @@ export function editPokemonsCard() {
     // itera para construção das 4 colunas
     for (let i = 1; i <= 4; i++) {
 
+        pokemonsDescription.style.marginBottom = "20px";
+
         // para cada pokémon selecionado, cria os cards e descrição personalizados
         if (i <= selectedPokemons.length) {
             const selectedPokemon = selectedPokemons[i - 1];
@@ -180,6 +191,11 @@ export function editPokemonsCard() {
     } else {
         const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
         radarSvg.innerHTML = "";
+        radarSvg.style.border = 0;
+        const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
+        radarPaiSvg.style.padding = 0;
+        radarPaiSvg.style.marginBottom = 0;
+        pokemonsDescription.style.marginBottom = 0;
     }
 }
 

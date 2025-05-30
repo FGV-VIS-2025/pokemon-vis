@@ -21,7 +21,7 @@
 }
 
 body {
-    background-color: #ffffff;
+    background-color: #000000;
     margin: 0;
     width: 100vw;
     display: flex;
@@ -82,7 +82,7 @@ body {
 
 /* Main Content Area */
 #main-container {
-    width: 100%;
+    width: 95%;
     aspect-ratio: 3 / 1;
     display: flex;
     flex-direction: row;
@@ -99,10 +99,14 @@ body {
 
 #main-container-1 {
     width: 40%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 #main-container-2 {
     width: 60%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 /* Map Section */
@@ -286,7 +290,6 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 20px;
 }
 
 /* Pokemons Screen */
@@ -299,6 +302,7 @@ body {
     justify-content: center;
     flex-direction: row;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 .pokemon-card-select{
@@ -350,6 +354,7 @@ body {
     justify-content: center;
     flex-direction: row;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 .pokemon-description{
@@ -368,9 +373,8 @@ body {
 
 .info-rows{
     margin-top: 10px;
-    width: 90%;
+    width: 87.5%;
     aspect-ratio:  2 / 1;
-    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -387,7 +391,8 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    font-size: .8em;;
+    font-size: .8em;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .info-blocks img{
@@ -397,8 +402,9 @@ body {
 }
 
 .info-rows-2{
-    width: 90%;
+    width: 87.5%;
     margin-bottom: 10px;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     border-radius: 5px;
@@ -408,6 +414,7 @@ body {
     gap: 10px;
     padding: 10px;
     font-size: .65em;;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .info-blocks-2-menor{
@@ -420,11 +427,25 @@ body {
     width: 55%;
 }
 
+.svg-pai-chart-1{
+    width: 78.5%;
+    height: auto;
+    background-color: #1b1b1b;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
 .svg-chart-1{
-    width: 80%;
+    width: 100%;
     height: auto;
     background-color: rgb(49, 49, 49);
     border-radius: 10px;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .svg-chart-2{
