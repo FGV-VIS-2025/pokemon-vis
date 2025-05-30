@@ -1,4 +1,4 @@
-import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap } from "./consts.js";
+import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap, pokemonTypeColorsRadar } from "./consts.js";
 import { RadarChart } from "./radarChart.js"
 
 // Elementos do DOM
@@ -85,6 +85,29 @@ function buildRadarDataFromPokemons(selectedPokemons) {
 }
 
 /**
+ * Função que define a cor que um pokémon vai ter no gráfico de radar com base no seu tipo.
+ * 
+ * @param {*} selectedPokemons - Array com os pokémons selecionados
+ * @returns Retorna um array com as cores que vão ser usadas no gráfico de radar
+ */
+function getColorRadarChart(selectedPokemons) {
+    const tiposVistos = [];
+    const cores = [];
+
+    for (const pokemon of selectedPokemons) {
+        const nomeTipo = pokemon.types[0].type_name;
+        const numeroOcorrencias = tiposVistos.filter(t => t === nomeTipo).length;
+        tiposVistos.push(nomeTipo);
+        
+        const cor = pokemonTypeColorsRadar[nomeTipo]?.[String(numeroOcorrencias + 1)] ?? '#000000';
+        cores.push(cor);
+    }
+
+    return cores;
+}
+
+
+/**
  * Função responsável por configurar as variáveis necessárias e chamar a função que de fato cria o gráfico de radar.
  */
 function createRadarChart(){
@@ -107,7 +130,7 @@ function createRadarChart(){
     // TODO criação de uma função que determina as cores com base nos tipos dos pokemóns selecionados
     // cores que vão ser usadas
     var color = d3.scaleOrdinal()
-        .range(["#EDC951", "#CC333F", "#00A0B0", "#6A4A3C"]);
+        .range(getColorRadarChart(selectedPokemons));
 
     // configurações de gráfico
     var radarChartOptions = {
