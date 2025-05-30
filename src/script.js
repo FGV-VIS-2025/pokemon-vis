@@ -4,10 +4,10 @@ import { getLocationsByRegionId, getLocationAreaByLocation, getPokemonsIdByLocat
 
 const regionsSelect = document.getElementById("regions-select");
 const regionButton = document.getElementById("region-screen");
-const routeButton = document.getElementById("location-screen");
+const locationButton = document.getElementById("location-screen");
 const pokemonButton = document.getElementById("pokemon-screen");
 
-const buttons = [pokemonButton, routeButton, regionButton];
+const buttons = [pokemonButton, locationButton, regionButton];
 
 // Declare these variables globally 
 let selectedRegion;
@@ -53,10 +53,10 @@ regionButton.addEventListener("click", (event) => {
     changeContent(regionButton);
 });
 
-routeButton.addEventListener("click", (event) => {
+locationButton.addEventListener("click", (event) => {
     buttons.forEach(btn => btn.classList.remove("active"));
-    routeButton.classList.add("active");
-    changeContent(routeButton);
+    locationButton.classList.add("active");
+    changeContent(locationButton);
 });
 
 pokemonButton.addEventListener("click", (event) => {
