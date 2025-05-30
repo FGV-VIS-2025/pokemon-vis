@@ -32,6 +32,21 @@ export function createPokemonScreen() {
     contentScreen.innerHTML = ``;
     contentScreen.style.backgroundColor = "black";
 
+    // área de pesquisa dos pokémons
+    const pokemonSearch = document.createElement("div");
+    pokemonSearch.classList.add("pokemons-search");
+
+    const pokemonSearchBox = document.createElement("input");
+    pokemonSearchBox.placeholder="Search for your favorite Pokémon..."
+    pokemonSearchBox.classList.add("pokemons-search-box");
+
+    const pokemonSearchBoxImage = document.createElement("img");
+    pokemonSearchBoxImage.src = "../assets/search.png";
+    pokemonSearchBoxImage.classList.add("pokemons-search-img");
+
+    pokemonSearch.appendChild(pokemonSearchBox);
+    pokemonSearch.appendChild(pokemonSearchBoxImage);
+
     // área de seleção dos pokémons
     const pokemonsSelect = document.createElement("div");
     pokemonsSelect.classList.add("pokemons-select");
@@ -55,6 +70,7 @@ export function createPokemonScreen() {
     svg2.classList.add("svg-chart-2");
     svg2.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
 
+    contentScreen.appendChild(pokemonSearch);
     contentScreen.appendChild(pokemonsSelect);
     contentScreen.appendChild(pokemonsDescriptionArea);
     contentScreen.appendChild(svgPai1);

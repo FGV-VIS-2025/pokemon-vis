@@ -18,7 +18,7 @@ export function RadarChart(className, data, options) {
         wrapWidth: 60,
         opacityArea: 0.35,
         dotRadius: 4,
-        opacityCircles: 0.1,
+        opacityCircles: 0.05,
         strokeWidth: 2,
         roundStrokes: false,
         color: d3.scaleOrdinal(d3.schemeCategory10)
