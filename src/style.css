@@ -424,7 +424,8 @@ body {
 .svg-chart-1{
     width: 80%;
     aspect-ratio: 1 / 1;
-    background-color: coral;
+    background-color: rgb(49, 49, 49);
+    border-radius: 10px;
 }
 
 .svg-chart-2{

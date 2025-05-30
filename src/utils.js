@@ -1,6 +1,7 @@
 // Importações
 import { getRegions } from "./data.js";
 import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap } from "./consts.js";
+import { RadarChart } from "./radarChart.js"
 
 // Elementos do DOM
 const regionsSelect = document.getElementById("regions-select");
@@ -93,6 +94,58 @@ function createPokemonScreen() {
     contentScreen.appendChild(svg2);
 }
 
+function buildRadarDataFromPokemons(selectedPokemons) {
+  const statLabels = [
+    { key: "Hp_Stat", label: "Hp" },
+    { key: "Attack_Stat", label: "Attack" },
+    { key: "Defense_Stat", label: "Defense" },
+    { key: "Special_Attack_Stat", label: "Special Attack" },
+    { key: "Special_Defense_Stat", label: "Special Defense" },
+    { key: "Speed_Stat", label: "Speed" }
+  ];
+
+  return selectedPokemons.map(pokemon => ({
+    name: pokemon.Name || pokemon.name || "Unknown",
+    axes: statLabels.map(stat => ({
+      axis: stat.label,
+      value: pokemon[stat.key],
+      name: pokemon.Name || pokemon.name || "Unknown"
+    }))
+  }));
+}
+
+function createRadarChart(){
+    const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
+
+    var margin = {top: 250, right: 250, bottom: 250, left: 250};
+
+    const svgWidth = radarSvg.clientWidth;
+    const svgHeight = radarSvg.clientHeight;
+
+    var width = svgWidth - margin.left - margin.right;
+    var height = svgHeight - margin.top - margin.bottom;
+
+    var data = buildRadarDataFromPokemons(selectedPokemons);
+
+    var names = selectedPokemons.map(pokemon => pokemon.Name || pokemon.name || "Unknown");
+
+    var color = d3.scaleOrdinal()
+        .range(["#EDC951", "#CC333F", "#00A0B0", "#6A4A3C"]);
+
+    var radarChartOptions = {
+        w: width,
+        h: height,
+        margin: margin,
+        maxValue: 0.5,
+        levels: 5,
+        roundStrokes: true,
+        color: color
+    };
+
+    RadarChart(".svg-chart-1", data, radarChartOptions, names);
+}
+
+
 // Atualiza as Cartas Após alguma Seleção
 function editPokemonsCard() {
     const pokemonsCardSelect = document.getElementsByClassName("pokemons-select")[0];
@@ -111,6 +164,10 @@ function editPokemonsCard() {
             pokemonsDescription.appendChild(createEmptyDescription());
         }
     }
+
+    if (selectedPokemons.length > 0){
+        createRadarChart();
+    }
 }
 
 function createEmptyDescription(){
@@ -121,7 +178,6 @@ function createEmptyDescription(){
 }
 
 function createSelectedPokemonDescription(selectedPokemon){
-    console.log(selectedPokemon);
     const desc = document.createElement("div");
     desc.classList.add("pokemon-description");
     desc.innerHTML = `
