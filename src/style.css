@@ -21,7 +21,7 @@
 }
 
 body {
-    background-color: #ffffff;
+    background-color: #000000;
     margin: 0;
     width: 100vw;
     display: flex;
@@ -34,6 +34,7 @@ body {
 #top-nav-container {
     width: 100%;
     aspect-ratio: 16 / 1.15;
+    max-height: 200px;
     background-color: var(--primary-blue);
     display: flex;
     flex-direction: row;
@@ -82,7 +83,7 @@ body {
 
 /* Main Content Area */
 #main-container {
-    width: 100%;
+    width: 95%;
     aspect-ratio: 3 / 1;
     display: flex;
     flex-direction: row;
@@ -99,10 +100,14 @@ body {
 
 #main-container-1 {
     width: 40%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 #main-container-2 {
     width: 60%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 /* Map Section */
@@ -255,7 +260,7 @@ body {
 }
 
 #pokemon-screen,
-#route-screen,
+#location-screen,
 #region-screen {
     flex: 1;
     height: 100%;
@@ -269,7 +274,7 @@ body {
 }
 
 #pokemon-screen:hover,
-#route-screen:hover,
+#location-screen:hover,
 #region-screen:hover {
     cursor: pointer;
     background-color: var(--dark-blue);
@@ -286,12 +291,90 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 20px;
 }
 
 /* Pokemons Screen */
-.pokemons-select{
+.pokemons-search {
+    width: 60%;
+    padding: 10px;
+    border-radius: 12px;
+    background-color: #f2f2f2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
     margin-top: 20px;
+    margin-bottom: 20px;
+
+    position: relative;
+}
+
+.pokemons-search-img {
+    height: 32px;
+    width: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.pokemons-search-box {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+}
+
+.pokemons-search-box:focus {
+    outline: 2px solid #1d15c4;
+}
+
+/* Estilo do dropdown */
+.suggestions {
+    position: absolute;
+    top: 100%; /* logo abaixo do container */
+    left: 0;
+    right: 0;
+
+    background: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.search-gif{
+    height: 50px;
+    max-width: 150px;
+    justify-self: right;
+}
+
+.suggestions li:hover {
+    background-color: #efefef;
+}
+
+.pokemons-select{
     width: 80%;
     background-color: rgb(0, 0, 0);
     display: flex;
@@ -299,6 +382,7 @@ body {
     justify-content: center;
     flex-direction: row;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 .pokemon-card-select{
@@ -350,6 +434,7 @@ body {
     justify-content: center;
     flex-direction: row;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 .pokemon-description{
@@ -368,9 +453,8 @@ body {
 
 .info-rows{
     margin-top: 10px;
-    width: 90%;
+    width: 87.5%;
     aspect-ratio:  2 / 1;
-    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -387,7 +471,8 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    font-size: .8em;;
+    font-size: .8em;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .info-blocks img{
@@ -397,7 +482,7 @@ body {
 }
 
 .info-rows-2{
-    width: 90%;
+    width: 87.5%;
     margin-bottom: 10px;
     margin-top: 10px;
     display: flex;
@@ -409,6 +494,7 @@ body {
     gap: 10px;
     padding: 10px;
     font-size: .65em;;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .info-blocks-2-menor{
@@ -421,11 +507,25 @@ body {
     width: 55%;
 }
 
+.svg-pai-chart-1{
+    width: 78.5%;
+    height: auto;
+    background-color: #1b1b1b;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
 .svg-chart-1{
-    width: 80%;
-    aspect-ratio: 1 / 1;
+    width: 100%;
+    height: auto;
     background-color: rgb(49, 49, 49);
     border-radius: 10px;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .svg-chart-2{
@@ -433,4 +533,32 @@ body {
     aspect-ratio: 3 / 1;
     background-color: rgb(240, 0, 240);
     margin-bottom: 20px;
+}
+
+.tooltip {
+  position: absolute;
+  background: #222;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ribbon {
+  fill-opacity: 0.8;
+  cursor: pointer;
+  transition: fill-opacity 0.3s;
+}
+
+.fade {
+  opacity: 0.15 !important;
+}
+
+.group path {
+  stroke: #000;
+  stroke-width: 0.5px;
+  transition: fill-opacity 0.3s;
 }
