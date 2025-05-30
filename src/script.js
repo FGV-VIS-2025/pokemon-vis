@@ -1,4 +1,5 @@
-import { loadRegions, loadCards, changeContent, buildMap } from "./utils.js";
+import { loadRegions, changeContent, buildMap } from "./utils.js";
+import { loadCards } from "./pokemonScreen.js";
 import { getLocationsByRegionId, getLocationAreaByLocation, getPokemonsIdByLocationAreaId } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
