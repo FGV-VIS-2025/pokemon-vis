@@ -1,5 +1,6 @@
-import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap, pokemonTypeColorsRadar } from "./consts.js";
+import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap, pokemonTypeColorsRadar, pokemonTypeColorsRGBA } from "./consts.js";
 import { RadarChart } from "./radarChart.js"
+import { getAllPokemons } from "./data.js" 
 
 // Elementos do DOM
 const contentScreen = document.getElementById("content-container");
@@ -24,28 +25,125 @@ export async function loadCards(pokemonsArray) {
     }
 }
 
+const pokemons = [
+    "Pikachu", "Charmander", "Bulbasaur", "Squirtle",
+    "Jigglypuff", "Gengar", "Eevee", "Snorlax",
+    "Mewtwo", "Lucario", "Garchomp", "Togekiss"
+];
+
 /**
  * Vai construir os elementos básicos da 'pokemon-screen'. 
  */
-export function createPokemonScreen() {
-    // preenchimento
-    contentScreen.innerHTML = ``;
-    contentScreen.style.backgroundColor = "black";
+export async function createPokemonScreen() {
+    const todosPokemons = await getAllPokemons();
 
-    // área de pesquisa dos pokémons
+    contentScreen.innerHTML = ""; 
+    contentScreen.style.backgroundColor = "black";
+    // cria os elementos
     const pokemonSearch = document.createElement("div");
     pokemonSearch.classList.add("pokemons-search");
 
     const pokemonSearchBox = document.createElement("input");
-    pokemonSearchBox.placeholder="Search for your favorite Pokémon..."
+    pokemonSearchBox.placeholder = "Search for your favorite Pokémon...";
     pokemonSearchBox.classList.add("pokemons-search-box");
 
     const pokemonSearchBoxImage = document.createElement("img");
     pokemonSearchBoxImage.src = "../assets/search.png";
     pokemonSearchBoxImage.classList.add("pokemons-search-img");
 
+    const suggestionsList = document.createElement("ul");
+    suggestionsList.classList.add("suggestions");
+    suggestionsList.style.display = "none";
+
+    // Funções dentro do escopo para acessar variáveis locais
+    function filterSuggestions() {
+        const query = pokemonSearchBox.value.toLowerCase();
+        suggestionsList.innerHTML = "";
+
+        const filtered = todosPokemons.filter(p => 
+            p.name.toLowerCase().includes(query)
+        );
+
+        if (filtered.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "Pokémon Not Found";
+            suggestionsList.appendChild(li);
+            li.onclick = () => {
+                suggestionsList.style.display = "none";
+                pokemonSearch.style.borderBottomLeftRadius = "12px"
+                pokemonSearch.style.borderBottomRightRadius = "12px"
+                pokemonSearchBox.value = "";
+            };
+            return;
+        }
+
+        filtered.forEach(pokemon => {
+            const li = document.createElement("li");
+            li.classList.add("li");
+
+            const img = document.createElement("img");
+            img.src = `../assets/types/${pokemon.types[0].type_name}.png`
+            img.classList.add("search-type-img");
+            li.appendChild(img);
+
+            li.appendChild(document.createTextNode(pokemon.name));
+
+            const img2 = document.createElement("img");
+            img2.src = `../assets/gifs/${pokemon.pokemon_id}.gif`
+            img2.classList.add("search-gif");
+            li.appendChild(img2);
+            
+            li.style.backgroundColor = pokemonTypeColorsRGBA[pokemon.types[0].type_name];
+
+            li.onclick = () => {
+                pokemonSearchBox.value = pokemon.name;
+
+                if(selectedPokemons.length < 4 && !selectedPokemons.some(p => p.name === pokemon.name)){
+                    selectedPokemons.push(pokemon);
+                    editPokemonsCard();
+                }
+
+                pokemonSearchBox.value = "";
+                suggestionsList.style.display = "none";
+
+                pokemonSearch.style.borderBottomLeftRadius = "12px"
+                pokemonSearch.style.borderBottomRightRadius = "12px"
+
+            };
+            suggestionsList.appendChild(li);
+        });
+    }
+
+    function showSuggestions() {
+        pokemonSearch.style.borderBottomLeftRadius = "0px"
+        pokemonSearch.style.borderBottomRightRadius = "0px"
+        suggestionsList.style.display = "block";
+        filterSuggestions();
+    }
+
+    function hideSuggestions() {
+        pokemonSearch.style.borderBottomLeftRadius = "12px"
+        pokemonSearch.style.borderBottomRightRadius = "12px"
+        setTimeout(() => {
+            suggestionsList.style.display = "none";
+        }, 50);
+    }
+
+    // Associa eventos aos elementos
+    pokemonSearchBox.oninput = filterSuggestions;
+    pokemonSearchBox.onclick = showSuggestions;
+
+    // Esconder sugestões ao clicar fora
+    document.addEventListener("click", (e) => {
+        if (!pokemonSearch.contains(e.target)) {
+            hideSuggestions();
+        }
+    });
+
+    // Monta a estrutura
     pokemonSearch.appendChild(pokemonSearchBox);
     pokemonSearch.appendChild(pokemonSearchBoxImage);
+    pokemonSearch.appendChild(suggestionsList);
 
     // área de seleção dos pokémons
     const pokemonsSelect = document.createElement("div");

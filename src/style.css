@@ -295,8 +295,7 @@ body {
 
 /* Pokemons Screen */
 .pokemons-search {
-    width: 80%;
-    max-width: 600px;
+    width: 60%;
     padding: 10px;
     border-radius: 12px;
     background-color: #f2f2f2;
@@ -308,12 +307,15 @@ body {
 
     margin-top: 20px;
     margin-bottom: 20px;
+
+    position: relative;
 }
 
 .pokemons-search-img {
     height: 32px;
     width: 32px;
     object-fit: contain;
+    flex-shrink: 0;
 }
 
 .pokemons-search-box {
@@ -331,6 +333,46 @@ body {
     outline: 2px solid #1d15c4;
 }
 
+/* Estilo do dropdown */
+.suggestions {
+    position: absolute;
+    top: 100%; /* logo abaixo do container */
+    left: 0;
+    right: 0;
+
+    background: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.search-gif{
+    height: 50px;
+    max-width: 150px;
+    justify-self: right;
+}
+
+.suggestions li:hover {
+    background-color: #efefef;
+}
 
 .pokemons-select{
     width: 80%;

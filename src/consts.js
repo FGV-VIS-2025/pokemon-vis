@@ -19,6 +19,27 @@ export const pokemonTypeColors = {
     steel: { primary: '#B7B7CE', hover: '#8E8EAA' },
 };
 
+export const pokemonTypeColorsRGBA = {
+    water: 'rgba(74, 144, 226, 0.7)',    
+    grass: 'rgba(126, 211, 33, 0.7)',     
+    normal: 'rgba(155, 155, 155, 0.7)',   
+    fighting: 'rgba(245, 166, 35, 0.7)',     
+    psychic: 'rgba(243, 102, 185, 0.7)',   
+    ice: 'rgba(91, 200, 229, 0.7)',       
+    dragon: 'rgba(123, 98, 240, 0.7)',    
+    dark: 'rgba(111, 111, 111, 0.7)',      
+    fairy: 'rgba(238, 153, 172, 0.7)',     
+    fire: 'rgba(194, 46, 40, 0.7)',  
+    electric: 'rgba(247, 208, 44, 0.7)', 
+    poison: 'rgba(163, 62, 161, 0.7)',
+    ground: 'rgba(226, 191, 101, 0.7)',
+    flying: 'rgba(169, 143, 243, 0.7)',
+    bug: 'rgba(166, 185, 26, 0.7)',
+    rock: 'rgba(182, 161, 54, 0.7)',
+    ghost: 'rgba(115, 87, 151, 0.7)',
+    steel: 'rgba(183, 183, 206, 0.7)',
+};
+
 export const pokemonTypeColorsRadar = {
     "water":  { "1": '#4A90E2', "2": '#74B3F0', "3": '#4A90E2', "4": '#2E6DA4' },
     "grass":  { "1": '#7ED321', "2": '#A4E957', "3": '#7ED321', "4": '#5C9E18' },
