@@ -224,8 +224,34 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId){
         ...(pokemonsMap2.get(pokemon.pokemon_id) || {})
     }));
 
-    mergedPokemons2.sort((a, b) => a.name.localeCompare(b.name));
-    mergedPokemons2.sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
+    const finalStats = await d3.csv('../data/pokemon_stats_clean.csv', d => ({
+        Pokemon_Id: +d.Pokemon_Id,
+        Hp_Stat: +d.Hp_Stat,
+        Hp_Effort: +d.Hp_Effort,
+        Attack_Stat: +d.Attack_Stat,
+        Attack_Effort: +d.Attack_Effort,
+        Defense_Stat: +d.Defense_Stat,
+        Defense_Effort: +d.Defense_Effort,
+        Special_Attack_Stat: +d.Special_Attack_Stat,
+        Special_Attack_Effort: +d.Special_Attack_Effort,
+        Special_Defense_Stat: +d.Special_Defense_Stat,
+        Special_Defense_Effort: +d.Special_Defense_Effort,
+        Speed_Stat: +d.Speed_Stat,
+        Speed_Effort: +d.Speed_Effort
+    }));
 
-    return mergedPokemons2;
+    const pokemonsMap3 = new Map(
+        finalStats.map(pokemons => [pokemons.Pokemon_Id, pokemons])
+    );
+
+    const mergedPokemons3 = mergedPokemons2.map(pokemon => ({
+        ...pokemon,
+        ...(pokemonsMap3.get(pokemon.pokemon_id) || {})
+    }));
+
+    mergedPokemons3
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
+
+    return mergedPokemons3;
 }
