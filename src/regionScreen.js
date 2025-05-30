@@ -1,8 +1,8 @@
-import { renderTypeChord } from "./types.js";
+import { updateTypeChordByRegion } from "./types.js";
 
 const contentScreen = document.getElementById("content-container");
 
-export function createRegionScreen() {
+export function createRegionScreen(id_region) {
     contentScreen.innerHTML = '';
     contentScreen.style.backgroundColor = 'black';
 
@@ -16,5 +16,5 @@ export function createRegionScreen() {
 
     // Supondo que você exporte da types.js uma função chamada renderRegionChart que
     // recebe o id do container onde desenhar o gráfico:
-    renderTypeChord('#region-chart-container');
+    updateTypeChordByRegion(5);
 }

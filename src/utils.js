@@ -44,7 +44,7 @@ export function changeContent(selectedButton) {
         createPokemonScreen();
         editPokemonsCard();
     } else if (selectedButton.id === "region-screen"){
-        createRegionScreen();
+        createRegionScreen(regionsSelect.value);
     } else {
         contentScreen.innerHTML = ``;
         contentScreen.style.backgroundColor = colors[selectedButton.id];
