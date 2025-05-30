@@ -122,7 +122,7 @@ function createRadarChart(){
     const svgHeight = radarSvg.clientHeight;
 
     var width = svgWidth - margin.left - margin.right;
-    var height = svgHeight - margin.top - margin.bottom;
+    var height = svgWidth - margin.top - margin.bottom;
 
     // formatação dos dados
     var data = buildRadarDataFromPokemons(selectedPokemons);
@@ -177,8 +177,10 @@ export function editPokemonsCard() {
     // caso ao menos algum pokémon tenha sido selecionado, cria o gráfico de radar
     if (selectedPokemons.length > 0){
         createRadarChart();
+    } else {
+        const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
+        radarSvg.innerHTML = "";
     }
-    // TODO criação de uma função que apaga o gráfico de radar caso não tenha pokémons selecionados
 }
 
 /**

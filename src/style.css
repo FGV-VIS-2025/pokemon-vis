@@ -399,7 +399,6 @@ body {
 .info-rows-2{
     width: 90%;
     margin-bottom: 10px;
-    margin-top: 10px;
     display: flex;
     align-items: center;
     border-radius: 5px;
@@ -423,7 +422,7 @@ body {
 
 .svg-chart-1{
     width: 80%;
-    aspect-ratio: 1 / 1;
+    height: auto;
     background-color: rgb(49, 49, 49);
     border-radius: 10px;
 }
