@@ -260,7 +260,7 @@ body {
 }
 
 #pokemon-screen,
-#route-screen,
+#location-screen,
 #region-screen {
     flex: 1;
     height: 100%;
@@ -274,7 +274,7 @@ body {
 }
 
 #pokemon-screen:hover,
-#route-screen:hover,
+#location-screen:hover,
 #region-screen:hover {
     cursor: pointer;
     background-color: var(--dark-blue);
@@ -533,4 +533,32 @@ body {
     aspect-ratio: 3 / 1;
     background-color: rgb(240, 0, 240);
     margin-bottom: 20px;
+}
+
+.tooltip {
+  position: absolute;
+  background: #222;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ribbon {
+  fill-opacity: 0.8;
+  cursor: pointer;
+  transition: fill-opacity 0.3s;
+}
+
+.fade {
+  opacity: 0.15 !important;
+}
+
+.group path {
+  stroke: #000;
+  stroke-width: 0.5px;
+  transition: fill-opacity 0.3s;
 }
