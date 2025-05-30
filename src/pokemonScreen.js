@@ -34,18 +34,6 @@ export function createPokemonScreen() {
     const pokemonsDescriptionArea = document.createElement("div");
     pokemonsDescriptionArea.classList.add("pokemons-description-area");
 
-    for (let i = 0; i < 4; i++) {
-        const desc = document.createElement("div");
-        desc.classList.add("pokemon-description");
-        desc.innerHTML = `Nome: blá blá bla <br>
-                        Peso: blá blá bla <br>
-                        Altura: blá blá bla <br>
-                        Genero: blá blá bla <br>
-                        Espécime: blá blá bla <br>
-                        Tipo: blá blá bla <br>`;
-        pokemonsDescriptionArea.appendChild(desc);
-    }
-
     const svg1 = document.createElement("svg");
     svg1.classList.add("svg-chart-1");
     svg1.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
@@ -93,8 +81,6 @@ function createRadarChart(){
 
     var data = buildRadarDataFromPokemons(selectedPokemons);
 
-    var names = selectedPokemons.map(pokemon => pokemon.Name || pokemon.name || "Unknown");
-
     var color = d3.scaleOrdinal()
         .range(["#EDC951", "#CC333F", "#00A0B0", "#6A4A3C"]);
 
@@ -103,12 +89,12 @@ function createRadarChart(){
         h: height,
         margin: margin,
         maxValue: 0.5,
-        levels: 5,
+        levels: 8,
         roundStrokes: true,
         color: color
     };
 
-    RadarChart(".svg-chart-1", data, radarChartOptions, names);
+    RadarChart(".svg-chart-1", data, radarChartOptions);
 }
 
 
