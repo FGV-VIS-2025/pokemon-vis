@@ -18,7 +18,7 @@ export function RadarChart(className, data, options) {
         wrapWidth: 60,
         opacityArea: 0.35,
         dotRadius: 4,
-        opacityCircles: 0.05,
+        opacityCircles: 0.025,
         strokeWidth: 2,
         roundStrokes: false,
         color: d3.scaleOrdinal(d3.schemeCategory10)
@@ -53,6 +53,16 @@ export function RadarChart(className, data, options) {
         .attr("width", cfg.w + cfg.margin.left + cfg.margin.right)
         .attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
         .attr("class", "radar" + className);
+
+    // adição do título no gráfico
+    svg.append("text")
+        .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
+        .attr("y", cfg.margin.top / 3)
+        .attr("text-anchor", "middle")
+        .style("font-size", "30px")
+        .style("font-weight", "bold")
+        .style("fill", "#ffffff")
+        .text("Pokémon Attribute Comparison");
 
     var g = svg.append("g")
         .attr("transform", `translate(${cfg.w / 2 + cfg.margin.left},${cfg.h / 2 + cfg.margin.top})`);
