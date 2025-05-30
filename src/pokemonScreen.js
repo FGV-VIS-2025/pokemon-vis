@@ -124,11 +124,11 @@ function createRadarChart(){
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    // valores de margem
-    var margin = {top: 250, right: 250, bottom: 250, left: 250};
-
     // definição das dimensões do gráfico com base no svg-pai
     const svgWidth = radarSvg.clientWidth;
+
+    // valores de margem
+    var margin = {top: svgWidth/5, right: svgWidth/5, bottom: svgWidth/5, left: svgWidth/5};
 
     var width = svgWidth - margin.left - margin.right;
     var height = svgWidth - margin.top - margin.bottom;
@@ -154,6 +154,9 @@ function createRadarChart(){
     // chamada da função que de fato cria o gráfico
     RadarChart(".svg-chart-1", data, radarChartOptions);
 }
+
+// ao mudar a tela de tamanho, reconstroi tudo para parecer dinâmico
+window.addEventListener("resize", editPokemonsCard);
 
 /**
  * Função que atualiza a pokemon-screen caso seja selecionado/desselecionado algum pokémon.
