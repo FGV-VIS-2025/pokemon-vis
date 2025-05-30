@@ -255,7 +255,7 @@ body {
 }
 
 #pokemon-screen,
-#route-screen,
+#location-screen,
 #region-screen {
     flex: 1;
     height: 100%;
@@ -269,7 +269,7 @@ body {
 }
 
 #pokemon-screen:hover,
-#route-screen:hover,
+#location-screen:hover,
 #region-screen:hover {
     cursor: pointer;
     background-color: var(--dark-blue);

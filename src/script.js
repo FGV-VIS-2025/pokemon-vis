@@ -4,7 +4,7 @@ import { getLocationsByRegionId, getLocationAreaByLocation, getPokemonsIdByLocat
 
 const regionsSelect = document.getElementById("regions-select");
 const regionButton = document.getElementById("region-screen");
-const routeButton = document.getElementById("route-screen");
+const routeButton = document.getElementById("location-screen");
 const pokemonButton = document.getElementById("pokemon-screen");
 
 const buttons = [pokemonButton, routeButton, regionButton];

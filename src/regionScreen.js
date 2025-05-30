@@ -1,5 +1,7 @@
 import { renderTypeChord } from "./types.js";
 
+const contentScreen = document.getElementById("content-container");
+
 export function createRegionScreen() {
     contentScreen.innerHTML = '';
     contentScreen.style.backgroundColor = 'black';

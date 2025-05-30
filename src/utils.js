@@ -1,6 +1,7 @@
 // Importações
 import { getRegions } from "./data.js";
 import { createPokemonScreen, editPokemonsCard } from "./pokemonScreen.js"
+import { createRegionScreen } from "./regionScreen.js"; 
 
 // Elementos do DOM
 const regionsSelect = document.getElementById("regions-select");
@@ -11,7 +12,7 @@ const mapRealContainer = document.getElementById("map-real-container");
 const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova"];
 const colors = {
   "region-screen": "#3EDB2A",
-  "route-screen": "#2AD2DB",
+  "location-screen": "#2AD2DB",
   "pokemon-screen": "#A11F62"
 };
 
@@ -42,6 +43,8 @@ export function changeContent(selectedButton) {
     if (selectedButton.id === "pokemon-screen") {
         createPokemonScreen();
         editPokemonsCard();
+    } else if (selectedButton.id === "location-screen"){
+        createRegionScreen();
     } else {
         contentScreen.innerHTML = ``;
         contentScreen.style.backgroundColor = colors[selectedButton.id];
