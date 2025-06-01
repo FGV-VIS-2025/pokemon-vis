@@ -1,6 +1,6 @@
-import { pokemonTypeColors, genderRateMap, growthRateMap, habitatMap, generationMap, pokemonTypeColorsRadar, pokemonTypeColorsRGBA } from "./consts.js";
-import { RadarChart } from "./radarChart.js"
-import { getAllPokemons } from "./data.js" 
+import { genderRateMap, generationMap, growthRateMap, habitatMap, pokemonTypeColors, pokemonTypeColorsRadar, pokemonTypeColorsRGBA } from "./consts.js";
+import { getAllPokemons } from "./data.js";
+import { RadarChart } from "./radarChart.js";
 
 // Elementos do DOM
 const contentScreen = document.getElementById("content-container");
@@ -37,7 +37,7 @@ const pokemons = [
 export async function createPokemonScreen() {
     const todosPokemons = await getAllPokemons();
 
-    contentScreen.innerHTML = ""; 
+    contentScreen.innerHTML = "";
     contentScreen.style.backgroundColor = "black";
     // cria os elementos
     const pokemonSearch = document.createElement("div");
@@ -48,7 +48,7 @@ export async function createPokemonScreen() {
     pokemonSearchBox.classList.add("pokemons-search-box");
 
     const pokemonSearchBoxImage = document.createElement("img");
-    pokemonSearchBoxImage.src = "../assets/search.png";
+    pokemonSearchBoxImage.src = "assets/search.png";
     pokemonSearchBoxImage.classList.add("pokemons-search-img");
 
     const suggestionsList = document.createElement("ul");
@@ -60,7 +60,7 @@ export async function createPokemonScreen() {
         const query = pokemonSearchBox.value.toLowerCase();
         suggestionsList.innerHTML = "";
 
-        const filtered = todosPokemons.filter(p => 
+        const filtered = todosPokemons.filter(p =>
             p.name.toLowerCase().includes(query)
         );
 
@@ -82,23 +82,23 @@ export async function createPokemonScreen() {
             li.classList.add("li");
 
             const img = document.createElement("img");
-            img.src = `../assets/types/${pokemon.types[0].type_name}.png`
+            img.src = `assets/types/${pokemon.types[0].type_name}.png`
             img.classList.add("search-type-img");
             li.appendChild(img);
 
             li.appendChild(document.createTextNode(pokemon.name));
 
             const img2 = document.createElement("img");
-            img2.src = `../assets/gifs/${pokemon.pokemon_id}.gif`
+            img2.src = `assets/gifs/${pokemon.pokemon_id}.gif`
             img2.classList.add("search-gif");
             li.appendChild(img2);
-            
+
             li.style.backgroundColor = pokemonTypeColorsRGBA[pokemon.types[0].type_name];
 
             li.onclick = () => {
                 pokemonSearchBox.value = pokemon.name;
 
-                if(selectedPokemons.length < 4 && !selectedPokemons.some(p => p.name === pokemon.name)){
+                if (selectedPokemons.length < 4 && !selectedPokemons.some(p => p.name === pokemon.name)) {
                     selectedPokemons.push(pokemon);
                     editPokemonsCard();
                 }
@@ -217,7 +217,7 @@ function getColorRadarChart(selectedPokemons) {
         const nomeTipo = pokemon.types[0].type_name;
         const numeroOcorrencias = tiposVistos.filter(t => t === nomeTipo).length;
         tiposVistos.push(nomeTipo);
-        
+
         const cor = pokemonTypeColorsRadar[nomeTipo]?.[String(numeroOcorrencias + 1)] ?? '#000000';
         cores.push(cor);
     }
@@ -229,7 +229,7 @@ function getColorRadarChart(selectedPokemons) {
 /**
  * Função responsável por configurar as variáveis necessárias e chamar a função que de fato cria o gráfico de radar.
  */
-function createRadarChart(){
+function createRadarChart() {
     // seleção do svg-pai onde vai ser construido o gráfico
     const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
     const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
@@ -242,7 +242,7 @@ function createRadarChart(){
     const svgWidth = radarSvg.clientWidth;
 
     // valores de margem
-    var margin = {top: svgWidth/5, right: svgWidth/5, bottom: svgWidth/5, left: svgWidth/5};
+    var margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
 
     var width = svgWidth - margin.left - margin.right;
     var height = svgWidth - margin.top - margin.bottom;
@@ -294,7 +294,7 @@ export function editPokemonsCard() {
             const selectedPokemon = selectedPokemons[i - 1];
             pokemonsCardSelect.appendChild(createSelectedPokemonCard(selectedPokemon));
             pokemonsDescription.appendChild(createSelectedPokemonDescription(selectedPokemon));
-        } 
+        }
         // para os restantes, cria as versões vazias
         else {
             pokemonsCardSelect.appendChild(createEmptyPokemonCard());
@@ -303,7 +303,7 @@ export function editPokemonsCard() {
     }
 
     // caso ao menos algum pokémon tenha sido selecionado, cria o gráfico de radar
-    if (selectedPokemons.length > 0){
+    if (selectedPokemons.length > 0) {
         createRadarChart();
     } else {
         const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
@@ -321,7 +321,7 @@ export function editPokemonsCard() {
  * 
  * @returns Retorna a div da descrição vazia.
  */
-function createEmptyDescription(){
+function createEmptyDescription() {
     const desc = document.createElement("div");
     desc.classList.add("pokemon-description");
     desc.innerHTML = ``;
@@ -335,7 +335,7 @@ function createEmptyDescription(){
  * @param {*} selectedPokemon - Dados do pokémon que vão ser usados para construção da descrição dele
  * @returns Retorna a div da descrição personalizada. 
  */
-function createSelectedPokemonDescription(selectedPokemon){
+function createSelectedPokemonDescription(selectedPokemon) {
     // construção da div das descrições
     const desc = document.createElement("div");
     desc.classList.add("pokemon-description");
@@ -343,26 +343,26 @@ function createSelectedPokemonDescription(selectedPokemon){
     // configuração de todo o html da div com as infos personalizadas
     desc.innerHTML = `
                     <div class="types-container">
-                        <img class="type-img" src="../assets/description-types/${selectedPokemon.types[0].type_name}.png" />
-                        ${selectedPokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}
+                        <img class="type-img" src="assets/description-types/${selectedPokemon.types[0].type_name}.png" />
+                        ${selectedPokemon.types[1]?.type_name ? `<img class="type-img" src="assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}
                     </div>
                     <div class="info-rows">
                         <div class="info-blocks">
-                            <img src="../assets/block-info/governante.png" ></img>
-                            ${selectedPokemon.height/10} m
+                            <img src="assets/block-info/governante.png" ></img>
+                            ${selectedPokemon.height / 10} m
                         </div>
                         <div class="info-blocks">
-                            <img src="../assets/block-info/regua.png" ></img>
-                            ${selectedPokemon.weight/10} kg
+                            <img src="assets/block-info/regua.png" ></img>
+                            ${selectedPokemon.weight / 10} kg
                         </div>
                     </div>
                     <div class="info-rows">
                         <div class="info-blocks">
-                            <img src="../assets/block-info/genders.png" ></img>
+                            <img src="assets/block-info/genders.png" ></img>
                             ${genderRateMap[selectedPokemon.gender_rate]}
                         </div>
                         <div class="info-blocks">
-                            <img src="../assets/block-info/relogio.png" ></img>
+                            <img src="assets/block-info/relogio.png" ></img>
                             ${selectedPokemon.hatch_counter} ciclos
                         </div>
                     </div>
@@ -413,7 +413,7 @@ function createEmptyPokemonCard() {
 
     // imagem do plus sign usada
     const img = document.createElement("img");
-    img.src = "../assets/plus_button.png";
+    img.src = "assets/plus_button.png";
 
     plusButton.appendChild(img);
     card.appendChild(plusButton);
@@ -451,7 +451,7 @@ function createSelectedPokemonCard(pokemon) {
 
     // seleção da imagem de cada pokémon
     const img = document.createElement("img");
-    img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+    img.src = `assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
 
     card.appendChild(img);
 
@@ -509,10 +509,10 @@ export function createPokemonCard(pokemon) {
     // criação e configuração das imagens da carta (laboratório e do próprio pokémon)
     const imgWrapper = document.createElement("div");
     imgWrapper.classList.add("pokemon-img-wrapper");
-    imgWrapper.style.background = "url('../assets/background.png') center/cover no-repeat";
+    imgWrapper.style.background = "url('assets/background.png') center/cover no-repeat";
 
     const img = document.createElement("img");
-    img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+    img.src = `assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
     img.classList.add("card-img");
 
     imgWrapper.appendChild(img);
@@ -523,8 +523,8 @@ export function createPokemonCard(pokemon) {
     content.classList.add("card-content");
     content.innerHTML = `
         <div class="types-container">
-        <img class="type-img" src="../assets/types/${pokemon.types[0].type_name}.png" />
-        ${pokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${pokemon.types[1].type_name}.png" />` : ''}
+        <img class="type-img" src="assets/types/${pokemon.types[0].type_name}.png" />
+        ${pokemon.types[1]?.type_name ? `<img class="type-img" src="assets/types/${pokemon.types[1].type_name}.png" />` : ''}
         </div>
         Min Level: ${pokemon.overall_min_level}<br>
         Max Level: ${pokemon.overall_max_level}<br>
@@ -537,7 +537,7 @@ export function createPokemonCard(pokemon) {
             card.style.backgroundColor = colors.hover;
             card.style.boxShadow = "0 8px 16px rgba(0,0,0,0.4)";
             card.style.transform = "translateY(-5px)";
-            img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+            img.src = `assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
         }
     });
 
@@ -546,7 +546,7 @@ export function createPokemonCard(pokemon) {
             card.style.backgroundColor = colors.primary;
             card.style.boxShadow = "none";
             card.style.transform = "translateY(+5px)";
-            img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+            img.src = `assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
         }
     });
 
@@ -558,22 +558,22 @@ export function createPokemonCard(pokemon) {
         if (isActive) {
             // se já foram selecionadas cartas, não permite a seleção dessa carta 
             if (selectedPokemons.length >= 4) {
-                    alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
-                    card.classList.remove("card-active");
+                alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
+                card.classList.remove("card-active");
                 return;
             }
-            
+
             card.style.backgroundColor = colors.hover;
             card.style.transform = "translateY(-5px)";
-            img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+            img.src = `assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
             selectedPokemons.push(pokemon);
 
-        } 
+        }
         else {
             selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== pokemon.pokemon_id);
             card.style.backgroundColor = colors.primary;
             card.style.transform = "translateY(+5px)";
-            img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+            img.src = `assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
         }
 
         editPokemonsCard();
