@@ -67,7 +67,56 @@ const regionLocations = {
 <area shape="rect" coords="8, 79, 23, 88" title="Route 28">
 `,
     "Johto": `
+<area shape="rect" coords="144, 109, 152, 117" title="New Bark Town">
+<area shape="rect" coords="105, 109, 113, 117" title="Cherrygrove City">
+<area shape="rect" coords="90, 60, 97, 68" title="Violet City">
+<area shape="rect" coords="116, 60, 136, 69" title="Dark Cave">
+<area shape="rect" coords="81, 76, 89, 84" title="Ruins of Alph">
+<area shape="rect" coords="90, 129, 98, 137" title="Union Cave">
+<area shape="rect" coords="71, 129, 79, 137" title="Azalea Town">
+<area shape="rect" coords="53, 129, 61, 137" title="Ilex Forest">
+<area shape="rect" coords="49, 88, 63, 103" title="Goldenrod City">
+<area shape="rect" coords="53, 60, 61, 68" title="National Park">
+<area shape="rect" coords="66, 40, 81, 48" title="Ecruteak City">
+<area shape="rect" coords="71, 40, 81, 48" title="Ecruteak City">
+<area shape="rect" coords="18, 53, 33, 61" title="Olivine City">
+<area shape="rect" coords="18, 88, 26, 96" title="Whirl Islands">
+<area shape="rect" coords="8, 96, 16, 104" title="Cianwood City">
+<area shape="rect" coords="86, 40, 94, 48" title="Mt. Mortar">
+<area shape="rect" coords="109, 40, 117, 48" title="Mahogany Town">
+<area shape="rect" coords="109, 7, 117, 15" title="Lake of Rage">
+<area shape="rect" coords="129, 40, 137, 48" title="Ice Path">
+<area shape="rect" coords="137, 40, 145, 48" title="Blackthorn City">
+<area shape="rect" coords="137, 30, 145, 38" title="Dragon's Den">
+<area shape="rect" coords="158, 80, 166, 88" title="Mt. Silver">
+<area shape="rect" coords="161, 109, 166, 115" title="Tohjo Falls (Kanto)">
+<area shape="rect" coords="0, 93, 5, 101" title="Safari Zone">
+<area shape="rect" coords="10, 51, 18, 59" title="Battle Frontier">
+<area shape="rect" coords="152, 108, 161, 117" title="Route 26 (Kanto)">
+
+
+<area shape="rect" coords="113, 108, 143, 118" title="Route 29">
+<area shape="rect" coords="105, 108, 116, 68" title="Route 30">
+<area shape="rect" coords="98, 59, 115, 68" title="Route 31">
+<area shape="rect" coords="89, 68, 99, 128" title="Route 32">
+<area shape="rect" coords="79, 128, 90, 137" title="Route 33">
+<area shape="rect" coords="52, 103, 62, 128" title="Route 34">
+<area shape="rect" coords="52, 68, 62, 88" title="Route 35">
+<area shape="rect" coords="60, 59, 89, 69" title="Route 36">
+<area shape="rect" coords="71, 55, 82, 58" title="Route 37">
+<area shape="rect" coords="25, 39, 66, 49" title="Route 38">
+<area shape="rect" coords="25, 48, 34, 53" title="Route 39">
+<area shape="rect" coords="17, 61, 27, 82" title="Route 40">
+<area shape="rect" coords="17, 82, 27, 105" title="Route 41">
+<area shape="rect" coords="81, 39, 109, 49" title="Route 42">
+<area shape="rect" coords="108, 15, 118, 40" title="Route 43">
+<area shape="rect" coords="117, 39, 128, 49" title="Route 44">
+<area shape="rect" coords="136, 48, 146, 89" title="Route 45">
+<area shape="rect" coords="130, 78, 140, 108" title="Route 46">
+<area shape="rect" coords="0, 104, 8, 111" title="Route 47">
+<area shape="rect" coords="0, 100, 6, 105" title="Route 48">
 `,
+
     "Hoenn": `
 `,
     "Sinnoh": `
