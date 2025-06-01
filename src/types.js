@@ -154,10 +154,10 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
 let typesData, pokemonTypesData, encountersData, locationsData;
 
 Promise.all([
-  d3.csv("/data/types.csv", d3.autoType),
-  d3.csv("/data/pokemon_types.csv", d3.autoType),
-  d3.csv("/data/encounters.csv", d3.autoType),
-  d3.csv("/data/locations.csv", d3.autoType)
+  d3.csv("data/types.csv", d3.autoType),
+  d3.csv("data/pokemon_types.csv", d3.autoType),
+  d3.csv("data/encounters.csv", d3.autoType),
+  d3.csv("data/locations.csv", d3.autoType)
 ]).then(([types, pokemonTypes, encounters, locations]) => {
   typesData = types;
   pokemonTypesData = pokemonTypes;
