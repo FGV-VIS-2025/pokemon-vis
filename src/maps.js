@@ -365,6 +365,61 @@ const regionLocations = {
 <area shape="rect" coords="95, 153, 103, 161" title="Unity Tower">
 `,
     "Kalos": `
+<area shape="rect" coords="210, 163, 213, 173" title="Route 1">
+<area shape="rect" coords="209, 140, 214, 150" title="Route 2">
+<area shape="poly" coords="203,124, 200,124, 206,132, 209,131" title="Route 3">
+<area shape="poly" coords="176,90, 173,90, 190,114, 193,114" title="Route 4">
+<area shape="poly" coords="137,115, 133,115, 154,89, 157,92" title="Route 5">
+<area shape="poly" coords="100,95, 97,98, 123,117, 127,115" title="Route 6">
+<area shape="rect" coords="76, 118, 124, 123" title="Route 7">
+<area shape="poly" coords="60,126, 55,127, 66,155, 70,153" title="Route 8">
+<area shape="rect" coords="78, 156, 109, 162" title="Route 9">
+<area shape="poly" coords="36,103, 32,106, 49,118, 51,115" title="Route 10">
+<area shape="poly" coords="37,88, 33,87, 30,93, 34,95" title="Route 11">
+<area shape="poly" coords="103,67, 99,61, 53,72, 57,76" title="Route 12">
+<area shape="poly" coords="117,62, 115,67, 149,76, 152,72" title="Route 13">
+<area shape="rect" coords="162, 30, 168, 63" title="Route 14">
+<area shape="poly" coords="171,25, 169,30, 212,60, 215,58" title="Route 15">
+<area shape="poly" coords="213,68, 209,63, 179,72, 181,77" title="Route 16">
+<area shape="poly" coords="226,62, 224,68, 273,81, 275,76" title="Route 17">
+<area shape="poly" coords="287,83, 285,86, 292,92, 294,90" title="Route 18">
+<area shape="poly" coords="294,103, 290,98, 275,112, 278,115" title="Route 19">
+<area shape="poly" coords="270,124, 266,123, 258,153, 262,154" title="Route 20">
+<area shape="rect" coords="241, 114, 264, 119" title="Route 21">
+<area shape="poly" coords="229,119, 229,113, 202,116, 204,121" title="Route 22">
+
+<area shape="rect" coords="65, 152, 79, 166" title="Ambrette Town">
+<area shape="rect" coords="274, 73, 288, 87" title="Anistar City">
+<area shape="rect" coords="205, 150, 219, 164" title="Aquacorde Town">
+<area shape="poly" coords="88,41, 84,45, 102,58, 105,54" title="Azure Bay">
+<area shape="rect" coords="124, 114, 138, 128" title="Camphrier Town">
+<area shape="rect" coords="216, 120, 227, 131" title="Chamber of Empitness">
+<area shape="rect" coords="65, 115, 76, 126" title="Connecting Cave">
+<area shape="rect" coords="291, 89, 305, 103" title="Couriway Town">
+<area shape="rect" coords="103, 56, 117, 70" title="Coumarine City">
+<area shape="rect" coords="49, 113, 63, 127" title="Cyllage City">
+<area shape="rect" coords="212, 56, 226, 70" title="Dendemille Town">
+<area shape="rect" coords="226, 62, 238, 74" title="Frost Cavern">
+<area shape="rect" coords="22, 93, 36, 107" title="Geosenge Town">
+<area shape="rect" coords="111, 153, 122, 164" title="Glittering Cave">
+<area shape="rect" coords="116, 79, 128, 91" title="Kalos Power Plant">
+<area shape="rect" coords="233, 187, 247, 201" title="Kiloude City">
+<area shape="rect" coords="158, 17, 172, 31" title="Laverre City">
+<area shape="rect" coords="185, 49, 197, 61" title="Lost Hotel">
+<area shape="rect" coords="150, 63, 182, 93" title="Lumiose City">
+<area shape="rect" coords="89, 88, 101, 100" title="Parfum Palace">
+<area shape="rect" coords="159, 6, 170, 17" title="Poke Ball Factory">
+<area shape="rect" coords="228, 84, 240, 96" title="Pokemon League">
+<area shape="rect" coords="253, 153, 264, 164" title="Pokemon Village">
+<area shape="rect" coords="35, 78, 47, 90" title="Reflection Cave">
+<area shape="rect" coords="192, 112, 204, 124" title="Santalune City">
+<area shape="rect" coords="206, 130, 217, 141" title="Santalune Forest">
+<area shape="rect" coords="75, 33, 86, 44" title="Sea Spirit's Den">
+<area shape="rect" coords="41, 69, 54, 83" title="Shalour City">
+<area shape="rect" coords="264, 110, 278, 124" title="Snowbelle City">
+<area shape="rect" coords="302, 73, 313, 84" title="Terminus Cave">
+<area shape="rect" coords="205, 174, 219, 188" title="Vaniville Town">
+<area shape="rect" coords="229, 98, 241, 121" title="Victory Road">
 `
 }
 
