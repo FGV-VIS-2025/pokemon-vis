@@ -181,6 +181,85 @@ const regionLocations = {
 <area shape="rect" coords="100, 147, 131, 155" title="Route 134">
 `,
     "Sinnoh": `
+<area shape="rect" coords="22, 150, 30, 158" title="Twinleaf Town">
+<area shape="rect" coords="8, 136, 23, 151" title="Lake Verity">
+<area shape="rect" coords="36, 143, 44, 151" title="Sandgem Town">
+<area shape="rect" coords="29, 122, 44, 137" title="Jubilife City">
+<area shape="rect" coords="8, 115, 16, 130" title="Canalave City">
+<area shape="rect" coords="22, 66, 30, 74" title="Iron Island">
+<area shape="rect" coords="16, 17, 24, 25" title="Full Moon Island">
+<area shape="rect" coords="29, 17, 37, 25" title="New Moon Island">
+<area shape="rect" coords="36, 94, 44, 109" title="Floaroma Town">
+<area shape="rect" coords="64, 73, 79, 81" title="Eterna City">
+<area shape="rect" coords="64, 73, 72, 88" title="Eterna City">
+<area shape="rect" coords="57, 122, 72, 130" title="Oreburgh City">
+<area shape="rect" coords="64, 136, 72, 122" title="Oreburgh City">
+<area shape="rect" coords="64, 158, 72, 164" title="Pal Park">
+<area shape="rect" coords="78, 3, 86, 18" title="Snowpoint City">
+<area shape="rect" coords="64, 6, 76, 18" title="Lake Acuity">
+<area shape="rect" coords="64, 3, 77, 18" title="Acuity Lakefront">
+<area shape="rect" coords="100, 73, 108, 81" title="Celestic Town">
+<area shape="rect" coords="99, 108, 114, 123" title="Hearthome City">
+<area shape="rect" coords="120, 101, 135, 109" title="Solaceon Town">
+<area shape="rect" coords="148, 87, 163, 102" title="Veilstone City">
+<area shape="rect" coords="162, 108, 177, 118" title="Sendoff Spring">
+<area shape="rect" coords="162, 118, 177, 123" title="Spring Path">
+<area shape="rect" coords="148, 122, 159, 136" title="Lake Valor">
+<area shape="rect" coords="159, 122, 163, 136" title="Valor Lakefront">
+<area shape="rect" coords="183, 122, 198, 137" title="Sunyshore City">
+<area shape="rect" coords="183, 88, 191, 94" title="Victory Road">
+<area shape="rect" coords="183, 80, 191, 88" title="Pokémon League">
+<area shape="rect" coords="134, 52, 149, 60" title="Fight Area">
+<area shape="rect" coords="141, 31, 149, 39" title="Survival Area">
+<area shape="rect" coords="22, 150, 30, 158" title="Resort Area">
+<area shape="rect" coords="141, 45, 145, 52" title="Battle Tower">
+<area shape="rect" coords="145, 45, 149, 52" title="Battle Frontier">
+<area shape="rect" coords="85, 45, 93, 102" title="Mt. Coronet">
+<area shape="rect" coords="78, 94, 86, 123" title="Mt. Coronet">
+<area shape="rect" coords="50, 101, 58, 109" title="Valley Windwords">
+<area shape="rect" coords="36, 87, 44, 95" title="Fuego Ironworks">
+<area shape="rect" coords="43, 73, 58, 88" title="Eterna Forest">
+<area shape="rect" coords="197, 10, 205, 68" title="Seabreak Path">
+<area shape="rect" coords="197, 2, 205, 10" title="Flower Paradise">
+<area shape="rect" coords="162, 10, 170, 16" title="Stark Mountain">
+
+
+
+<area shape="rect" coords="23, 143, 36, 151" title="Route 201">
+<area shape="rect" coords="36, 137, 44, 143" title="Route 202">
+<area shape="rect" coords="44, 122, 57, 130" title="Route 203">
+<area shape="rect" coords="36, 109, 44, 122" title="Route 204">
+<area shape="rect" coords="44, 87, 52, 109" title="Route 205">
+<area shape="rect" coords="57, 73, 64, 81" title="Route 205">
+<area shape="rect" coords="64, 88, 72, 115" title="Route 206">
+<area shape="rect" coords="64, 115, 79, 123" title="Route 207">
+<area shape="rect" coords="85, 115, 99, 123" title="Route 208">
+<area shape="rect" coords="114, 115, 128, 123" title="Route 209">
+<area shape="rect" coords="120, 109, 128, 123" title="Route 209">
+<area shape="rect" coords="120, 73, 128, 101" title="Route 210">
+<area shape="rect" coords="108, 73, 128, 81" title="Route 210">
+<area shape="rect" coords="79, 73, 101, 81" title="Route 211">
+<area shape="rect" coords="99, 123, 107, 151" title="Route 212">
+<area shape="rect" coords="99, 143, 127, 151" title="Route 212">
+<area shape="rect" coords="142, 136, 163, 151" title="Route 213">
+<area shape="rect" coords="155, 102, 163, 123" title="Route 214">
+<area shape="rect" coords="127, 87, 148, 95" title="Route 215">
+<area shape="rect" coords="64, 45, 86, 53" title="Route 216">
+<area shape="rect" coords="64, 17, 72, 45" title="Route 217">
+<area shape="rect" coords="16, 122, 29, 130" title="Route 218">
+<area shape="rect" coords="36, 151, 44, 158" title="Route 219">
+<area shape="rect" coords="36, 157, 52, 165" title="Route 220">
+<area shape="rect" coords="52, 157, 72, 165" title="Route 221">
+<area shape="rect" coords="162, 129, 183, 137" title="Route 222">
+<area shape="rect" coords="183, 94, 191, 122" title="Route 223">
+<area shape="rect" coords="190, 73, 198, 88" title="Route 224">
+<area shape="rect" coords="197, 68, 205, 81" title="Route 224">
+<area shape="rect" coords="134, 31, 142, 52" title="Route 225">
+<area shape="rect" coords="149, 31, 170, 39" title="Route 226">
+<area shape="rect" coords="162, 16, 170, 32" title="Route 227">
+<area shape="rect" coords="169, 31, 177, 53" title="Route 228">
+<area shape="rect" coords="169, 52, 184, 60" title="Route 229">
+<area shape="rect" coords="149, 52, 169, 60" title="Route 230">
 `,
     "Unova": `
 `,
