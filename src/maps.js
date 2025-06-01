@@ -14,28 +14,6 @@ export const dimensions = {
 
 export const regionLocations = {
     "Kanto": `
-<area shape="rect" coords="47, 112, 56, 103" title="Pallet Town">
-<area shape="rect" coords="47, 92, 56, 76" title="Viridian City">
-<area shape="rect" coords="47, 64, 56, 71" title="Viridian Forest">
-<area shape="rect" coords="47, 62, 56, 46" title="Pewter City">
-<area shape="rect" coords="47, 47, 62, 56" title="Pewter City">
-<area shape="rect" coords="88, 39, 96, 48" title="Mt. Moon">
-<area shape="rect" coords="127, 39, 137, 48" title="Cerulean City">
-<area shape="rect" coords="160, 40, 168, 47" title="Rock Tunnel">
-<area shape="rect" coords="160, 50, 168, 57" title="Power Plant">
-<area shape="rect" coords="160, 64, 168, 71" title="Lavender Town">
-<area shape="rect" coords="168, 74, 176, 82" title="Pokémon Tower">
-<area shape="rect" coords="124, 62, 138, 76" title="Saffron City">
-<area shape="rect" coords="104, 64, 111, 72" title="Celadon City">
-<area shape="rect" coords="128, 88, 136, 96" title="Vermilion City">
-<area shape="rect" coords="136, 88, 144, 96" title="Diglett's Cave">
-<area shape="rect" coords="112, 112, 120, 120" title="Fuchsia City">
-<area shape="rect" coords="75, 128, 88, 135" title="Seafoam Islands">
-<area shape="rect" coords="47, 128, 55, 136" title="Cinnabar Island">
-<area shape="rect" coords="23, 55, 31, 48" title="Victory Road">
-<area shape="rect" coords="23, 39, 31, 47" title="Indigo Plateau">
-<area shape="rect" coords="2, 109, 10, 116" title="Tohjo Falls">
-<area shape="rect" coords="0, 80, 8, 88" title="Mt. Silver (Johto)">
 <area shape="rect" coords="47, 103, 56, 92" title="Route 1">
 <area shape="rect" coords="47, 76, 56, 71" title="Route 2">
 <area shape="rect" coords="63, 47, 88, 56" title="Route 3">
@@ -65,8 +43,52 @@ export const regionLocations = {
 <area shape="rect" coords="0, 103, 32, 118" title="Route 27">
 <area shape="rect" coords="22, 88, 32, 108" title="Route 26">
 <area shape="rect" coords="8, 79, 23, 88" title="Route 28">
+
+<area shape="rect" coords="47, 112, 56, 103" title="Pallet Town">
+<area shape="rect" coords="47, 92, 56, 76" title="Viridian City">
+<area shape="rect" coords="47, 64, 56, 71" title="Viridian Forest">
+<area shape="rect" coords="47, 62, 56, 46" title="Pewter City">
+<area shape="rect" coords="47, 47, 62, 56" title="Pewter City">
+<area shape="rect" coords="88, 39, 96, 48" title="Mt. Moon">
+<area shape="rect" coords="127, 39, 137, 48" title="Cerulean City">
+<area shape="rect" coords="160, 40, 168, 47" title="Rock Tunnel">
+<area shape="rect" coords="160, 50, 168, 57" title="Power Plant">
+<area shape="rect" coords="160, 64, 168, 71" title="Lavender Town">
+<area shape="rect" coords="168, 74, 176, 82" title="Pokémon Tower">
+<area shape="rect" coords="124, 62, 138, 76" title="Saffron City">
+<area shape="rect" coords="104, 64, 111, 72" title="Celadon City">
+<area shape="rect" coords="128, 88, 136, 96" title="Vermilion City">
+<area shape="rect" coords="136, 88, 144, 96" title="Diglett's Cave">
+<area shape="rect" coords="112, 112, 120, 120" title="Fuchsia City">
+<area shape="rect" coords="75, 128, 88, 135" title="Seafoam Islands">
+<area shape="rect" coords="47, 128, 55, 136" title="Cinnabar Island">
+<area shape="rect" coords="23, 55, 31, 48" title="Victory Road">
+<area shape="rect" coords="23, 39, 31, 47" title="Indigo Plateau">
+<area shape="rect" coords="2, 109, 10, 116" title="Tohjo Falls">
+<area shape="rect" coords="0, 80, 8, 88" title="Mt. Silver (Johto)">
 `,
     "Johto": `
+<area shape="rect" coords="113, 108, 143, 118" title="Route 29">
+<area shape="rect" coords="105, 108, 116, 68" title="Route 30">
+<area shape="rect" coords="98, 59, 115, 68" title="Route 31">
+<area shape="rect" coords="89, 68, 99, 128" title="Route 32">
+<area shape="rect" coords="79, 128, 90, 137" title="Route 33">
+<area shape="rect" coords="52, 103, 62, 128" title="Route 34">
+<area shape="rect" coords="52, 68, 62, 88" title="Route 35">
+<area shape="rect" coords="60, 59, 89, 69" title="Route 36">
+<area shape="rect" coords="71, 55, 82, 58" title="Route 37">
+<area shape="rect" coords="25, 39, 66, 49" title="Route 38">
+<area shape="rect" coords="25, 48, 34, 53" title="Route 39">
+<area shape="rect" coords="17, 61, 27, 82" title="Route 40">
+<area shape="rect" coords="17, 82, 27, 105" title="Route 41">
+<area shape="rect" coords="81, 39, 109, 49" title="Route 42">
+<area shape="rect" coords="108, 15, 118, 40" title="Route 43">
+<area shape="rect" coords="117, 39, 128, 49" title="Route 44">
+<area shape="rect" coords="136, 48, 146, 89" title="Route 45">
+<area shape="rect" coords="130, 78, 140, 108" title="Route 46">
+<area shape="rect" coords="0, 104, 8, 111" title="Route 47">
+<area shape="rect" coords="0, 100, 6, 105" title="Route 48">
+
 <area shape="rect" coords="144, 109, 152, 117" title="New Bark Town">
 <area shape="rect" coords="105, 109, 113, 117" title="Cherrygrove City">
 <area shape="rect" coords="90, 60, 97, 68" title="Violet City">
@@ -93,54 +115,9 @@ export const regionLocations = {
 <area shape="rect" coords="0, 93, 5, 101" title="Safari Zone">
 <area shape="rect" coords="10, 51, 18, 59" title="Battle Frontier">
 <area shape="rect" coords="152, 108, 161, 117" title="Route 26 (Kanto)">
-
-
-<area shape="rect" coords="113, 108, 143, 118" title="Route 29">
-<area shape="rect" coords="105, 108, 116, 68" title="Route 30">
-<area shape="rect" coords="98, 59, 115, 68" title="Route 31">
-<area shape="rect" coords="89, 68, 99, 128" title="Route 32">
-<area shape="rect" coords="79, 128, 90, 137" title="Route 33">
-<area shape="rect" coords="52, 103, 62, 128" title="Route 34">
-<area shape="rect" coords="52, 68, 62, 88" title="Route 35">
-<area shape="rect" coords="60, 59, 89, 69" title="Route 36">
-<area shape="rect" coords="71, 55, 82, 58" title="Route 37">
-<area shape="rect" coords="25, 39, 66, 49" title="Route 38">
-<area shape="rect" coords="25, 48, 34, 53" title="Route 39">
-<area shape="rect" coords="17, 61, 27, 82" title="Route 40">
-<area shape="rect" coords="17, 82, 27, 105" title="Route 41">
-<area shape="rect" coords="81, 39, 109, 49" title="Route 42">
-<area shape="rect" coords="108, 15, 118, 40" title="Route 43">
-<area shape="rect" coords="117, 39, 128, 49" title="Route 44">
-<area shape="rect" coords="136, 48, 146, 89" title="Route 45">
-<area shape="rect" coords="130, 78, 140, 108" title="Route 46">
-<area shape="rect" coords="0, 104, 8, 111" title="Route 47">
-<area shape="rect" coords="0, 100, 6, 105" title="Route 48">
 `,
 
     "Hoenn": `
-<area shape="rect" coords="57, 147, 65, 155" title="Littleroot Town">
-<area shape="rect" coords="57, 122, 65, 129" title="Oldale Town">
-<area shape="rect" coords="30, 122, 45, 130" title="Petalburg City">
-<area shape="rect" coords="11, 82, 26, 90" title="Rustboro City">
-<area shape="rect" coords="11, 82, 19, 97" title="Rustboro City">
-<area shape="rect" coords="38, 185, 46, 193" title="Dewford Town">
-<area shape="rect" coords="85, 140, 100, 155" title="Slateport City">
-<area shape="rect" coords="85, 89, 99, 96" title="Mauville City">
-<area shape="rect" coords="85, 89, 93, 104" title="Mauville City">
-<area shape="rect" coords="57, 89, 65, 97" title="Verdanturf Town">
-<area shape="rect" coords="64, 64, 72, 72" title="Lavaridge Town">
-<area shape="rect" coords="44, 43, 59, 51" title="Fallarbor Town">
-<area shape="rect" coords="109, 43, 117, 51" title="Fortree City">
-<area shape="rect" coords="156, 61, 171, 76" title="Lilycove City">
-<area shape="rect" coords="172, 147, 180, 155" title="Pacifidlog Town">
-<area shape="rect" coords="199, 109, 207, 117" title="Sootopolis City">
-<area shape="rect" coords="227, 79, 242, 87" title="Mossdeep City">
-<area shape="rect" coords="268, 130, 276, 144" title="Evergrande City">
-<area shape="rect" coords="221, 174, 237, 191" title="Battle Frontier">
-<area shape="rect" coords="268, 196, 280, 208" title="Southern Island">
-
-
-
 <area shape="rect" coords="57, 130, 65, 147" title="Route 101">
 <area shape="rect" coords="45, 122, 57, 130" title="Route 102">
 <area shape="rect" coords="57, 115, 85, 123" title="Route 103">
@@ -157,7 +134,6 @@ export const regionLocations = {
 <area shape="rect" coords="59, 43, 85, 51" title="Route 113">
 <area shape="rect" coords="27, 43, 44, 51" title="Route 114">
 <area shape="rect" coords="27, 43, 35, 63" title="Route 114">
-<area shape="rect" coords="18, 55, 27, 63" title="Meteor Falls">
 <area shape="rect" coords="11, 55, 19, 82" title="Route 115">
 <area shape="rect" coords="26, 82, 65, 90" title="Route 116">
 <area shape="rect" coords="65, 89, 85, 97" title="Route 117">
@@ -179,8 +155,69 @@ export const regionLocations = {
 <area shape="rect" coords="153, 147, 172, 155" title="Route 132">
 <area shape="rect" coords="131, 147, 153, 155" title="Route 133">
 <area shape="rect" coords="100, 147, 131, 155" title="Route 134">
+<area shape="rect" coords="18, 55, 27, 63" title="Meteor Falls">
+
+
+<area shape="rect" coords="57, 147, 65, 155" title="Littleroot Town">
+<area shape="rect" coords="57, 122, 65, 129" title="Oldale Town">
+<area shape="rect" coords="30, 122, 45, 130" title="Petalburg City">
+<area shape="rect" coords="11, 82, 26, 90" title="Rustboro City">
+<area shape="rect" coords="11, 82, 19, 97" title="Rustboro City">
+<area shape="rect" coords="38, 185, 46, 193" title="Dewford Town">
+<area shape="rect" coords="85, 140, 100, 155" title="Slateport City">
+<area shape="rect" coords="85, 89, 99, 96" title="Mauville City">
+<area shape="rect" coords="85, 89, 93, 104" title="Mauville City">
+<area shape="rect" coords="57, 89, 65, 97" title="Verdanturf Town">
+<area shape="rect" coords="64, 64, 72, 72" title="Lavaridge Town">
+<area shape="rect" coords="44, 43, 59, 51" title="Fallarbor Town">
+<area shape="rect" coords="109, 43, 117, 51" title="Fortree City">
+<area shape="rect" coords="156, 61, 171, 76" title="Lilycove City">
+<area shape="rect" coords="172, 147, 180, 155" title="Pacifidlog Town">
+<area shape="rect" coords="199, 109, 207, 117" title="Sootopolis City">
+<area shape="rect" coords="227, 79, 242, 87" title="Mossdeep City">
+<area shape="rect" coords="268, 130, 276, 144" title="Evergrande City">
+<area shape="rect" coords="221, 174, 237, 191" title="Battle Frontier">
+<area shape="rect" coords="268, 196, 280, 208" title="Southern Island">
+
 `,
     "Sinnoh": `
+<area shape="rect" coords="23, 143, 36, 151" title="Route 201">
+<area shape="rect" coords="36, 137, 44, 143" title="Route 202">
+<area shape="rect" coords="44, 122, 57, 130" title="Route 203">
+<area shape="rect" coords="36, 109, 44, 122" title="Route 204">
+<area shape="rect" coords="44, 87, 52, 109" title="Route 205">
+<area shape="rect" coords="57, 73, 64, 81" title="Route 205">
+<area shape="rect" coords="64, 88, 72, 115" title="Route 206">
+<area shape="rect" coords="64, 115, 79, 123" title="Route 207">
+<area shape="rect" coords="85, 115, 99, 123" title="Route 208">
+<area shape="rect" coords="114, 115, 128, 123" title="Route 209">
+<area shape="rect" coords="120, 109, 128, 123" title="Route 209">
+<area shape="rect" coords="120, 73, 128, 101" title="Route 210">
+<area shape="rect" coords="108, 73, 128, 81" title="Route 210">
+<area shape="rect" coords="79, 73, 101, 81" title="Route 211">
+<area shape="rect" coords="99, 123, 107, 151" title="Route 212">
+<area shape="rect" coords="99, 143, 127, 151" title="Route 212">
+<area shape="rect" coords="142, 136, 163, 151" title="Route 213">
+<area shape="rect" coords="155, 102, 163, 123" title="Route 214">
+<area shape="rect" coords="127, 87, 148, 95" title="Route 215">
+<area shape="rect" coords="64, 45, 86, 53" title="Route 216">
+<area shape="rect" coords="64, 17, 72, 45" title="Route 217">
+<area shape="rect" coords="16, 122, 29, 130" title="Route 218">
+<area shape="rect" coords="36, 151, 44, 158" title="Route 219">
+<area shape="rect" coords="36, 157, 52, 165" title="Route 220">
+<area shape="rect" coords="52, 157, 72, 165" title="Route 221">
+<area shape="rect" coords="162, 129, 183, 137" title="Route 222">
+<area shape="rect" coords="183, 94, 191, 122" title="Route 223">
+<area shape="rect" coords="190, 73, 198, 88" title="Route 224">
+<area shape="rect" coords="197, 68, 205, 81" title="Route 224">
+<area shape="rect" coords="134, 31, 142, 52" title="Route 225">
+<area shape="rect" coords="149, 31, 170, 39" title="Route 226">
+<area shape="rect" coords="162, 16, 170, 32" title="Route 227">
+<area shape="rect" coords="169, 31, 177, 53" title="Route 228">
+<area shape="rect" coords="169, 52, 184, 60" title="Route 229">
+<area shape="rect" coords="149, 52, 169, 60" title="Route 230">
+
+
 <area shape="rect" coords="22, 150, 30, 158" title="Twinleaf Town">
 <area shape="rect" coords="8, 136, 23, 151" title="Lake Verity">
 <area shape="rect" coords="36, 143, 44, 151" title="Sandgem Town">
@@ -222,44 +259,6 @@ export const regionLocations = {
 <area shape="rect" coords="197, 10, 205, 68" title="Seabreak Path">
 <area shape="rect" coords="197, 2, 205, 10" title="Flower Paradise">
 <area shape="rect" coords="162, 10, 170, 16" title="Stark Mountain">
-
-
-
-<area shape="rect" coords="23, 143, 36, 151" title="Route 201">
-<area shape="rect" coords="36, 137, 44, 143" title="Route 202">
-<area shape="rect" coords="44, 122, 57, 130" title="Route 203">
-<area shape="rect" coords="36, 109, 44, 122" title="Route 204">
-<area shape="rect" coords="44, 87, 52, 109" title="Route 205">
-<area shape="rect" coords="57, 73, 64, 81" title="Route 205">
-<area shape="rect" coords="64, 88, 72, 115" title="Route 206">
-<area shape="rect" coords="64, 115, 79, 123" title="Route 207">
-<area shape="rect" coords="85, 115, 99, 123" title="Route 208">
-<area shape="rect" coords="114, 115, 128, 123" title="Route 209">
-<area shape="rect" coords="120, 109, 128, 123" title="Route 209">
-<area shape="rect" coords="120, 73, 128, 101" title="Route 210">
-<area shape="rect" coords="108, 73, 128, 81" title="Route 210">
-<area shape="rect" coords="79, 73, 101, 81" title="Route 211">
-<area shape="rect" coords="99, 123, 107, 151" title="Route 212">
-<area shape="rect" coords="99, 143, 127, 151" title="Route 212">
-<area shape="rect" coords="142, 136, 163, 151" title="Route 213">
-<area shape="rect" coords="155, 102, 163, 123" title="Route 214">
-<area shape="rect" coords="127, 87, 148, 95" title="Route 215">
-<area shape="rect" coords="64, 45, 86, 53" title="Route 216">
-<area shape="rect" coords="64, 17, 72, 45" title="Route 217">
-<area shape="rect" coords="16, 122, 29, 130" title="Route 218">
-<area shape="rect" coords="36, 151, 44, 158" title="Route 219">
-<area shape="rect" coords="36, 157, 52, 165" title="Route 220">
-<area shape="rect" coords="52, 157, 72, 165" title="Route 221">
-<area shape="rect" coords="162, 129, 183, 137" title="Route 222">
-<area shape="rect" coords="183, 94, 191, 122" title="Route 223">
-<area shape="rect" coords="190, 73, 198, 88" title="Route 224">
-<area shape="rect" coords="197, 68, 205, 81" title="Route 224">
-<area shape="rect" coords="134, 31, 142, 52" title="Route 225">
-<area shape="rect" coords="149, 31, 170, 39" title="Route 226">
-<area shape="rect" coords="162, 16, 170, 32" title="Route 227">
-<area shape="rect" coords="169, 31, 177, 53" title="Route 228">
-<area shape="rect" coords="169, 52, 184, 60" title="Route 229">
-<area shape="rect" coords="149, 52, 169, 60" title="Route 230">
 `,
     "Unova": `
 <area shape="rect" coords="231, 144, 233, 152" title="Route 1">
