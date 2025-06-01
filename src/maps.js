@@ -262,6 +262,107 @@ const regionLocations = {
 <area shape="rect" coords="149, 52, 169, 60" title="Route 230">
 `,
     "Unova": `
+<area shape="rect" coords="231, 144, 233, 152" title="Route 1">
+<area shape="rect" coords="229, 124, 232, 132" title="Route 2">
+<area shape="rect" coords="209, 117, 222, 121" title="Route 3">
+<area shape="rect" coords="130, 96, 134, 124" title="Route 4">
+<area shape="rect" coords="115, 89, 126, 94" title="Route 5">
+<area shape="poly" coords="44,68, 44,73, 68,89, 69,84" title="Route 6">
+<area shape="poly" coords="45,64, 44,60, 68,45, 70,48" title="Route 7">
+<area shape="rect" coords="80, 41, 94, 47" title="Route 8">
+<area shape="rect" coords="113, 41, 127, 47" title="Route 9">
+<area shape="rect" coords="134, 29, 158, 34" title="Route 10">
+<area shape="rect" coords="138, 41, 151, 47" title="Route 11">
+<area shape="rect" coords="170, 41, 184, 47" title="Route 12">
+<area shape="poly" coords="195,46, 196,51, 220,67, 219,62" title="Route 13">
+<area shape="poly" coords="194,85, 194,90, 220,73, 220,69" title="Route 14">
+<area shape="rect" coords="169, 89, 184, 94" title="Route 15">
+<area shape="rect" coords="138, 89, 150, 94" title="Route 16">
+<area shape="rect" coords="213, 156, 226, 161" title="Route 17">
+<area shape="rect" coords="202, 156, 213, 161" title="Route 18">
+<area shape="rect" coords="13, 131, 15, 147" title="Route 19">
+<area shape="poly" coords="12,132, 12,130, 26,126, 27,130" title="Route 19">
+
+<area shape="rect" coords="39, 126, 63, 130" title="Route 20">
+<area shape="rect" coords="233, 41, 237, 50" title="Route 21">
+<area shape="rect" coords="211, 35, 229, 39" title="Route 22">
+<area shape="rect" coords="195, 35, 205, 39" title="Route 23">
+<area shape="rect" coords="195, 15, 197, 39" title="Route 23">
+<area shape="rect" coords="188, 15, 197, 19" title="Route 23">
+<area shape="rect" coords="229, 66, 253, 71" title="Marine Tube">
+<area shape="rect" coords="251, 31, 253, 71" title="Marine Tube">
+<area shape="rect" coords="241, 35, 253, 40" title="Marine Tube">
+
+
+
+<area shape="poly" coords="138,130, 187,117, 138,126," title="Sky Arrow Bridge">
+<area shape="rect" coords="118, 102, 131, 107" title="Desert Resort">
+<area shape="rect" coords="93, 40, 114, 46" title="Tubeline Bridge">
+<area shape="rect" coords="150, 40, 171, 46" title="Village Bridge">
+<area shape="rect" coords="149, 88, 170, 94" title="Marvelous Bridge">
+<area shape="rect" coords="80, 88, 114, 94" title="Driftveil Drawbridge">
+
+
+
+<area shape="rect" coords="226, 152, 238, 164" title="Nuvema Town">
+<area shape="rect" coords="219, 148, 225, 154" title="Plasma Frigate">
+<area shape="rect" coords="226, 132, 238, 144" title="Accumula Town">
+<area shape="rect" coords="222, 112, 234, 124" title="Striaton City">
+<area shape="rect" coords="197, 112, 209, 124" title="Nacrene City">
+<area shape="rect" coords="126, 124, 138, 136" title="Castelia City">
+<area shape="rect" coords="126, 85, 138, 97" title="Nimbasa City">
+<area shape="rect" coords="68, 85, 80, 97" title="Driftveil City">
+<area shape="rect" coords="34, 61, 46, 73" title="Mistralton City">
+<area shape="rect" coords="68, 37, 80, 49" title="Icirrus City">
+<area shape="rect" coords="126, 37, 138, 49" title="Opelucid City">
+<area shape="rect" coords="164, 9, 176, 21" title="Pokémon League">
+<area shape="rect" coords="184, 37, 196, 49" title="Lacunosa Town">
+<area shape="rect" coords="218, 61, 230, 73" title="Undella Town">
+<area shape="rect" coords="184, 85, 190, 97" title="Black City">
+<area shape="rect" coords="190, 85, 196, 97" title="White Forest">
+<area shape="rect" coords="8, 147, 20, 161" title="Aspertia City">
+<area shape="rect" coords="26, 121, 39, 135" title="Floccesy Town">
+<area shape="rect" coords="63, 121, 76, 135" title="Virbank City">
+
+
+
+<area shape="rect" coords="60, 111, 68, 121" title="Pokéwood">
+<area shape="rect" coords="38, 115, 44, 121" title="Floccesy Ranch">
+<area shape="rect" coords="38, 135, 44, 143" title="Cave of Being">
+<area shape="rect" coords="61, 135, 67, 143" title="Virbank Complex">
+<area shape="rect" coords="153, 140, 159, 148" title="Castelia Sewers">
+<area shape="rect" coords="211, 148, 217, 156" title="P2 Laboratory">
+<area shape="rect" coords="102, 115, 108, 123" title="Relic Passage">
+<area shape="rect" coords="73, 99, 81, 109" title="PWT">
+<area shape="rect" coords="69, 74, 81, 109" title="Clay Tunnel">
+<area shape="rect" coords="181, 61, 193, 75" title="Lentimas Town">
+<area shape="rect" coords="195, 56, 201, 64" title="Strange House">
+<area shape="rect" coords="203, 64, 209, 72" title="Reversal Mountain">
+<area shape="rect" coords="232, 50, 238, 56" title="Seaside Cave">
+<area shape="rect" coords="229, 30, 241, 41" title="Humilau City">
+<area shape="rect" coords="179, 3, 185, 11" title="N's Castle">
+<area shape="rect" coords="180, 12, 188, 21" title="Victory Road">
+
+<area shape="rect" coords="236, 115, 242, 121" title="Dreamyard">
+<area shape="rect" coords="212, 107, 218, 113" title="Wellspring Cave">
+<area shape="rect" coords="191, 122, 197, 128" title="Pinwheel Forest">
+<area shape="rect" coords="112, 101, 118, 107" title="Relic Castle">
+<area shape="rect" coords="66, 71, 72, 77" title="Mistralton Cave">
+<area shape="rect" coords="39, 77, 45, 83" title="Chargestone Cave">
+<area shape="rect" coords="51, 47, 57, 53" title="Celestial Tower">
+<area shape="rect" coords="69, 52, 75, 58" title="Twist Mountain">
+<area shape="rect" coords="63, 28, 69, 34" title="Dragonspiral Tower">
+<area shape="rect" coords="85, 33, 91, 39" title="Moor of Icirrus">
+<area shape="rect" coords="4, 27, 10, 33" title="Anville Town">
+<area shape="rect" coords="114, 46, 120, 52" title="Challenger's Cave">
+<area shape="rect" coords="159, 20, 167, 28" title="Victory Road">
+<area shape="rect" coords="205, 33, 211, 41" title="Giant Chasm">
+<area shape="rect" coords="239, 60, 245, 68" title="Undella Bay">
+<area shape="rect" coords="194, 74, 200, 80" title="Abundant Shrine">
+<area shape="rect" coords="143, 81, 149, 87" title="Lostlorn Forest">
+<area shape="rect" coords="129, 64, 135, 70" title="EntraLink">
+<area shape="rect" coords="71, 142, 77, 148" title="Liberty Island">
+<area shape="rect" coords="95, 153, 103, 161" title="Unity Tower">
 `,
     "Kalos": `
 `
