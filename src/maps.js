@@ -1,9 +1,9 @@
-const regions = [
+export const regions = [
     "Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"
 ]
 
 // Largura X Altura
-const dimensions = {
+export const dimensions = {
     "Kanto": [200, 160],
     "Johto": [166, 144],
     "Hoenn": [306, 221],
@@ -12,7 +12,7 @@ const dimensions = {
     "Kalos": [320, 210]
 }
 
-const regionLocations = {
+export const regionLocations = {
     "Kanto": `
 <area shape="rect" coords="47, 112, 56, 103" title="Pallet Town">
 <area shape="rect" coords="47, 92, 56, 76" title="Viridian City">
