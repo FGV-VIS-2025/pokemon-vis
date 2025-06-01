@@ -1,5 +1,5 @@
 export async function getRegions() {
-    const data = await d3.csv('data/region_names.csv', d => ({
+    const data = await d3.csv('./data/region_names.csv', d => ({
         region_id: +d.region_id,
         local_lan_id: +d.local_language_id,
         name: d.name
@@ -9,13 +9,13 @@ export async function getRegions() {
 }
 
 export async function getLocationsByRegionId(regionId) {
-    const location_data = await d3.csv('data/locations.csv', d => ({
+    const location_data = await d3.csv('./data/locations.csv', d => ({
         location_id: +d.id,
         location_ident: d.identifier,
         region_id: +d.region_id
     }));
 
-    const location_names_data = await d3.csv('data/location_names.csv', d => ({
+    const location_names_data = await d3.csv('./data/location_names.csv', d => ({
         location_id: +d.local_language_id,
         local_language_id: +d.local_language_id,
         location_name: d.name
@@ -37,7 +37,7 @@ export async function getLocationsByRegionId(regionId) {
 }
 
 export async function getLocationAreaByLocation(locationId) {
-    const locationAreaData = await d3.csv('data/location_areas.csv', d => ({
+    const locationAreaData = await d3.csv('./data/location_areas.csv', d => ({
         locationAreaId: +d.id,
         locationId: +d.location_id,
         gameIndex: +d.game_index,
@@ -50,7 +50,7 @@ export async function getLocationAreaByLocation(locationId) {
 }
 
 export async function getPokemonsIdByLocationAreaId(locationAreaId) {
-    const encounter = await d3.csv('data/encounters.csv', d => ({
+    const encounter = await d3.csv('./data/encounters.csv', d => ({
         id: +d.id,
         version_id: +d.version_id,
         location_area_id: +d.location_area_id,
@@ -61,7 +61,7 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
 
     const filteredEncounters = encounter.filter(loc => loc.location_area_id === +locationAreaId);
 
-    const pokemonsArray = await d3.csv('data/pokemon_species_names.csv', d => ({
+    const pokemonsArray = await d3.csv('./data/pokemon_species_names.csv', d => ({
         pokemon_id: +d.pokemon_species_id,
         language_id: +d.local_language_id,
         name: d.name,
@@ -87,14 +87,14 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
         };
     });
 
-    const typesArray = await d3.csv('data/types.csv', d => ({
+    const typesArray = await d3.csv('./data/types.csv', d => ({
         type_id: +d.id,
         name: d.identifier,
         generation_id: +d.generation_id,
         damage_class_id: +d.damage_class_id,
     }));
 
-    const pokemonsTypeArray = await d3.csv('data/pokemon_types.csv', d => ({
+    const pokemonsTypeArray = await d3.csv('./data/pokemon_types.csv', d => ({
         pokemon_id: +d.pokemon_id,
         type_id: +d.type_id,
         slot: +d.slot,
@@ -173,7 +173,7 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
 
     const uniquePokemons = Array.from(uniquePokemonsMap.values());
 
-    const pokemonsSpeciesArray = await d3.csv('data/pokemon_species.csv', d => ({
+    const pokemonsSpeciesArray = await d3.csv('./data/pokemon_species.csv', d => ({
         pokemon_id: +d.id,
         identifier: d.identifier,
         generation_id: +d.generation_id,
@@ -205,7 +205,7 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
         ...(speciesMap.get(pokemon.pokemon_id) || {})
     }));
 
-    const pokemonsArray2 = await d3.csv('data/pokemon.csv', d => ({
+    const pokemonsArray2 = await d3.csv('./data/pokemon.csv', d => ({
         pokemon_id: +d.id,
         identifier: d.identifier,
         height: +d.height,
@@ -224,7 +224,7 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
         ...(pokemonsMap2.get(pokemon.pokemon_id) || {})
     }));
 
-    const finalStats = await d3.csv('data/pokemon_stats_clean.csv', d => ({
+    const finalStats = await d3.csv('./data/pokemon_stats_clean.csv', d => ({
         Pokemon_Id: +d.Pokemon_Id,
         Hp_Stat: +d.Hp_Stat,
         Hp_Effort: +d.Hp_Effort,
@@ -258,7 +258,7 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
 
 export async function getAllPokemons() {
     // Carrega todos os encontros
-    const encounters = await d3.csv('data/encounters.csv', d => ({
+    const encounters = await d3.csv('./data/encounters.csv', d => ({
         id: +d.id,
         version_id: +d.version_id,
         location_area_id: +d.location_area_id,
@@ -268,7 +268,7 @@ export async function getAllPokemons() {
     }));
 
     // Carrega nomes e gêneros dos pokémons na linguagem (9 = inglês)
-    const pokemonsArray = await d3.csv('data/pokemon_species_names.csv', d => ({
+    const pokemonsArray = await d3.csv('./data/pokemon_species_names.csv', d => ({
         pokemon_id: +d.pokemon_species_id,
         language_id: +d.local_language_id,
         name: d.name,
@@ -291,13 +291,13 @@ export async function getAllPokemons() {
     }));
 
     // Tipos dos pokémons
-    const typesArray = await d3.csv('data/types.csv', d => ({
+    const typesArray = await d3.csv('./data/types.csv', d => ({
         type_id: +d.id,
         name: d.identifier,
         generation_id: +d.generation_id,
         damage_class_id: +d.damage_class_id,
     }));
-    const pokemonsTypeArray = await d3.csv('data/pokemon_types.csv', d => ({
+    const pokemonsTypeArray = await d3.csv('./data/pokemon_types.csv', d => ({
         pokemon_id: +d.pokemon_id,
         type_id: +d.type_id,
         slot: +d.slot,
@@ -363,7 +363,7 @@ export async function getAllPokemons() {
     const uniquePokemons = Array.from(uniquePokemonsMap.values());
 
     // Carrega espécies
-    const pokemonsSpeciesArray = await d3.csv('data/pokemon_species.csv', d => ({
+    const pokemonsSpeciesArray = await d3.csv('./data/pokemon_species.csv', d => ({
         pokemon_id: +d.id,
         identifier: d.identifier,
         generation_id: +d.generation_id,
@@ -392,7 +392,7 @@ export async function getAllPokemons() {
     }));
 
     // Carrega dados gerais
-    const pokemonsArray2 = await d3.csv('data/pokemon.csv', d => ({
+    const pokemonsArray2 = await d3.csv('./data/pokemon.csv', d => ({
         pokemon_id: +d.id,
         identifier: d.identifier,
         height: +d.height,
@@ -408,7 +408,7 @@ export async function getAllPokemons() {
     }));
 
     // Carrega stats
-    const finalStats = await d3.csv('data/pokemon_stats_clean.csv', d => ({
+    const finalStats = await d3.csv('./data/pokemon_stats_clean.csv', d => ({
         Pokemon_Id: +d.Pokemon_Id,
         Hp_Stat: +d.Hp_Stat,
         Hp_Effort: +d.Hp_Effort,
