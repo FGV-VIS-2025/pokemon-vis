@@ -55,7 +55,7 @@ export function buildMap(selectedRegion) {
     mapRealContainer.appendChild(tooltip);
 
     const img = document.createElement("img");
-    img.src = `../assets/maps/${selectedRegion.name}.png`;
+    img.src = `./assets/maps/${selectedRegion.name}.png`;
     Object.assign(img.style, {
         position: "absolute",
         zIndex: 1,
