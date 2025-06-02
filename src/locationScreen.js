@@ -21,7 +21,7 @@ export function createLocationScreen(id_location) {
     barChartContainer.style.width = '100%';
     barChartContainer.style.height = '600px';
     barChartContainer.style.margin = 'auto';
-    barChartContainer.style.marginTop = '40px';
+    barChartContainer.style.marginTop = '200px';
     barChartContainer.style.display = 'flex';
     barChartContainer.style.justifyContent = 'center';
     barChartContainer.style.alignItems = 'center';
