@@ -150,7 +150,9 @@ export function buildMap(selectedRegion) {
 export function changeContent(selectedButton) {
     if (selectedButton.id === "pokemon-screen") {
         createPokemonScreen();
+        setTimeout(() => {
         editPokemonsCard();
+        }, 10);
     } else if (selectedButton.id === "region-screen") {
         createRegionScreen(regionsSelect.value);
     } else {

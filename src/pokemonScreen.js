@@ -228,6 +228,12 @@ function createHeatMap() {
     d3.select(".svg-chart-2").selectAll("*").remove();
 
     const heatSvg = document.getElementsByClassName("svg-chart-2")[0];
+    const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
+
+    heatSvg.style.border = "1px solid rgb(255, 255, 255)";
+    heatPaiSvg.style.padding = "15px";
+    heatPaiSvg.style.marginBottom = "20px";
+
     const svgWidth = heatSvg.clientWidth;
     const svgHeight = svgWidth;
 
@@ -277,8 +283,6 @@ function createHeatMap() {
     .range([0, height])
     .domain(types)
     .padding(0.05);
-
-    console.log(data);
 
     // Adiciona imagens dos tipos no eixo Y
     types.forEach(tipo => {
@@ -496,6 +500,12 @@ export function editPokemonsCard() {
         const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
         radarPaiSvg.style.padding = 0;
         radarPaiSvg.style.marginBottom = 0;
+        const heatSvg = document.getElementsByClassName("svg-chart-2")[0];
+        heatSvg.innerHTML = "";
+        heatSvg.style.border = 0;
+        const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
+        heatPaiSvg.style.padding = 0;
+        heatPaiSvg.style.marginBottom = 0;
         pokemonsDescription.style.marginBottom = 0;
     }
 }
