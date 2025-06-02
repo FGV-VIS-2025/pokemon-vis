@@ -1,7 +1,7 @@
 // Importações
-import { getRegions } from "./data.js";
+import { getPokemonsIdByLocationAreaId, getRegions } from "./data.js";
 import { regionLocations } from "./maps.js";
-import { createPokemonScreen, editPokemonsCard } from "./pokemonScreen.js";
+import { createPokemonScreen, editPokemonsCard, loadCards } from "./pokemonScreen.js";
 import { createRegionScreen } from "./regionScreen.js";
 
 // Elementos do DOM
@@ -68,7 +68,7 @@ export function buildMap(selectedRegion) {
     mapRealContainer.appendChild(img);
 
 
-    function createAreaSVG(shape, coords, title) {
+    function createAreaSVG(shape, coords, title, id) {
         return new Promise(resolve => {
             let el = null;
             if (shape === "rect" && coords.length === 4) {
@@ -83,6 +83,7 @@ export function buildMap(selectedRegion) {
                 rect.setAttribute("stroke-width", "2");
                 rect.setAttribute("pointer-events", "auto");
                 rect.setAttribute("data-title", title);
+                rect.setAttribute("data-location-id", id);
                 el = rect;
             } else if (shape === "poly" && coords.length >= 6) {
                 const points = coords.reduce((acc, val, i) => {
@@ -96,11 +97,12 @@ export function buildMap(selectedRegion) {
                 polygon.setAttribute("stroke-width", "2");
                 polygon.setAttribute("pointer-events", "auto");
                 polygon.setAttribute("data-title", title);
+                polygon.setAttribute("data-location-id", id);
                 el = polygon;
             }
             if (el) {
                 el.addEventListener("mouseenter", function (e) {
-                    tooltip.textContent = title;
+                    tooltip.textContent = id;
                     tooltip.style.display = "block";
                 });
                 el.addEventListener("mousemove", function (e) {
@@ -110,6 +112,14 @@ export function buildMap(selectedRegion) {
                 });
                 el.addEventListener("mouseleave", function () {
                     tooltip.style.display = "none";
+                });
+                
+                el.addEventListener("click", async () => {
+                    const areaId = parseInt(el.getAttribute("data-location-id"));
+                    
+                    window.selectedLocationArea = areaId;
+                    const pokemons = await getPokemonsIdByLocationAreaId(areaId);
+                    loadCards(pokemons);
                 });
             }
             resolve(el);
@@ -127,17 +137,17 @@ export function buildMap(selectedRegion) {
             height: "100%"
         });
         svg.setAttribute("viewBox", `0 0 ${img.naturalWidth} ${img.naturalHeight}`);
-        svg.setAttribute("pointer-events", "none");
+        svg.setAttribute("pointer-events", "auto");
 
         const regionAreas = regionLocations[selectedRegion.name];
         if (regionAreas) {
-            const areaRegex = /<area shape="(rect|poly)" coords="([^"]+)" title="([^"]+)"\s*\/?/g;
+            const areaRegex = /<area shape="(rect|poly)" coords="([^"]+)" title="([^"]+)" id=(\d+)\s*\/?/g;
             let match;
             const areaPromises = [];
             while ((match = areaRegex.exec(regionAreas)) !== null) {
-                const [shape, coordsStr, title] = [match[1], match[2], match[3]];
+                const [shape, coordsStr, title, id] = [match[1], match[2], match[3], match[4]];
                 const coords = coordsStr.split(',').map(c => parseInt(c.trim()));
-                areaPromises.push(createAreaSVG(shape, coords, title));
+                areaPromises.push(createAreaSVG(shape, coords, title, id));
             }
 
             const svgElements = await Promise.all(areaPromises);
