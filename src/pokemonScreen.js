@@ -135,7 +135,17 @@ export async function createPokemonScreen() {
 
     // Esconder sugestões ao clicar fora
     document.addEventListener("click", (e) => {
-        if (!pokemonSearch.contains(e.target)) {
+        const emptyCards = document.getElementsByClassName("pokemon-card-select");
+
+        // Verifica se o clique foi dentro de alguma carta vazia
+        const clickInsideEmptyCard = Array.from(emptyCards).some(card =>
+            card.contains(e.target)
+        );
+
+        // Verifica se foi dentro da barra de busca
+        const clickInsideSearch = pokemonSearch.contains(e.target);
+
+        if (!clickInsideSearch && !clickInsideEmptyCard) {
             hideSuggestions();
         }
     });
@@ -427,6 +437,17 @@ function createEmptyPokemonCard() {
             card.style.boxShadow = "none";
             card.style.transform = "translateY(+5px)";
         });
+    });
+
+    // clique que leva para a barra de pesquisa
+    card.addEventListener("click", () => {
+        const target = document.getElementsByClassName("pokemons-search-box")[0];
+        if (target) {
+            target.focus();  
+            target.click(); 
+        } else {
+            console.warn("Elemento de busca não encontrado.");
+        }
     });
 
     return card;
