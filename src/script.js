@@ -37,15 +37,23 @@ let pokemonsArray;
     locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
     pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
     loadCards(pokemonsArray);
+
+    if (regionButton.classList.contains("active")) {
+        changeContent(regionButton, +selectedRegion.id);
+    }
+
+    if (locationButton.classList.contains("active")) {
+        changeContent(locationButton, +selectedRegion.id, +selectedLocation.location_id);
+    }
 })();
 
 // construção da página dinamicamente
 regionsSelect.addEventListener("change", async (event) => {
-  selectedRegion.id = regionsSelect.value;
-  selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
-  buildMap(selectedRegion);
+    selectedRegion.id = regionsSelect.value;
+    selectedRegion.name = regionsSelect.options[regionsSelect.selectedIndex].textContent;
+    buildMap(selectedRegion);
 
-  locationsArray = await getLocationsByRegionId(selectedRegion.id);
+    locationsArray = await getLocationsByRegionId(selectedRegion.id);
 
     // ao carregar ele garante que não vai sortear uma vazia
     while (!selectedLocation || locationsArray.length === 0) {
@@ -54,21 +62,29 @@ regionsSelect.addEventListener("change", async (event) => {
         }
     }
 
-  locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-  pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
-  loadCards(pokemonsArray);
+    locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
+    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
+    loadCards(pokemonsArray);
+
+    if (regionButton.classList.contains("active")) {
+        changeContent(regionButton, +selectedRegion.id);
+    }
+
+    if (locationButton.classList.contains("active")) {
+        changeContent(locationButton, +selectedRegion.id, +selectedLocation.location_id);
+    }
 });
 
 regionButton.addEventListener("click", (event) => {
     buttons.forEach(btn => btn.classList.remove("active"));
     regionButton.classList.add("active");
-    changeContent(regionButton);
+    changeContent(regionButton, +selectedRegion.id);
 });
 
 locationButton.addEventListener("click", (event) => {
     buttons.forEach(btn => btn.classList.remove("active"));
     locationButton.classList.add("active");
-    changeContent(locationButton);
+    changeContent(locationButton, +selectedRegion.id, +selectedLocation.location_id);
 });
 
 pokemonButton.addEventListener("click", (event) => {
@@ -80,8 +96,12 @@ pokemonButton.addEventListener("click", (event) => {
 mapRealContainer.addEventListener('locationSelected', async (event) => {
     const { locationId, title } = event.detail;
     
-    selectedLocation = locationId;
-    locationsAreaArray = await getLocationAreaByLocation(locationId);
+    selectedLocation.location_id = locationId;
+    locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
     pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
     loadCards(pokemonsArray);
+
+    if (locationButton.classList.contains("active")) {
+        changeContent(locationButton, +selectedRegion.id, +selectedLocation.location_id);
+    }
 });

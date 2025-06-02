@@ -150,15 +150,17 @@ export function buildMap(selectedRegion) {
     };
 }
 
-export function changeContent(selectedButton) {
+export function changeContent(selectedButton, region_id = 3, location_id = 28) {
     if (selectedButton.id === "pokemon-screen") {
         createPokemonScreen();
         setTimeout(() => {
             editPokemonsCard();
         }, 10);
+
     } else if (selectedButton.id === "region-screen") {
-        createRegionScreen(3);
+        createRegionScreen(region_id);
+        
     } else if (selectedButton.id === "location-screen") {
-        createLocationScreen(28);
+        createLocationScreen(location_id);
     }
 }
