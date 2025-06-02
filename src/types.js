@@ -154,11 +154,24 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
 let typesData, pokemonTypesData, encountersData, locationsData;
 
 Promise.all([
-  d3.csv("./data/types.csv", d3.autoType),
-  d3.csv("./data/pokemon_types.csv", d3.autoType),
-  d3.csv("./data/encounters.csv", d3.autoType),
-  d3.csv("./data/locations.csv", d3.autoType)
-]).then(([types, pokemonTypes, encounters, locations]) => {
+  d3.csv("../data/types.csv", d3.autoType),
+  d3.csv("../data/pokemon_types.csv", d3.autoType),
+  d3.csv("../data/encounters.csv", d3.autoType),
+  d3.csv("../data/locations.csv", d3.autoType)
+]).then(([types, pokemonTypes, encountersRaw, locations]) => {
+  // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
+  const seen = new Set();
+  const encounters = [];
+
+  for (const row of encountersRaw) {
+    const key = `${row.location_area_id}-${row.pokemon_id}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      encounters.push(row);
+    }
+  }
+
+  // Armazena os dados filtrados
   typesData = types;
   pokemonTypesData = pokemonTypes;
   encountersData = encounters;
@@ -175,4 +188,31 @@ export function updateTypeChordByRegion(regionId) {
   const filteredPokemonTypes = pokemonTypesData.filter(pt => regionPokemonIds.has(pt.pokemon_id));
 
   renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
+}
+
+export function updateTypeChordByLocation(locationId) {
+  if (!typesData || !pokemonTypesData || !encountersData || !locationsData) return;
+
+  // 1. Filtra as location areas que pertencem à location selecionada
+  const locationAreaIds = new Set(
+    locationsData
+      .filter(loc => loc.id === locationId)
+      .map(loc => loc.id)
+  );
+
+  // 2. Filtrar encounters com essas location_area_id
+  const filteredEncounters = encountersData.filter(e =>
+    locationAreaIds.has(e.location_area_id)
+  );
+
+  // 3. Pegar os Pokémon únicos dessa location
+  const locationPokemonIds = new Set(filteredEncounters.map(e => e.pokemon_id));
+
+  // 4. Filtrar os tipos dos Pokémon
+  const filteredPokemonTypes = pokemonTypesData.filter(pt =>
+    locationPokemonIds.has(pt.pokemon_id)
+  );
+
+  // 5. Atualizar o gráfico
+  renderTypeChord('#location-chart-container', typesData, filteredPokemonTypes);
 }

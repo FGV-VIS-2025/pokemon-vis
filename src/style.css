@@ -284,13 +284,25 @@ body {
     background-color: var(--dark-blue) !important;
 }
 
+#region-chart-container, #bar-chart-container {
+  width: 100%; /* ocupam toda largura do content-container */
+  display: block; /* largura máxima, opcional */
+  margin: 0 auto; /* centraliza horizontalmente */
+  /* altura pode ser ajustada conforme necessário */
+}
+
 #content-container {
-    width: 100%;
-    min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
+    gap: 150px;
+    padding: 20px;
+}
+
+svg {
+  display: block;
+  margin: auto;
+  max-width: 100%;
 }
 
 /* Pokemons Screen */
