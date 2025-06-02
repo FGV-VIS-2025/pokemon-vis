@@ -46,6 +46,22 @@ export function drawStatBarChart(containerSelector, data) {
     .attr("font-size", "16px")
     .attr("font-weight", "bold")
     .text("Média das Estatísticas dos Pokémon");
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - margin.bottom / 4)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "14px")
+    .text("Estatística");
+
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", margin.left / 3)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "14px")
+    .text("Média");
+
 }
 
 let encountersData, locationsData, pokemonStatsData, statsData;

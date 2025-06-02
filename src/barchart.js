@@ -43,7 +43,7 @@ export function drawBarChart(containerSelector, data) {
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("x", -height / 2)
-    .attr("y", margin.left / 3)
+    .attr("y", margin.left - 30)
     .attr("dy", "-1em")
     .style("text-anchor", "middle")
     .style("font-size", "14px")
@@ -69,6 +69,14 @@ export function drawBarChart(containerSelector, data) {
       .attr("width", x.bandwidth())
       .attr("height", d => y(0) - y(d.count))
       .attr("fill", "steelblue");
+
+  // Rótulo do eixo X
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - margin.bottom + 80)
+    .attr("text-anchor", "middle")
+    .style("font-size", "14px")
+    .text("Pokémon");
 }
 
 
