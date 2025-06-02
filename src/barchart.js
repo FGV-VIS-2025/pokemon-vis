@@ -43,7 +43,7 @@ export function drawBarChart(containerSelector, data) {
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("x", -height / 2)
-    .attr("y", margin.left / 3)
+    .attr("y", margin.left - 30)
     .attr("dy", "-1em")
     .style("text-anchor", "middle")
     .style("font-size", "14px")
@@ -56,7 +56,7 @@ export function drawBarChart(containerSelector, data) {
     .attr("text-anchor", "middle")
     .style("font-size", "18px")
     .style("font-weight", "bold")
-    .text("Top 5 e Bottom 5 Pokémon por Região");
+    .text("5 Pokémons mais comuns e 5 Pokémons mais raros da Região");
 
   // Barras
   svg.selectAll(".bar")
@@ -69,6 +69,14 @@ export function drawBarChart(containerSelector, data) {
       .attr("width", x.bandwidth())
       .attr("height", d => y(0) - y(d.count))
       .attr("fill", "steelblue");
+
+  // Rótulo do eixo X
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - margin.bottom + 80)
+    .attr("text-anchor", "middle")
+    .style("font-size", "14px")
+    .text("Pokémon");
 }
 
 

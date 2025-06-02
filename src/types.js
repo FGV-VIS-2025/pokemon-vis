@@ -10,6 +10,14 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .attr("width", width)
     .attr("height", height);
 
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 80)
+    .attr("text-anchor", "middle")
+    .style("font-size", "25px")
+    .style("fill", "white")
+    .text("Número de pokémons por tipo");
+
   const tooltip = d3.select("body")
     .append("div")
     .attr("class", "tooltip")
