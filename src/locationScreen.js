@@ -30,7 +30,6 @@ export function createLocationScreen(id_location) {
     contentScreen.appendChild(chartContainer);
     contentScreen.appendChild(barChartContainer);
 
-    console.log(id_location);
     updateTypeChordByLocation(id_location);
     renderStatBarChart(id_location);
 }

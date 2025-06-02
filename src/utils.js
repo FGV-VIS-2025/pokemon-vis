@@ -111,7 +111,7 @@ export function buildMap(selectedRegion) {
                 });
                 el.addEventListener("click", function (e) {
                     e.stopPropagation();
-                    mapRealContainer.dispatchEvent(new CustomEvent('locationSelected', { detail: { locationAreaId: areaId, title } }));
+                    mapRealContainer.dispatchEvent(new CustomEvent('locationSelected', { detail: { locationId: areaId, title } }));
                 });
             }
             resolve(el);
