@@ -507,7 +507,7 @@ body {
     width: 55%;
 }
 
-.svg-pai-chart-1{
+.svg-pai-chart-1, .svg-pai-chart-2{
     width: 78.5%;
     height: auto;
     background-color: #1b1b1b;
@@ -529,10 +529,11 @@ body {
 }
 
 .svg-chart-2{
-    width: 80%;
-    aspect-ratio: 3 / 1;
-    background-color: rgb(240, 0, 240);
-    margin-bottom: 20px;
+    width: 100%;
+    height: auto;
+    background-color: rgb(49, 49, 49);
+    border-radius: 10px;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .tooltip {
@@ -561,4 +562,11 @@ body {
   stroke: #000;
   stroke-width: 0.5px;
   transition: fill-opacity 0.3s;
+}
+
+.heat-map-img{
+    width: 70%;
+    max-height: 100px;
+    opacity: 1  !important;;
+    margin-top: 10px;
 }
