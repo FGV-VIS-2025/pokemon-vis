@@ -153,9 +153,9 @@ export function changeContent(selectedButton) {
         createPokemonScreen();
         editPokemonsCard();
     } else if (selectedButton.id === "region-screen") {
-        createRegionScreen(regionsSelect.value);
+        createRegionScreen(4);
     } else if (selectedButton.id === "location-screen") {
-        createLocationScreen(5);
+        createLocationScreen(28);
     } else {
         contentScreen.innerHTML = ``;
         contentScreen.style.backgroundColor = colors[selectedButton.id];
