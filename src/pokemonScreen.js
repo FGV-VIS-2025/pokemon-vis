@@ -25,12 +25,6 @@ export async function loadCards(pokemonsArray) {
     }
 }
 
-const pokemons = [
-    "Pikachu", "Charmander", "Bulbasaur", "Squirtle",
-    "Jigglypuff", "Gengar", "Eevee", "Snorlax",
-    "Mewtwo", "Lucario", "Garchomp", "Togekiss"
-];
-
 /**
  * Vai construir os elementos básicos da 'pokemon-screen'. 
  */
@@ -202,15 +196,25 @@ function buildRadarDataFromPokemons(selectedPokemons) {
         { key: "Speed_Stat", label: "Speed" }
     ];
 
-    // formatação dos dados
-    return selectedPokemons.map(pokemon => ({
-        name: pokemon.Name || pokemon.name || "Unknown",
-        axes: statLabels.map(stat => ({
+    // mapeia e calcula total
+    const formattedData = selectedPokemons.map(pokemon => {
+        const name = pokemon.Name || pokemon.name || "Unknown";
+
+        const axes = statLabels.map(stat => ({
             axis: stat.label,
             value: pokemon[stat.key],
-            name: pokemon.Name || pokemon.name || "Unknown"
-        }))
-    }));
+            name: name
+        }));
+
+        const total = axes.reduce((sum, stat) => sum + (stat.value || 0), 0);
+
+        return { name, axes, total };
+    });
+
+    // ordena por total decrescente
+    formattedData.sort((a, b) => b.total - a.total);
+
+    return formattedData;
 }
 
 /**
