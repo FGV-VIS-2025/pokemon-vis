@@ -201,5 +201,5 @@ export function updateTypeChordByLocation(locationId) {
   );
 
   // 5. Atualizar o gráfico
-  renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
+  renderTypeChord('#location-chart-container', typesData, filteredPokemonTypes);
 }
