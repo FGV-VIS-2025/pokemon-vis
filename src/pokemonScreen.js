@@ -359,7 +359,6 @@ function createHeatMap() {
  * @returns 
  */
 function buildRadarDataFromPokemons(selectedPokemons) {
-    // stats que vão ser consideradas
     const statLabels = [
         { key: "Hp_Stat", label: "Hp" },
         { key: "Attack_Stat", label: "Attack" },
@@ -369,24 +368,25 @@ function buildRadarDataFromPokemons(selectedPokemons) {
         { key: "Speed_Stat", label: "Speed" }
     ];
 
-    // mapeia e calcula total
+    const tiposVistos = {};
     const formattedData = selectedPokemons.map(pokemon => {
         const name = pokemon.Name || pokemon.name || "Unknown";
-
         const axes = statLabels.map(stat => ({
             axis: stat.label,
             value: pokemon[stat.key],
             name: name
         }));
-
         const total = axes.reduce((sum, stat) => sum + (stat.value || 0), 0);
 
-        return { name, axes, total };
+        const tipo = pokemon.types[0].type_name;
+        if (!tiposVistos[tipo]) tiposVistos[tipo] = 0;
+        tiposVistos[tipo]++;
+        const cor = pokemonTypeColorsRadar[tipo]?.[String(tiposVistos[tipo])] ?? "#000000";
+
+        return { name, axes, total, color: cor };
     });
 
-    // ordena por total decrescente
     formattedData.sort((a, b) => b.total - a.total);
-
     return formattedData;
 }
 
@@ -417,7 +417,6 @@ function getColorRadarChart(selectedPokemons) {
  * Função responsável por configurar as variáveis necessárias e chamar a função que de fato cria o gráfico de radar.
  */
 function createRadarChart() {
-    // seleção do svg-pai onde vai ser construido o gráfico
     const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
     const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
 
@@ -425,24 +424,16 @@ function createRadarChart() {
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    // definição das dimensões do gráfico com base no svg-pai
     const svgWidth = radarSvg.clientWidth;
+    const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
+    const width = svgWidth - margin.left - margin.right;
+    const height = svgWidth - margin.top - margin.bottom;
 
-    // valores de margem
-    var margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
+    const data = buildRadarDataFromPokemons(selectedPokemons);
 
-    var width = svgWidth - margin.left - margin.right;
-    var height = svgWidth - margin.top - margin.bottom;
+    const color = d3.scaleOrdinal().range(data.map(p => p.color));
 
-    // formatação dos dados
-    var data = buildRadarDataFromPokemons(selectedPokemons);
-
-    // cores que vão ser usadas
-    var color = d3.scaleOrdinal()
-        .range(getColorRadarChart(selectedPokemons));
-
-    // configurações de gráfico
-    var radarChartOptions = {
+    const radarChartOptions = {
         w: width,
         h: height,
         margin: margin,
@@ -452,9 +443,9 @@ function createRadarChart() {
         color: color
     };
 
-    // chamada da função que de fato cria o gráfico
     RadarChart(".svg-chart-1", data, radarChartOptions);
 }
+
 
 // ao mudar a tela de tamanho, reconstroi tudo para parecer dinâmico
 window.addEventListener("resize", editPokemonsCard);
