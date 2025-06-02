@@ -1,3 +1,5 @@
+import { pokemonTypeColorsRGBA } from './consts.js';
+
 export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960) {
   // Limpa SVG anterior, se existir
   d3.select(containerSelector).selectAll("svg").remove();
@@ -7,6 +9,14 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .append("svg")
     .attr("width", width)
     .attr("height", height);
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 80)
+    .attr("text-anchor", "middle")
+    .style("font-size", "25px")
+    .style("fill", "white")
+    .text("Número de pokémons por tipo");
 
   const tooltip = d3.select("body")
     .append("div")
@@ -47,16 +57,7 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     }
   }
 
-  const tableau20 = [
-    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
-    "#393b79", "#637939", "#8c6d31", "#843c39", "#7b4173",
-    "#3182bd", "#e6550d", "#31a354"
-  ];
-
-  const color = d3.scaleOrdinal()
-    .domain(filteredTypeNames)
-    .range(tableau20);
+const color = typeName => pokemonTypeColorsRGBA[typeName] || 'rgba(200, 200, 200, 0.7)';
 
   const ribbonRadius = Math.min(width, height) * 0.5 - 200;
   const arcInnerRadius = ribbonRadius + 10;
