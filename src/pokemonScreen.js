@@ -4,12 +4,12 @@ import { genderRateMap,
         habitatMap, 
         pokemonTypeColors, 
         pokemonTypeColorsRadar, 
-        pokemonTypeColorsRGBA, 
-        getDefensiveMultipliers,
-        types } from "./consts.js";
+        pokemonTypeColorsRGBA } from "./consts.js";
 
 import { getAllPokemons } from "./data.js";
 import { RadarChart } from "./radarChart.js";
+import { createHeatMap } from "./heatMapDef.js";
+import { createHeatMapAta } from "./heatMapAta.js";
 
 // Elementos do DOM
 const contentScreen = document.getElementById("content-container");
@@ -186,170 +186,22 @@ export async function createPokemonScreen() {
     svg2.appendChild(document.createElement("rect")).classList.add("svg-chart-2-rect-1");
     svgPai2.appendChild(svg2);
 
+    // área externa para o primeiro gráfico
+    const svgPai3 = document.createElement("svg");
+    svgPai3.classList.add("svg-pai-chart-3");
+
+    // área para o primeiro gráfico (radar)
+    const svg3 = document.createElement("svg");
+    svg3.classList.add("svg-chart-3");
+    svg3.appendChild(document.createElement("rect")).classList.add("svg-chart-3-rect-1");
+    svgPai3.appendChild(svg3);
+
     contentScreen.appendChild(pokemonSearch);
     contentScreen.appendChild(pokemonsSelect);
     contentScreen.appendChild(pokemonsDescriptionArea);
     contentScreen.appendChild(svgPai1);
     contentScreen.appendChild(svgPai2);
-}
-
-function getDataHeatMap(selectedPokemons){
-    const data = {};
-    for (const eachPokemon of selectedPokemons){
-        const tipo1 = eachPokemon.types[0].type_name;
-        const tipo2 = eachPokemon.types[1]?.type_name || null;
-        const dataDict = getDefensiveMultipliers(tipo1, tipo2);
-        data[eachPokemon.name] = {
-            multipliers: dataDict,
-            pokemon: eachPokemon
-        };
-    }
-    return data;
-}
-
-function transformDataForHeatMap(data) {
-  const transformed = [];
-
-  for (const [pokemonName, info] of Object.entries(data)) {
-    for (const [type, multiplier] of Object.entries(info.multipliers)) {
-      transformed.push({
-        group: pokemonName,
-        variable: type,
-        value: multiplier,
-        pokemon: info.pokemon
-      });
-    }
-  }
-
-  return transformed;
-}
-
-function createHeatMap() {
-    d3.select(".svg-chart-2").selectAll("*").remove();
-
-    const heatSvg = document.getElementsByClassName("svg-chart-2")[0];
-    const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
-
-    heatSvg.style.border = "1px solid rgb(255, 255, 255)";
-    heatPaiSvg.style.padding = "15px";
-    heatPaiSvg.style.marginBottom = "20px";
-
-    const svgWidth = heatSvg.clientWidth;
-    const svgHeight = svgWidth;
-
-    const rawData = getDataHeatMap(selectedPokemons);
-    const data = transformDataForHeatMap(rawData);
-
-    const pokemons = Object.keys(rawData);
-    const types = Object.keys(Object.values(rawData)[0].multipliers); 
-
-    const margin = { top: svgWidth/7, right: svgWidth/45, bottom: svgWidth/45, left: svgWidth/14 };
-    const width = svgWidth - margin.left - margin.right;
-    const height = svgHeight - margin.top - margin.bottom;
-
-    const svg = d3.select(".svg-chart-2")
-    .append("svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // adição do título no gráfico
-    svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", -svgWidth/14)  // Acima do gráfico
-    .attr("text-anchor", "middle")
-    .style("font-size", `${svgWidth/45}px`)
-    .style("font-weight", "bold")
-    .style("fill", "#ffffff")
-    .text("Defending Effectiveness Comparison");
-
-    // Escala X (Pokémons)
-    const x = d3.scaleBand()
-    .range([0, width])
-    .domain(pokemons)
-    .padding(0.05);
-
-    // Coloca os nomes dos pokémons NO TOPO
-    svg.append("g")
-    .call(d3.axisTop(x))
-    .selectAll("text")
-    .style("text-anchor", "center")
-    .style("font-size", `${svgWidth/50}px`)
-    .style("fill", "#ffffff");
-
-    // Escala Y (Tipos)
-    const y = d3.scaleBand()
-    .range([0, height])
-    .domain(types)
-    .padding(0.05);
-
-    // Adiciona imagens dos tipos no eixo Y
-    types.forEach(tipo => {
-        svg.append("image")
-        .attr("xlink:href", `./../assets/icon-types/${tipo}.svg`)
-        .attr("x", -width/20) 
-        .attr("y", y(tipo) + y.bandwidth() / 2 - width/50)
-        .attr("width", width/25)
-        .attr("height", width/25);
-    });
-
-    const myColor = d3.scaleOrdinal()
-    .domain([0, 0.25, 0.5, 1, 2, 4])
-    .range([
-    "#ffffff",  // 0: imunidade total (branco - sem cor para neutralizar o azul)
-    "#ffe0b2",  // 0.25: resistência forte (laranja bem claro)
-    "#ffab91",  // 0.5: resistência (laranja-rosado claro)
-    "#ff8a65",  // 1: neutro (laranja avermelhado)
-    "#e57373",  // 2: fraqueza (vermelho rosado suave)
-    "#c62828"   // 4: fraqueza forte (vermelho intenso)
-    ]);
-
-
-    // --- Tooltip setup ---
-    const tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0); // Initially hidden
-
-    // Heatmap cells
-    svg.selectAll(".cell") // Use a class for selection
-    .data(data, d => d.group + ':' + d.variable + ':' + d.pokemon)
-    .enter()
-    .append("rect")
-    .attr("class", "cell") // Add the class
-    .attr("x", d => x(d.group))
-    .attr("y", d => y(d.variable))
-    .attr("width", x.bandwidth())
-    .attr("height", y.bandwidth())
-    .style("fill", d => myColor(d.value))
-    .style("stroke", "#555")
-    .style("cursor", "pointer") // Indicate interactivity
-
-    // Mouse events for tooltip
-    .on("mouseover", function(event, d) {
-        tooltip.transition()
-            .duration(200)
-            .style("opacity", .95);
-        tooltip.html(`
-            <center><img src="./../assets/gifs/${d.pokemon.pokemon_id}.gif" class="heat-map-img"></img></center><br/>
-            <strong>Pokémon:</strong> ${d.group}<br/>
-            <strong>At. Type:</strong> ${d.variable.charAt(0).toUpperCase() + d.variable.slice(1)}<br/>
-            <strong>Effectiveness:</strong> ${d.value}x
-        `)
-        .style("left", (event.pageX + 10) + "px") // Position near mouse
-        .style("top", (event.pageY - 28) + "px"); // Position near mouse
-    })
-
-    .on("mousemove", function(event) {
-        tooltip.style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 28) + "px");
-    })
-
-    .on("mouseleave", function(event, d) {
-        tooltip.transition()
-            .duration(500)
-            .style("opacity", 0); 
-    });
+    contentScreen.appendChild(svgPai3);
 }
 
 /**
@@ -483,7 +335,8 @@ export function editPokemonsCard() {
     // caso ao menos algum pokémon tenha sido selecionado, cria o gráfico de radar
     if (selectedPokemons.length > 0) {
         createRadarChart();
-        createHeatMap();
+        createHeatMap(selectedPokemons);
+        createHeatMapAta(selectedPokemons);
     } else {
         const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
         radarSvg.innerHTML = "";
@@ -497,6 +350,12 @@ export function editPokemonsCard() {
         const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
         heatPaiSvg.style.padding = 0;
         heatPaiSvg.style.marginBottom = 0;
+        const heatSvg2 = document.getElementsByClassName("svg-chart-3")[0];
+        heatSvg2.innerHTML = "";
+        heatSvg2.style.border = 0;
+        const heatPaiSvg2 = document.getElementsByClassName("svg-pai-chart-3")[0];
+        heatPaiSvg2.style.padding = 0;
+        heatPaiSvg2.style.marginBottom = 0;
         pokemonsDescription.style.marginBottom = 0;
     }
 }
@@ -758,6 +617,11 @@ export function createPokemonCard(pokemon) {
                 return;
             }
 
+            if (selectedPokemons.some(p => p.name === pokemon.name)) {
+                card.classList.remove("card-active");
+                return;
+            }
+
             card.style.backgroundColor = colors.hover;
             card.style.transform = "translateY(-5px)";
             img.src = `./assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
@@ -776,3 +640,4 @@ export function createPokemonCard(pokemon) {
 
     return card;
 }
+ 
