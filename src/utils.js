@@ -3,6 +3,7 @@ import { getRegions } from "./data.js";
 import { regionLocations } from "./maps.js";
 import { createPokemonScreen, editPokemonsCard } from "./pokemonScreen.js";
 import { createRegionScreen } from "./regionScreen.js";
+import { createLocationScreen } from "./locationScreen.js";
 
 // Elementos do DOM
 const regionsSelect = document.getElementById("regions-select");
@@ -154,7 +155,6 @@ export function changeContent(selectedButton) {
     } else if (selectedButton.id === "region-screen") {
         createRegionScreen(regionsSelect.value);
     } else {
-        contentScreen.innerHTML = ``;
-        contentScreen.style.backgroundColor = colors[selectedButton.id];
+        createLocationScreen(4);
     }
 }

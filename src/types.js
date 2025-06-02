@@ -176,3 +176,30 @@ export function updateTypeChordByRegion(regionId) {
 
   renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
 }
+
+export function updateTypeChordByLocation(locationId) {
+  if (!typesData || !pokemonTypesData || !encountersData || !locationsData) return;
+
+  // 1. Filtra as location areas que pertencem à location selecionada
+  const locationAreaIds = new Set(
+    locationsData
+      .filter(loc => loc.id === locationId)
+      .map(loc => loc.id)
+  );
+
+  // 2. Filtrar encounters com essas location_area_id
+  const filteredEncounters = encountersData.filter(e =>
+    locationAreaIds.has(e.location_area_id)
+  );
+
+  // 3. Pegar os Pokémon únicos dessa location
+  const locationPokemonIds = new Set(filteredEncounters.map(e => e.pokemon_id));
+
+  // 4. Filtrar os tipos dos Pokémon
+  const filteredPokemonTypes = pokemonTypesData.filter(pt =>
+    locationPokemonIds.has(pt.pokemon_id)
+  );
+
+  // 5. Atualizar o gráfico
+  renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
+}
