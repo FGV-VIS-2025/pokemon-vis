@@ -59,7 +59,7 @@ export function RadarChart(className, data, options) {
         .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
         .attr("y", cfg.margin.top / 3)
         .attr("text-anchor", "middle")
-        .style("font-size", "30px")
+        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right)/45}px`)
         .style("font-weight", "bold")
         .style("fill", "#ffffff")
         .text("Pokémon Attribute Comparison");
@@ -98,7 +98,7 @@ export function RadarChart(className, data, options) {
         .attr("x", 4)
         .attr("y", d => -d * radius / cfg.levels)
         .attr("dy", "0.4em")
-        .style("font-size", "25px")
+        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right)/50}px`)
         .style("font-weight", "bold")
         .attr("fill", "#ffffff")
         .text(d => Format(maxValue * d / cfg.levels));
@@ -122,7 +122,7 @@ export function RadarChart(className, data, options) {
     // Configuração dos títulos dos eixos
     axis.append("text")
         .attr("class", "legend")
-        .style("font-size", "30px")
+        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right)/45}px`)
         .attr("fill", "#ffffff")
         .attr("text-anchor", "middle")
         .attr("dy", "0.35em")

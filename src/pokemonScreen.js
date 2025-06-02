@@ -1,6 +1,15 @@
-import { genderRateMap, generationMap, growthRateMap, habitatMap, pokemonTypeColors, pokemonTypeColorsRadar, pokemonTypeColorsRGBA } from "./consts.js";
+import { genderRateMap, 
+        generationMap, 
+        growthRateMap, 
+        habitatMap, 
+        pokemonTypeColors, 
+        pokemonTypeColorsRadar, 
+        pokemonTypeColorsRGBA } from "./consts.js";
+
 import { getAllPokemons } from "./data.js";
 import { RadarChart } from "./radarChart.js";
+import { createHeatMap } from "./heatMapDef.js";
+import { createHeatMapAta } from "./heatMapAta.js";
 
 // Elementos do DOM
 const contentScreen = document.getElementById("content-container");
@@ -24,12 +33,6 @@ export async function loadCards(pokemonsArray) {
         cardsContainer.appendChild(card);
     }
 }
-
-const pokemons = [
-    "Pikachu", "Charmander", "Bulbasaur", "Squirtle",
-    "Jigglypuff", "Gengar", "Eevee", "Snorlax",
-    "Mewtwo", "Lucario", "Garchomp", "Togekiss"
-];
 
 /**
  * Vai construir os elementos básicos da 'pokemon-screen'. 
@@ -135,7 +138,17 @@ export async function createPokemonScreen() {
 
     // Esconder sugestões ao clicar fora
     document.addEventListener("click", (e) => {
-        if (!pokemonSearch.contains(e.target)) {
+        const emptyCards = document.getElementsByClassName("pokemon-card-select");
+
+        // Verifica se o clique foi dentro de alguma carta vazia
+        const clickInsideEmptyCard = Array.from(emptyCards).some(card =>
+            card.contains(e.target)
+        );
+
+        // Verifica se foi dentro da barra de busca
+        const clickInsideSearch = pokemonSearch.contains(e.target);
+
+        if (!clickInsideSearch && !clickInsideEmptyCard) {
             hideSuggestions();
         }
     });
@@ -163,16 +176,32 @@ export async function createPokemonScreen() {
     svg1.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
     svgPai1.appendChild(svg1);
 
-    // área para o segundo gráfico
+    // área externa para o primeiro gráfico
+    const svgPai2 = document.createElement("svg");
+    svgPai2.classList.add("svg-pai-chart-2");
+
+    // área para o primeiro gráfico (radar)
     const svg2 = document.createElement("svg");
     svg2.classList.add("svg-chart-2");
-    svg2.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
+    svg2.appendChild(document.createElement("rect")).classList.add("svg-chart-2-rect-1");
+    svgPai2.appendChild(svg2);
+
+    // área externa para o primeiro gráfico
+    const svgPai3 = document.createElement("svg");
+    svgPai3.classList.add("svg-pai-chart-3");
+
+    // área para o primeiro gráfico (radar)
+    const svg3 = document.createElement("svg");
+    svg3.classList.add("svg-chart-3");
+    svg3.appendChild(document.createElement("rect")).classList.add("svg-chart-3-rect-1");
+    svgPai3.appendChild(svg3);
 
     contentScreen.appendChild(pokemonSearch);
     contentScreen.appendChild(pokemonsSelect);
     contentScreen.appendChild(pokemonsDescriptionArea);
     contentScreen.appendChild(svgPai1);
-    contentScreen.appendChild(svg2);
+    contentScreen.appendChild(svgPai2);
+    contentScreen.appendChild(svgPai3);
 }
 
 /**
@@ -182,7 +211,6 @@ export async function createPokemonScreen() {
  * @returns 
  */
 function buildRadarDataFromPokemons(selectedPokemons) {
-    // stats que vão ser consideradas
     const statLabels = [
         { key: "Hp_Stat", label: "Hp" },
         { key: "Attack_Stat", label: "Attack" },
@@ -192,15 +220,26 @@ function buildRadarDataFromPokemons(selectedPokemons) {
         { key: "Speed_Stat", label: "Speed" }
     ];
 
-    // formatação dos dados
-    return selectedPokemons.map(pokemon => ({
-        name: pokemon.Name || pokemon.name || "Unknown",
-        axes: statLabels.map(stat => ({
+    const tiposVistos = {};
+    const formattedData = selectedPokemons.map(pokemon => {
+        const name = pokemon.Name || pokemon.name || "Unknown";
+        const axes = statLabels.map(stat => ({
             axis: stat.label,
             value: pokemon[stat.key],
-            name: pokemon.Name || pokemon.name || "Unknown"
-        }))
-    }));
+            name: name
+        }));
+        const total = axes.reduce((sum, stat) => sum + (stat.value || 0), 0);
+
+        const tipo = pokemon.types[0].type_name;
+        if (!tiposVistos[tipo]) tiposVistos[tipo] = 0;
+        tiposVistos[tipo]++;
+        const cor = pokemonTypeColorsRadar[tipo]?.[String(tiposVistos[tipo])] ?? "#000000";
+
+        return { name, axes, total, color: cor };
+    });
+
+    formattedData.sort((a, b) => b.total - a.total);
+    return formattedData;
 }
 
 /**
@@ -230,7 +269,6 @@ function getColorRadarChart(selectedPokemons) {
  * Função responsável por configurar as variáveis necessárias e chamar a função que de fato cria o gráfico de radar.
  */
 function createRadarChart() {
-    // seleção do svg-pai onde vai ser construido o gráfico
     const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
     const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
 
@@ -238,24 +276,16 @@ function createRadarChart() {
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    // definição das dimensões do gráfico com base no svg-pai
     const svgWidth = radarSvg.clientWidth;
+    const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
+    const width = svgWidth - margin.left - margin.right;
+    const height = svgWidth - margin.top - margin.bottom;
 
-    // valores de margem
-    var margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
+    const data = buildRadarDataFromPokemons(selectedPokemons);
 
-    var width = svgWidth - margin.left - margin.right;
-    var height = svgWidth - margin.top - margin.bottom;
+    const color = d3.scaleOrdinal().range(data.map(p => p.color));
 
-    // formatação dos dados
-    var data = buildRadarDataFromPokemons(selectedPokemons);
-
-    // cores que vão ser usadas
-    var color = d3.scaleOrdinal()
-        .range(getColorRadarChart(selectedPokemons));
-
-    // configurações de gráfico
-    var radarChartOptions = {
+    const radarChartOptions = {
         w: width,
         h: height,
         margin: margin,
@@ -265,9 +295,9 @@ function createRadarChart() {
         color: color
     };
 
-    // chamada da função que de fato cria o gráfico
     RadarChart(".svg-chart-1", data, radarChartOptions);
 }
+
 
 // ao mudar a tela de tamanho, reconstroi tudo para parecer dinâmico
 window.addEventListener("resize", editPokemonsCard);
@@ -305,6 +335,8 @@ export function editPokemonsCard() {
     // caso ao menos algum pokémon tenha sido selecionado, cria o gráfico de radar
     if (selectedPokemons.length > 0) {
         createRadarChart();
+        createHeatMap(selectedPokemons);
+        createHeatMapAta(selectedPokemons);
     } else {
         const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
         radarSvg.innerHTML = "";
@@ -312,6 +344,18 @@ export function editPokemonsCard() {
         const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
         radarPaiSvg.style.padding = 0;
         radarPaiSvg.style.marginBottom = 0;
+        const heatSvg = document.getElementsByClassName("svg-chart-2")[0];
+        heatSvg.innerHTML = "";
+        heatSvg.style.border = 0;
+        const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
+        heatPaiSvg.style.padding = 0;
+        heatPaiSvg.style.marginBottom = 0;
+        const heatSvg2 = document.getElementsByClassName("svg-chart-3")[0];
+        heatSvg2.innerHTML = "";
+        heatSvg2.style.border = 0;
+        const heatPaiSvg2 = document.getElementsByClassName("svg-pai-chart-3")[0];
+        heatPaiSvg2.style.padding = 0;
+        heatPaiSvg2.style.marginBottom = 0;
         pokemonsDescription.style.marginBottom = 0;
     }
 }
@@ -427,6 +471,17 @@ function createEmptyPokemonCard() {
             card.style.boxShadow = "none";
             card.style.transform = "translateY(+5px)";
         });
+    });
+
+    // clique que leva para a barra de pesquisa
+    card.addEventListener("click", () => {
+        const target = document.getElementsByClassName("pokemons-search-box")[0];
+        if (target) {
+            target.focus();  
+            target.click(); 
+        } else {
+            console.warn("Elemento de busca não encontrado.");
+        }
     });
 
     return card;
@@ -562,6 +617,11 @@ export function createPokemonCard(pokemon) {
                 return;
             }
 
+            if (selectedPokemons.some(p => p.name === pokemon.name)) {
+                card.classList.remove("card-active");
+                return;
+            }
+
             card.style.backgroundColor = colors.hover;
             card.style.transform = "translateY(-5px)";
             img.src = `./assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
@@ -580,3 +640,4 @@ export function createPokemonCard(pokemon) {
 
     return card;
 }
+ 
