@@ -12,6 +12,16 @@ export const dimensions = {
     "Kalos": [320, 210]
 }
 
+export const gameRegionVersions = {
+    "Kanto": [1, 2, 3],
+    "Johto": [4, 5, 6],
+    "Hoenn": [7, 8, 9],
+    "Sinnoh": [12, 13, 14],
+    "Unova": [17, 18, 21, 22],
+    "Kalos": [23, 24],
+}
+
+
 export const regionLocations = {
     "Kanto": `
 <area shape="rect" coords="47, 103, 56, 92" title="Route 1" id=88>
