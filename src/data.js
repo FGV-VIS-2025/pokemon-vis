@@ -41,11 +41,24 @@ export async function getLocationAreaByLocation(locationId) {
     return result;
 }
 
+export const gameRegionVersions = {
+    "Kanto": [1, 2, 3],
+    "Johto": [4, 5, 6],
+    "Hoenn": [7, 8, 9],
+    "Sinnoh": [12, 13, 14],
+    "Unova": [17, 18, 21, 22],
+    "Kalos": [23, 24],
+}
+
 export async function getPokemonsByMultipleLocationAreas(locationAreas) {
     const allLocationAreaIds = locationAreas.map(loc => loc.locationAreaId);
     const key = allLocationAreaIds.sort().join(',');
 
     if (pokemonsByAreaCache.has(key)) return pokemonsByAreaCache.get(key);
+
+    const validVersionIds = new Set(
+        Object.values(gameRegionVersions).flat()
+    );
 
     // Carregamento único dos CSVs
     const [encounter, pokemonsArray, typesArray, pokemonsTypeArray, pokemonsSpeciesArray, pokemonsArray2, finalStats] = await Promise.all([
@@ -101,7 +114,12 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas) {
         }))
     ]);
 
-    const filteredEncounters = encounter.filter(loc => allLocationAreaIds.includes(loc.location_area_id));
+    const filteredEncounters = encounter.filter(
+        loc =>
+            allLocationAreaIds.includes(loc.location_area_id) &&
+            validVersionIds.has(loc.version_id)
+    );
+    
     const filteredPokemons = pokemonsArray.filter(loc => loc.language_id === 9);
 
     const pokemonDetailsMap = new Map();
