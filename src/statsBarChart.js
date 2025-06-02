@@ -55,24 +55,40 @@ Promise.all([
   d3.csv("../data/locations.csv", d3.autoType),
   d3.csv("../data/pokemon_stats.csv", d3.autoType),
   d3.csv("../data/stats.csv", d3.autoType)
-]).then(([encounters, locations, pokemonStats, stats]) => {
+]).then(([encountersRaw, locations, pokemonStats, stats]) => {
   // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
   const seen = new Set();
-  encountersData = encounters.filter(d => {
-    const key = `${d.location_area_id}-${d.pokemon_id}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const filteredEncounters = [];
 
+  for (const row of encountersRaw) {
+    const key = `${row.location_area_id}-${row.pokemon_id}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      filteredEncounters.push(row);
+    }
+  }
+
+  encountersData = filteredEncounters;
   locationsData = locations;
   pokemonStatsData = pokemonStats;
   statsData = stats;
 });
 
 export function renderStatBarChart(locationId) {
+  if (!encountersData || !locationsData || !pokemonStatsData || !statsData) {
+    console.warn("Dados ainda não carregados.");
+    return;
+  }
+
   // Encontra os location_area_ids associados à location_id
-  const locationAreas = locationsData.filter(l => l.location_id === locationId).map(l => l.id);
+  const locationAreas = locationsData
+    .filter(l => l.id === locationId)
+    .map(l => l.id);
+
+  if (locationAreas.length === 0) {
+    console.warn(`Nenhuma location_area encontrada para location_id ${locationId}`);
+    return;
+  }
 
   // Filtra Pokémon encontrados nas location_areas da região
   const pokemonIds = new Set(
@@ -81,10 +97,13 @@ export function renderStatBarChart(locationId) {
       .map(e => e.pokemon_id)
   );
 
-  // Filtra as 6 stats principais (id 1 a 6)
+  if (pokemonIds.size === 0) {
+    console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
+    return;
+  }
+
   const mainStatIds = new Set([1, 2, 3, 4, 5, 6]);
 
-  // Coleta e agrupa stats dos pokémon encontrados
   const statSums = {};
   const statCounts = {};
 
@@ -92,18 +111,24 @@ export function renderStatBarChart(locationId) {
     if (!pokemonIds.has(entry.pokemon_id)) continue;
     if (!mainStatIds.has(entry.stat_id)) continue;
 
-    const statName = statsData.find(s => s.id === entry.stat_id)?.identifier;
-    if (!statName) continue;
+    const statRow = statsData.find(s => s.id === entry.stat_id);
+    if (!statRow || !statRow.identifier) continue;
+
+    const statName = statRow.identifier;
 
     statSums[statName] = (statSums[statName] || 0) + entry.base_stat;
     statCounts[statName] = (statCounts[statName] || 0) + 1;
   }
 
-  // Prepara os dados finais para o gráfico
   const finalData = Object.keys(statSums).map(stat => ({
     stat,
     mean: statSums[stat] / statCounts[stat]
   }));
+
+  if (finalData.length === 0) {
+    console.warn("Nenhuma estatística disponível para os pokémon encontrados.");
+    return;
+  }
 
   drawStatBarChart('#bar-chart-location', finalData);
 }
