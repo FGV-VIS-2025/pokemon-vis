@@ -56,7 +56,7 @@ export function drawBarChart(containerSelector, data) {
     .attr("text-anchor", "middle")
     .style("font-size", "18px")
     .style("font-weight", "bold")
-    .text("Top 5 e Bottom 5 Pokémon por Região");
+    .text("5 Pokémons mais comuns e 5 Pokémons mais raros da Região");
 
   // Barras
   svg.selectAll(".bar")

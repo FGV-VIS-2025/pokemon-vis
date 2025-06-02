@@ -45,7 +45,7 @@ export function drawStatBarChart(containerSelector, data) {
     .attr("text-anchor", "middle")
     .attr("font-size", "16px")
     .attr("font-weight", "bold")
-    .text("Média das Estatísticas dos Pokémon");
+    .text("Média das Estatísticas dos Pokémon da Localização");
 
   svg.append("text")
     .attr("x", width / 2)
