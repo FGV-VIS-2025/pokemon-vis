@@ -41,17 +41,67 @@ export async function getLocationAreaByLocation(locationId) {
     return result;
 }
 
-export async function getPokemonsIdByLocationAreaId(locationAreaId) {
-    if (pokemonsByAreaCache.has(locationAreaId)) return pokemonsByAreaCache.get(locationAreaId);
-    const [encounter, pokemonsArray, typesArray, pokemonsTypeArray] = await Promise.all([
+export async function getPokemonsByMultipleLocationAreas(locationAreas) {
+    const allLocationAreaIds = locationAreas.map(loc => loc.locationAreaId);
+    const key = allLocationAreaIds.sort().join(',');
+
+    if (pokemonsByAreaCache.has(key)) return pokemonsByAreaCache.get(key);
+
+    // Carregamento único dos CSVs
+    const [encounter, pokemonsArray, typesArray, pokemonsTypeArray, pokemonsSpeciesArray, pokemonsArray2, finalStats] = await Promise.all([
         loadCsv('./data/encounters.csv', d => ({ id: +d.id, version_id: +d.version_id, location_area_id: +d.location_area_id, pokemon_id: +d.pokemon_id, min_level: +d.min_level, max_level: +d.max_level })),
         loadCsv('./data/pokemon_species_names.csv', d => ({ pokemon_id: +d.pokemon_species_id, language_id: +d.local_language_id, name: d.name, genus: d.genus })),
         loadCsv('./data/types.csv', d => ({ type_id: +d.id, name: d.identifier, generation_id: +d.generation_id, damage_class_id: +d.damage_class_id })),
-        loadCsv('./data/pokemon_types.csv', d => ({ pokemon_id: +d.pokemon_id, type_id: +d.type_id, slot: +d.slot }))
+        loadCsv('./data/pokemon_types.csv', d => ({ pokemon_id: +d.pokemon_id, type_id: +d.type_id, slot: +d.slot })),
+        loadCsv('./data/pokemon_species.csv', d => ({
+            pokemon_id: +d.id,
+            identifier: d.identifier,
+            generation_id: +d.generation_id,
+            evolves_from_species_id: +d.evolves_from_species_id,
+            evolution_chain_id: +d.evolution_chain_id,
+            color_id: +d.color_id,
+            shape_id: +d.shape_id,
+            habitat_id: +d.habitat_id,
+            gender_rate: +d.gender_rate,
+            capture_rate: +d.capture_rate,
+            base_happiness: +d.base_happiness,
+            is_baby: +d.is_baby,
+            hatch_counter: +d.hatch_counter,
+            has_gender_differences: +d.has_gender_differences,
+            growth_rate_id: +d.growth_rate_id,
+            forms_switchable: +d.forms_switchable,
+            is_legendary: +d.is_legendary,
+            is_mythical: +d.is_mythical,
+            order: +d.order,
+            conquest_order: +d.conquest_order
+        })),
+        loadCsv('./data/pokemon.csv', d => ({
+            pokemon_id: +d.id,
+            identifier: d.identifier,
+            height: +d.height,
+            weight: +d.weight,
+            base_experience: +d.base_experience,
+            order: +d.order,
+            is_default: +d.is_default,
+        })),
+        loadCsv('./data/pokemon_stats_clean.csv', d => ({
+            Pokemon_Id: +d.Pokemon_Id,
+            Hp_Stat: +d.Hp_Stat,
+            Hp_Effort: +d.Hp_Effort,
+            Attack_Stat: +d.Attack_Stat,
+            Attack_Effort: +d.Attack_Effort,
+            Defense_Stat: +d.Defense_Stat,
+            Defense_Effort: +d.Defense_Effort,
+            Special_Attack_Stat: +d.Special_Attack_Stat,
+            Special_Attack_Effort: +d.Special_Attack_Effort,
+            Special_Defense_Stat: +d.Special_Defense_Stat,
+            Special_Defense_Effort: +d.Special_Defense_Effort,
+            Speed_Stat: +d.Speed_Stat,
+            Speed_Effort: +d.Speed_Effort
+        }))
     ]);
 
-    const filteredEncounters = encounter.filter(loc => loc.location_area_id === +locationAreaId);
-
+    const filteredEncounters = encounter.filter(loc => allLocationAreaIds.includes(loc.location_area_id));
     const filteredPokemons = pokemonsArray.filter(loc => loc.language_id === 9);
 
     const pokemonDetailsMap = new Map();
@@ -74,7 +124,7 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
     const typeDetailsMap = new Map();
     typesArray.forEach(type => {
         typeDetailsMap.set(type.type_id, {
-            type_name: type.name, // Renamed 'name' to 'type_name' to avoid conflict
+            type_name: type.name,
             generation_id: +type.generation_id,
             damage_class_id: +type.damage_class_id
         });
@@ -105,14 +155,12 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
         }
     });
 
-    // --- Lógica para agrupar e calcular min/max levels ---
+    // Agrupamento de Pokémon únicos
     const uniquePokemonsMap = new Map();
-
     mergedData.forEach(data => {
         const pokemonId = data.pokemon_id;
 
         if (!uniquePokemonsMap.has(pokemonId)) {
-            // Se for a primeira vez que vemos este Pokémon, inicialize
             const typesForPokemon = pokemonTypesGrouped.get(pokemonId) || [];
             uniquePokemonsMap.set(pokemonId, {
                 pokemon_id: pokemonId,
@@ -120,16 +168,14 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
                 genus: data.genus,
                 language_id: data.language_id,
                 types: typesForPokemon,
-                encounters: [], // Array para armazenar todos os detalhes de encontro
-                overall_min_level: Infinity, // Inicializa com valores extremos
+                encounters: [],
+                overall_min_level: Infinity,
                 overall_max_level: -Infinity
             });
         }
 
-        const currentPokemon = uniquePokemonsMap.get(pokemonId);
-
-        // Adicionar os detalhes específicos deste encontro ao array de encontros
-        currentPokemon.encounters.push({
+        const current = uniquePokemonsMap.get(pokemonId);
+        current.encounters.push({
             id: data.id,
             version_id: data.version_id,
             location_area_id: data.location_area_id,
@@ -137,94 +183,29 @@ export async function getPokemonsIdByLocationAreaId(locationAreaId) {
             max_level: data.max_level
         });
 
-        // Atualizar o overall_min_level e overall_max_level
-        currentPokemon.overall_min_level = Math.min(currentPokemon.overall_min_level, data.min_level);
-        currentPokemon.overall_max_level = Math.max(currentPokemon.overall_max_level, data.max_level);
+        current.overall_min_level = Math.min(current.overall_min_level, data.min_level);
+        current.overall_max_level = Math.max(current.overall_max_level, data.max_level);
     });
 
-    const uniquePokemons = Array.from(uniquePokemonsMap.values());
+    // Merge com outras informações
+    const speciesMap = new Map(pokemonsSpeciesArray.map(species => [species.pokemon_id, species]));
+    const pokemonsMap2 = new Map(pokemonsArray2.map(p => [p.pokemon_id, p]));
+    const pokemonsMap3 = new Map(finalStats.map(p => [p.Pokemon_Id, p]));
 
-    const pokemonsSpeciesArray = await loadCsv('./data/pokemon_species.csv', d => ({
-        pokemon_id: +d.id,
-        identifier: d.identifier,
-        generation_id: +d.generation_id,
-        evolves_from_species_id: +d.evolves_from_species_id,
-        evolution_chain_id: +d.evolution_chain_id,
-        color_id: +d.color_id,
-        shape_id: +d.shape_id,
-        habitat_id: +d.habitat_id,
-        gender_rate: +d.gender_rate,
-        capture_rate: +d.capture_rate,
-        base_happiness: +d.base_happiness,
-        is_baby: +d.is_baby,
-        hatch_counter: +d.hatch_counter,
-        has_gender_differences: +d.has_gender_differences,
-        growth_rate_id: +d.growth_rate_id,
-        forms_switchable: +d.forms_switchable,
-        is_legendary: +d.is_legendary,
-        is_mythical: +d.is_mythical,
-        order: +d.order,
-        conquest_order: +d.conquest_order
-    }));
-
-    const speciesMap = new Map(
-        pokemonsSpeciesArray.map(species => [species.pokemon_id, species])
-    );
-
-    const mergedPokemons = uniquePokemons.map(pokemon => ({
+    const final = Array.from(uniquePokemonsMap.values()).map(pokemon => ({
         ...pokemon,
-        ...(speciesMap.get(pokemon.pokemon_id) || {})
-    }));
-
-    const pokemonsArray2 = await loadCsv('./data/pokemon.csv', d => ({
-        pokemon_id: +d.id,
-        identifier: d.identifier,
-        height: +d.height,
-        weight: +d.weight,
-        base_experience: +d.base_experience,
-        order: +d.order,
-        is_default: +d.is_default,
-    }));
-
-    const pokemonsMap2 = new Map(
-        pokemonsArray2.map(pokemons => [pokemons.pokemon_id, pokemons])
-    );
-
-    const mergedPokemons2 = mergedPokemons.map(pokemon => ({
-        ...pokemon,
-        ...(pokemonsMap2.get(pokemon.pokemon_id) || {})
-    }));
-
-    const finalStats = await loadCsv('./data/pokemon_stats_clean.csv', d => ({
-        Pokemon_Id: +d.Pokemon_Id,
-        Hp_Stat: +d.Hp_Stat,
-        Hp_Effort: +d.Hp_Effort,
-        Attack_Stat: +d.Attack_Stat,
-        Attack_Effort: +d.Attack_Effort,
-        Defense_Stat: +d.Defense_Stat,
-        Defense_Effort: +d.Defense_Effort,
-        Special_Attack_Stat: +d.Special_Attack_Stat,
-        Special_Attack_Effort: +d.Special_Attack_Effort,
-        Special_Defense_Stat: +d.Special_Defense_Stat,
-        Special_Defense_Effort: +d.Special_Defense_Effort,
-        Speed_Stat: +d.Speed_Stat,
-        Speed_Effort: +d.Speed_Effort
-    }));
-
-    const pokemonsMap3 = new Map(
-        finalStats.map(pokemons => [pokemons.Pokemon_Id, pokemons])
-    );
-
-    const mergedPokemons3 = mergedPokemons2.map(pokemon => ({
-        ...pokemon,
+        ...(speciesMap.get(pokemon.pokemon_id) || {}),
+        ...(pokemonsMap2.get(pokemon.pokemon_id) || {}),
         ...(pokemonsMap3.get(pokemon.pokemon_id) || {})
     }));
 
-    mergedPokemons3
+    // Ordenação final
+    final
         .sort((a, b) => a.name.localeCompare(b.name))
         .sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
 
-    return mergedPokemons3;
+    pokemonsByAreaCache.set(key, final);
+    return final;
 }
 
 export async function getAllPokemons() {

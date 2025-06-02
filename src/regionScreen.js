@@ -32,7 +32,6 @@ export function createRegionScreen(id_region) {
     contentScreen.appendChild(chordContainer);
     contentScreen.appendChild(barChartContainer);
 
-    console.log(id_region);
     // Chama os renderizadores passando os ids dos containers correspondentes
     updateTypeChordByRegion(id_region);          // irá desenhar no #region-chart-container
     renderBarChartByRegion(id_region);            // irá desenhar no #bar-chart-container

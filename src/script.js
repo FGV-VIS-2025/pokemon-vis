@@ -1,11 +1,12 @@
 import { loadRegions, changeContent, buildMap } from "./utils.js";
 import { loadCards } from "./pokemonScreen.js";
-import { getLocationsByRegionId, getLocationAreaByLocation, getPokemonsIdByLocationAreaId } from "./data.js";
+import { getLocationsByRegionId, getLocationAreaByLocation, getPokemonsByMultipleLocationAreas } from "./data.js";
 
 const regionsSelect = document.getElementById("regions-select");
 const regionButton = document.getElementById("region-screen");
 const locationButton = document.getElementById("location-screen");
 const pokemonButton = document.getElementById("pokemon-screen");
+const mapRealContainer = document.getElementById("map-real-container");
 
 const buttons = [pokemonButton, locationButton, regionButton];
 
@@ -14,7 +15,6 @@ let selectedRegion;
 let locationsArray;
 let selectedLocation;
 let locationsAreaArray;
-let selectedLocationArea;
 let pokemonsArray; 
 
 // construção da página inicial
@@ -26,10 +26,16 @@ let pokemonsArray;
     buildMap(selectedRegion);
 
     locationsArray = await getLocationsByRegionId(selectedRegion.id);
-    selectedLocation = locationsArray[Math.floor(Math.random() * locationsArray.length)];
+
+    // ao carregar ele garante que não vai sortear uma vazia
+    while (!selectedLocation || locationsArray.length === 0) {
+        if (locationsArray.length > 0) {
+            selectedLocation = locationsArray[Math.floor(Math.random() * locationsArray.length)];
+        }
+    }
+
     locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-    selectedLocationArea = locationsAreaArray[Math.floor(Math.random() * locationsAreaArray.length)].locationAreaId;
-    pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
+    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
     loadCards(pokemonsArray);
 })();
 
@@ -40,10 +46,16 @@ regionsSelect.addEventListener("change", async (event) => {
   buildMap(selectedRegion);
 
   locationsArray = await getLocationsByRegionId(selectedRegion.id);
-  selectedLocation = locationsArray[Math.floor(Math.random() * locationsArray.length)];
+
+    // ao carregar ele garante que não vai sortear uma vazia
+    while (!selectedLocation || locationsArray.length === 0) {
+        if (locationsArray.length > 0) {
+            selectedLocation = locationsArray[Math.floor(Math.random() * locationsArray.length)];
+        }
+    }
+
   locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-  selectedLocationArea = locationsAreaArray[Math.floor(Math.random() * locationsAreaArray.length)].locationAreaId;
-  pokemonsArray = await getPokemonsIdByLocationAreaId(selectedLocationArea);
+  pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
   loadCards(pokemonsArray);
 });
 
@@ -63,4 +75,13 @@ pokemonButton.addEventListener("click", (event) => {
     buttons.forEach(btn => btn.classList.remove("active"));
     pokemonButton.classList.add("active");
     changeContent(pokemonButton);
+});
+
+mapRealContainer.addEventListener('locationSelected', async (event) => {
+    const { locationId, title } = event.detail;
+    
+    selectedLocation = locationId;
+    locationsAreaArray = await getLocationAreaByLocation(locationId);
+    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
+    loadCards(pokemonsArray);
 });
