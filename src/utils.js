@@ -154,7 +154,10 @@ export function changeContent(selectedButton) {
         editPokemonsCard();
     } else if (selectedButton.id === "region-screen") {
         createRegionScreen(regionsSelect.value);
+    } else if (selectedButton.id === "location-screen") {
+        createLocationScreen(5);
     } else {
-        createLocationScreen(4);
+        contentScreen.innerHTML = ``;
+        contentScreen.style.backgroundColor = colors[selectedButton.id];
     }
 }
