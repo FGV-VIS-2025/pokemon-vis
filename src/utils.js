@@ -1,9 +1,9 @@
 // Importações
 import { getRegions } from "./data.js";
+import { createLocationScreen } from "./locationScreen.js";
 import { regionLocations } from "./maps.js";
 import { createPokemonScreen, editPokemonsCard } from "./pokemonScreen.js";
 import { createRegionScreen } from "./regionScreen.js";
-import { createLocationScreen } from "./locationScreen.js";
 
 // Elementos do DOM
 const regionsSelect = document.getElementById("regions-select");
@@ -64,7 +64,7 @@ export function buildMap(selectedRegion) {
     mapRealContainer.appendChild(img);
 
 
-    function createAreaSVG(shape, coords, title) {
+    function createAreaSVG(shape, coords, title, areaId) {
         return new Promise(resolve => {
             let el = null;
             if (shape === "rect" && coords.length === 4) {
@@ -79,6 +79,7 @@ export function buildMap(selectedRegion) {
                 rect.setAttribute("stroke-width", "2");
                 rect.setAttribute("pointer-events", "auto");
                 rect.setAttribute("data-title", title);
+                rect.setAttribute("data-location-area-id", areaId);
                 el = rect;
             } else if (shape === "poly" && coords.length >= 6) {
                 const points = coords.reduce((acc, val, i) => {
@@ -92,6 +93,7 @@ export function buildMap(selectedRegion) {
                 polygon.setAttribute("stroke-width", "2");
                 polygon.setAttribute("pointer-events", "auto");
                 polygon.setAttribute("data-title", title);
+                polygon.setAttribute("data-location-area-id", areaId);
                 el = polygon;
             }
             if (el) {
@@ -106,6 +108,10 @@ export function buildMap(selectedRegion) {
                 });
                 el.addEventListener("mouseleave", function () {
                     tooltip.style.display = "none";
+                });
+                el.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    mapRealContainer.dispatchEvent(new CustomEvent('locationSelected', { detail: { locationAreaId: areaId, title } }));
                 });
             }
             resolve(el);
@@ -127,13 +133,14 @@ export function buildMap(selectedRegion) {
 
         const regionAreas = regionLocations[selectedRegion.name];
         if (regionAreas) {
-            const areaRegex = /<area shape="(rect|poly)" coords="([^"]+)" title="([^"]+)"\s*\/?/g;
+            const areaRegex = /<area shape="(rect|poly)" coords="([^"]+)" title="([^"]+)"\s*id=(\d+)\s*\/?\>/g;
             let match;
             const areaPromises = [];
             while ((match = areaRegex.exec(regionAreas)) !== null) {
-                const [shape, coordsStr, title] = [match[1], match[2], match[3]];
+                const shape = match[1], coordsStr = match[2], title = match[3];
+                const areaId = parseInt(match[4], 10);
                 const coords = coordsStr.split(',').map(c => parseInt(c.trim()));
-                areaPromises.push(createAreaSVG(shape, coords, title));
+                areaPromises.push(createAreaSVG(shape, coords, title, areaId));
             }
 
             const svgElements = await Promise.all(areaPromises);
@@ -147,7 +154,7 @@ export function changeContent(selectedButton) {
     if (selectedButton.id === "pokemon-screen") {
         createPokemonScreen();
         setTimeout(() => {
-        editPokemonsCard();
+            editPokemonsCard();
         }, 10);
     } else if (selectedButton.id === "region-screen") {
         createRegionScreen(3);
