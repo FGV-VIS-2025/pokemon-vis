@@ -153,7 +153,7 @@ export function changeContent(selectedButton) {
         createPokemonScreen();
         editPokemonsCard();
     } else if (selectedButton.id === "region-screen") {
-        createRegionScreen(4);
+        createRegionScreen(3);
     } else if (selectedButton.id === "location-screen") {
         createLocationScreen(28);
     } else {
