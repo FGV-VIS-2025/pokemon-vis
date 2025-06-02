@@ -1,4 +1,5 @@
 import { updateTypeChordByLocation } from "./types.js";
+import { renderStatBarChart } from "./statsBarChart.js";
 
 const contentScreen = document.getElementById("content-container");
 
@@ -9,13 +10,27 @@ export function createLocationScreen(id_location) {
     const chartContainer = document.createElement('div');
     chartContainer.id = 'location-chart-container';
     chartContainer.style.width = '100%';
-    chartContainer.style.height = '600px';  // pode ajustar conforme precisar
+    chartContainer.style.height = '600px';
     chartContainer.style.margin = 'auto';
+    chartContainer.style.display = 'flex';
+    chartContainer.style.justifyContent = 'center';
+    chartContainer.style.alignItems = 'center';
 
+    const barChartContainer = document.createElement('div');
+    barChartContainer.id = 'bar-chart-location';
+    barChartContainer.style.width = '100%';
+    barChartContainer.style.height = '600px';
+    barChartContainer.style.margin = 'auto';
+    barChartContainer.style.marginTop = '40px';
+    barChartContainer.style.display = 'flex';
+    barChartContainer.style.justifyContent = 'center';
+    barChartContainer.style.alignItems = 'center';
+
+    // Adiciona ambos os gráficos na tela
     contentScreen.appendChild(chartContainer);
+    contentScreen.appendChild(barChartContainer);
 
-    // Supondo que você exporte da types.js uma função chamada renderRegionChart que
-    // recebe o id do container onde desenhar o gráfico:
     console.log(id_location);
     updateTypeChordByLocation(id_location);
+    renderStatBarChart(id_location);
 }
