@@ -12,11 +12,6 @@ const mapRealContainer = document.getElementById("map-real-container");
 
 // Variáveis globais
 const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
-const colors = {
-    "region-screen": "#3EDB2A",
-    "location-screen": "#2AD2DB",
-    "pokemon-screen": "#A11F62"
-};
 
 // Funções Principais
 export async function loadRegions() {
@@ -158,8 +153,5 @@ export function changeContent(selectedButton) {
         createRegionScreen(3);
     } else if (selectedButton.id === "location-screen") {
         createLocationScreen(28);
-    } else {
-        contentScreen.innerHTML = ``;
-        contentScreen.style.backgroundColor = colors[selectedButton.id];
     }
 }
