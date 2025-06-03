@@ -88,6 +88,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 15px;
 }
 
 .screen-left{
@@ -96,6 +97,73 @@ body {
     background-color: #545358;
     border: #ffffff solid 5px;
     margin-top: 15px;
+}
+
+.region-select{
+    width: 95%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.region-screen{
+    height: 100%;
+    width: 60%;
+    background-color: aqua;
+}
+
+.location-display{
+    width: 95%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.location-screen{
+    height: 100%;
+    width: 60%;
+    background-color: aqua;
+}
+
+.left-button{
+    height: 90%;
+    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-button:hover{
+    cursor: pointer;
+}
+
+.left-button img{
+    width: 100%;
+}
+
+.right-button{
+    height: 90%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-button:hover{
+    cursor: pointer;
+}
+
+.right-button img{
+    width: 100%;
 }
 
 .column{
