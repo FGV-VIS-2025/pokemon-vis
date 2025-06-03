@@ -12,8 +12,8 @@
 /* Global Styles */
 :root {
     --primary-blue: #0A3873;
-    --dark-grey: rgb(46, 46, 46);
-    --medium-grey: #5a5a5a;
+    --dark-grey: #1b1b1b;
+    --medium-grey: rgb(49, 49, 49);
     --light-blue: rgb(8, 104, 189);
     --dark-blue: rgb(5, 60, 109);
     --border-radius-default: 10px;
@@ -124,17 +124,20 @@ body {
 #map-select-container {
     width: 100%;
     aspect-ratio: 16 / 1;
-    background-color: var(--primary-blue);
+    background-color: var(--medium-grey);
     display: flex;
     justify-content: center;
     align-items: center;
     border-top-left-radius: var(--border-radius-default);
     border-top-right-radius: var(--border-radius-default);
+    border: 1px solid rgb(255, 255, 255);
+    border-bottom: 0px;
 }
 
 #regions-select {
     border-radius: var(--border-radius-default);
-    height: 60%;
+    margin-top: 10px;
+    height: 80%;
     aspect-ratio: 8 / 1;
     min-height: 24px;
 }
@@ -148,6 +151,8 @@ body {
     align-items: center;
     border-bottom-left-radius: var(--border-radius-default);
     border-bottom-right-radius: var(--border-radius-default);
+    border: 1px solid rgb(255, 255, 255);
+    border-top: 0px;
 }
 
 #map-real-container img {
@@ -169,12 +174,13 @@ body {
     overflow-y: auto;
     padding: var(--card-padding);
     box-sizing: border-box;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .card {
-    width: 24%;
-    max-height: 350px;
-    min-width: 200px;
+    width: 18%;
+    max-height: 300px;
+    min-width: 140px;
     aspect-ratio: 2 / 3;
     border-radius: var(--border-radius-default);
     color: rgb(0, 0, 0); 
@@ -182,9 +188,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 100%;
-    padding-top: var(--card-padding);
-    padding-bottom: var(--card-padding);
+    font-size: 90%;
 }
 
 .card:hover {
@@ -196,11 +200,10 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
 }
 
 .pokemon-name-display {
-    font-size: 1.1em;
+    font-size: 1em;
     text-transform: capitalize;
 }
 

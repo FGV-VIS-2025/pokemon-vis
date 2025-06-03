@@ -580,8 +580,8 @@ export function createPokemonCard(pokemon) {
         <img class="type-img" src="../assets/types/${pokemon.types[0].type_name}.png" />
         ${pokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${pokemon.types[1].type_name}.png" />` : ''}
         </div>
-        Min Level: ${pokemon.overall_min_level}<br>
-        Max Level: ${pokemon.overall_max_level}<br>
+        Min Lvl: ${pokemon.overall_min_level}<br>
+        Max Lvl: ${pokemon.overall_max_level}<br>
     `;
     card.appendChild(content);
 
