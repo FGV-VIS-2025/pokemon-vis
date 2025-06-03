@@ -35,7 +35,7 @@ let pokemonsArray;
     }
 
     locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
+    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, selectedRegion.name);
     loadCards(pokemonsArray);
 
     if (regionButton.classList.contains("active")) {
@@ -63,7 +63,7 @@ regionsSelect.addEventListener("change", async (event) => {
     }
 
     locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
+    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, selectedRegion.name);
     loadCards(pokemonsArray);
 
     if (regionButton.classList.contains("active")) {
@@ -98,7 +98,7 @@ mapRealContainer.addEventListener('locationSelected', async (event) => {
     
     selectedLocation.location_id = locationId;
     locationsAreaArray = await getLocationAreaByLocation(selectedLocation.location_id);
-    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray);
+    pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, selectedRegion.name);
     loadCards(pokemonsArray);
 
     if (locationButton.classList.contains("active")) {

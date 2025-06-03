@@ -50,15 +50,13 @@ export const gameRegionVersions = {
     "Kalos": [23, 24],
 }
 
-export async function getPokemonsByMultipleLocationAreas(locationAreas) {
+export async function getPokemonsByMultipleLocationAreas(locationAreas, region) {
     const allLocationAreaIds = locationAreas.map(loc => loc.locationAreaId);
     const key = allLocationAreaIds.sort().join(',');
 
     if (pokemonsByAreaCache.has(key)) return pokemonsByAreaCache.get(key);
 
-    const validVersionIds = new Set(
-        Object.values(gameRegionVersions).flat()
-    );
+    const validVersionIds = gameRegionVersions[region];
 
     // Carregamento único dos CSVs
     const [encounter, pokemonsArray, typesArray, pokemonsTypeArray, pokemonsSpeciesArray, pokemonsArray2, finalStats] = await Promise.all([
@@ -117,9 +115,9 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas) {
     const filteredEncounters = encounter.filter(
         loc =>
             allLocationAreaIds.includes(loc.location_area_id) &&
-            validVersionIds.has(loc.version_id)
+            validVersionIds.includes(loc.version_id)
     );
-    
+
     const filteredPokemons = pokemonsArray.filter(loc => loc.language_id === 9);
 
     const pokemonDetailsMap = new Map();
