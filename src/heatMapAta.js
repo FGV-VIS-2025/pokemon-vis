@@ -41,7 +41,7 @@ export function createHeatMapAta(selectedPokemons) {
     heatPaiSvg.style.padding = "15px";
     heatPaiSvg.style.marginBottom = "20px";
 
-    const svgWidth = heatSvg.clientWidth;
+    const svgWidth = heatSvg.clientWidth*0.7;
     const svgHeight = svgWidth;
 
     const rawData = getDataHeatMap(selectedPokemons);

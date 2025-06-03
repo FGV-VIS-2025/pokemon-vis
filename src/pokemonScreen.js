@@ -276,7 +276,7 @@ function createRadarChart() {
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    const svgWidth = radarSvg.clientWidth;
+    const svgWidth = radarSvg.clientWidth*0.7;
     const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgWidth - margin.top - margin.bottom;
