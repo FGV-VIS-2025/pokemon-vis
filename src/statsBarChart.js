@@ -1,3 +1,5 @@
+import { getLocationAreaByLocation } from './data.js';
+
 export function drawStatBarChart(containerSelector, data) {
   const width = 800;
   const height = 400;
@@ -32,12 +34,12 @@ export function drawStatBarChart(containerSelector, data) {
     .data(data)
     .enter()
     .append("rect")
-      .attr("class", "bar")
-      .attr("x", d => x(d.stat))
-      .attr("y", d => y(d.mean))
-      .attr("width", x.bandwidth())
-      .attr("height", d => y(0) - y(d.mean))
-      .attr("fill", "teal");
+    .attr("class", "bar")
+    .attr("x", d => x(d.stat))
+    .attr("y", d => y(d.mean))
+    .attr("width", x.bandwidth())
+    .attr("height", d => y(0) - y(d.mean))
+    .attr("fill", "teal");
 
   svg.append("text")
     .attr("x", width / 2)
@@ -67,10 +69,10 @@ export function drawStatBarChart(containerSelector, data) {
 let encountersData, locationsData, pokemonStatsData, statsData;
 
 Promise.all([
-  d3.csv("./data/encounters.csv", d3.autoType),
-  d3.csv("./data/locations.csv", d3.autoType),
-  d3.csv("./data/pokemon_stats.csv", d3.autoType),
-  d3.csv("./data/stats.csv", d3.autoType)
+  d3.csv("../data/encounters.csv", d3.autoType),
+  d3.csv("../data/locations.csv", d3.autoType),
+  d3.csv("../data/pokemon_stats.csv", d3.autoType),
+  d3.csv("../data/stats.csv", d3.autoType)
 ]).then(([encountersRaw, locations, pokemonStats, stats]) => {
   // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
   const seen = new Set();
@@ -90,26 +92,26 @@ Promise.all([
   statsData = stats;
 });
 
-export function renderStatBarChart(locationId) {
+export async function renderStatBarChart(locationId) {
   if (!encountersData || !locationsData || !pokemonStatsData || !statsData) {
     console.warn("Dados ainda não carregados.");
     return;
   }
 
-  // Encontra os location_area_ids associados à location_id
-  const locationAreas = locationsData
-    .filter(l => l.id === locationId)
-    .map(l => l.id);
+  const locationAreaIds_ = await getLocationAreaByLocation(locationId);
 
-  if (locationAreas.length === 0) {
+  // Extrai os locationAreaId e coloca em um Set
+  const locationAreaIdSet = new Set(locationAreaIds_.map(obj => obj.locationAreaId));
+
+  if (locationAreaIdSet.size === 0) {
     console.warn(`Nenhuma location_area encontrada para location_id ${locationId}`);
     return;
   }
 
-  // Filtra Pokémon encontrados nas location_areas da região
+  // Filtra Pokémon encontrados nas location_areas associadas
   const pokemonIds = new Set(
     encountersData
-      .filter(e => locationAreas.includes(e.location_area_id))
+      .filter(e => locationAreaIdSet.has(e.location_area_id))
       .map(e => e.pokemon_id)
   );
 
