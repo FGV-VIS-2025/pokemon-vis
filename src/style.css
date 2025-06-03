@@ -1,12 +1,12 @@
 /* Font Definitions */
 @font-face {
     font-family: pokemon;
-    src: url("../assets/fonts/hollow.ttf") format("opentype");
+    src: url("./assets/fonts/hollow.ttf") format("opentype");
 }
 
 @font-face {
     font-family: pokemon_solid;
-    src: url("../assets/fonts/solid.ttf") format("opentype");
+    src: url("./assets/fonts/solid.ttf") format("opentype");
 }
 
 /* Global Styles */

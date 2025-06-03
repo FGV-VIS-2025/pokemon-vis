@@ -67,10 +67,10 @@ export function drawStatBarChart(containerSelector, data) {
 let encountersData, locationsData, pokemonStatsData, statsData;
 
 Promise.all([
-  d3.csv("../data/encounters.csv", d3.autoType),
-  d3.csv("../data/locations.csv", d3.autoType),
-  d3.csv("../data/pokemon_stats.csv", d3.autoType),
-  d3.csv("../data/stats.csv", d3.autoType)
+  d3.csv("./data/encounters.csv", d3.autoType),
+  d3.csv("./data/locations.csv", d3.autoType),
+  d3.csv("./data/pokemon_stats.csv", d3.autoType),
+  d3.csv("./data/stats.csv", d3.autoType)
 ]).then(([encountersRaw, locations, pokemonStats, stats]) => {
   // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
   const seen = new Set();
