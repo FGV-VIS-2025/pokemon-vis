@@ -94,7 +94,7 @@ export function createHeatMapAta(selectedPokemons) {
     // Adiciona imagens dos tipos no eixo Y
     types.forEach(tipo => {
         svg.append("image")
-        .attr("xlink:href", `././assets/icon-types/${tipo}.svg`)
+        .attr("xlink:href", `./assets/icon-types/${tipo}.svg`)
         .attr("x", -width/20) 
         .attr("y", y(tipo) + y.bandwidth() / 2 - width/50)
         .attr("width", width/25)
@@ -137,7 +137,7 @@ export function createHeatMapAta(selectedPokemons) {
             .duration(200)
             .style("opacity", .95);
         tooltip.html(`
-            <center><img src="././assets/gifs/${d.pokemon.pokemon_id}.gif" class="heat-map-img"></img></center><br/>
+            <center><img src="../assets/gifs/${d.pokemon.pokemon_id}.gif" class="heat-map-img"></img></center><br/>
             <strong>Pokémon:</strong> ${d.group}<br/>
             <strong>Def. Type:</strong> ${d.variable.charAt(0).toUpperCase() + d.variable.slice(1)}<br/>
             <strong>Effectiveness:</strong> ${d.value}x
