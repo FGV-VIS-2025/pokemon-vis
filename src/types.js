@@ -1,4 +1,5 @@
 import { pokemonTypeColorsRGBA } from './consts.js';
+import { getLocationAreaByLocation } from './data.js';
 
 export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960) {
   // Limpa SVG anterior, se existir
@@ -57,7 +58,7 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     }
   }
 
-const color = typeName => pokemonTypeColorsRGBA[typeName] || 'rgba(200, 200, 200, 0.7)';
+  const color = typeName => pokemonTypeColorsRGBA[typeName] || 'rgba(200, 200, 200, 0.7)';
 
   const ribbonRadius = Math.min(width, height) * 0.5 - 200;
   const arcInnerRadius = ribbonRadius + 10;
@@ -191,7 +192,7 @@ export function updateTypeChordByRegion(regionId) {
   renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
 }
 
-export function updateTypeChordByLocation(locationId) {
+export async function updateTypeChordByLocation(locationId) {
   if (!typesData || !pokemonTypesData || !encountersData || !locationsData) return;
 
   // 1. Filtra as location areas que pertencem à location selecionada
@@ -201,9 +202,14 @@ export function updateTypeChordByLocation(locationId) {
       .map(loc => loc.id)
   );
 
-  // 2. Filtrar encounters com essas location_area_id
+  const locationAreaIds_ = await getLocationAreaByLocation(locationId);
+
+  // Extrair os IDs em um `Set` para busca mais eficiente
+  const areaIdSet = new Set(locationAreaIds_.map(obj => obj.locationAreaId));
+
+  // Filtrar encounters com esses location_area_id
   const filteredEncounters = encountersData.filter(e =>
-    locationAreaIds.has(e.location_area_id)
+    areaIdSet.has(e.location_area_id)
   );
 
   // 3. Pegar os Pokémon únicos dessa location
