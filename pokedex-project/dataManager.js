@@ -7,6 +7,9 @@ async function loadCsv(path, parser) {
 }
 
 const locationsCacheByRegionName = new Map();
+const locationAreasCache = new Map();
+const regionIdCacheByName = new Map();
+
 
 export async function getLocationsByRegionName(regionName) {
     if (locationsCacheByRegionName.has(regionName)) {
@@ -54,4 +57,36 @@ export async function getLocationsByRegionName(regionName) {
 
     locationsCacheByRegionName.set(regionName, result);
     return result;
+}
+
+export async function getLocationAreaByLocation(locationId) {
+    if (locationAreasCache.has(locationId)) return locationAreasCache.get(locationId);
+    const data = await loadCsv('../data/location_areas.csv', d => ({ locationAreaId: +d.id, locationId: +d.location_id, gameIndex: +d.game_index, identifier: d.identifier }));
+    const result = data.filter(l => l.locationId === +locationId);
+    locationAreasCache.set(locationId, result);
+    return result;
+}
+
+export async function getRegionIdByName(regionName) {
+    if (regionIdCacheByName.has(regionName)) {
+        return regionIdCacheByName.get(regionName);
+    }
+
+    const regions = await loadCsv('../data/region_names.csv', d => ({
+        region_id: +d.region_id,
+        local_language_id: +d.local_language_id,
+        name: d.name
+    }));
+
+    const regionEntry = regions.find(
+        r => r.name.toLowerCase() === regionName.toLowerCase() && r.local_language_id === 9
+    );
+
+    if (!regionEntry) {
+        throw new Error(`Região "${regionName}" não encontrada.`);
+    }
+
+    const regionId = regionEntry.region_id;
+    regionIdCacheByName.set(regionName, regionId);
+    return regionId;
 }

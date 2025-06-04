@@ -724,3 +724,33 @@ body {
 .github-button:hover {
     background-color: var(--hover-purple);
 }
+
+/* INTERATIVIDADE GŔAFICO REGIÕES */
+
+.tooltip {
+  position: absolute;
+  background: #222;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ribbon {
+  fill-opacity: 0.9;
+  cursor: pointer;
+  transition: fill-opacity 0.3s;
+}
+
+.fade {
+  opacity: 0.15 !important;
+}
+
+.group path {
+  stroke: #000;
+  stroke-width: 0.5px;
+  transition: fill-opacity 0.3s;
+}
