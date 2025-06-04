@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../pokedex-project/style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="./main.js" type="module"></script>
+    <script src="./buttonsAnimation.js" type="module"></script>
 </head>
 <body>
     <div class="pokedex-container">
@@ -25,9 +26,7 @@
                     </div>
                     <div class="pokedex-page-1-sup-2">
                         <div class="botao-4">
-                            <a href="https://github.com/FGV-VIS-2025/pokemon-vis" target="_blank">
-                                <img id="folder" src="../assets/folder.png" alt="GitHub Folder">
-                            </a>
+                            <img id="folder" src="../assets/folder.png" alt="GitHub Folder">
                         </div>
                     </div>
                 </div>
@@ -84,6 +83,17 @@
                         <div class="margin-hor"></div>
                         <div class="screen-right">
                             <div class="cards-display"></div>
+                            <div class="pokemons-select">
+                                <div class="left-pokemon">
+                                    <img id="left-pokemon" src="../assets/left.png" alt="Left">
+                                </div>
+                                <div class="home-pokemon">
+                                    <img id="pokemon-right" src="../assets/home.png" alt="Home">
+                                </div>
+                                <div class="right-pokemon">
+                                    <img id="pokemon-right" src="../assets/right.png" alt="Right">
+                                </div>
+                            </div>
                             <div class="screen-select">
                                 <div class="region-button">
                                     <img src="../assets/earth-globe.png" alt="">
@@ -95,6 +105,14 @@
                                     <img src="../assets/pokeball.png" alt="">
                                 </div>
                             </div>
+                            <div class="second-row-buttons">
+                                <div class="authors-button">
+                                    <img src="../assets/user.png" alt="">
+                                </div>
+                                <div class="scroll-button">
+                                    <img src="../assets/chart.png" alt="">
+                                </div>
+                            </div>
                         </div>
                         <div class="margin-hor"></div>
                     </div>
@@ -104,5 +122,9 @@
 
         </div>
     </div>
+    <div class="interval-1"></div>
+    <div class="content-container"></div>
+    <div class="interval-2"></div>
+    <div class="authors-container"></div>
 </body>
 </html>
