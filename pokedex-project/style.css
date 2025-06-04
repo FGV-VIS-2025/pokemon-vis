@@ -218,7 +218,7 @@ body {
 }
 
 .right-button{
-    background-color: #809CD0;
+    background-color: #416dc0;
 }
 
 .left-button:hover{
@@ -226,7 +226,7 @@ body {
 }
 
 .right-button:hover{
-    background-color: #677faa;
+    background-color: #35599c;
 }
 
 .left-button:hover, .right-button:hover {
@@ -287,7 +287,6 @@ body {
     width: 95%;
     height: 10%;
     border-radius: 5px;
-    background-color: #859BD3;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -299,6 +298,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #859BD3;
 }
 
 .region-button:hover, .location-button:hover, .pokemons-button:hover {
