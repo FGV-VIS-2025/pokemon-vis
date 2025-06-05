@@ -8,18 +8,19 @@ const pokemonButton = document.getElementsByClassName("pokemons-button")[0];
 const regionDisplay = document.getElementsByClassName("region-screen")[0];
 const locationDisplay = document.getElementsByClassName("location-screen")[0];
 
-loadMainContent(1);
-
 regionButton.addEventListener("click", function () {
     loadMainContent(1);
+    setTimeout(function () {document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
 });
 
 locationButton.addEventListener("click", function () {
     loadMainContent(2);
+    setTimeout(function () {document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
 });
 
 pokemonButton.addEventListener("click", function () {
     loadMainContent(3);
+    setTimeout(function () {document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
 });
 
 async function loadMainContent(key){

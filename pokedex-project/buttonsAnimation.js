@@ -11,6 +11,7 @@ const authorsButton = document.getElementsByClassName("authors-button")[0];
 const scrollButton = document.getElementsByClassName("scroll-button")[0];
 const linkedinButtons = document.getElementsByClassName("linkedin-button");
 const githubButtons = document.getElementsByClassName("github-button");
+const pokedexButtons = document.getElementsByClassName("real-content-button")[0];
 
 const contentButtons = [regionButton, 
                         locationButton, 
@@ -20,7 +21,8 @@ const contentButtons = [regionButton,
                         homePokemonButton, 
                         rightPokemonButton, 
                         scrollButton, 
-                        authorsButton];
+                        authorsButton,
+                        pokedexButtons];
 
 function animatedButtons(arrayOfButtons){
     for (let eachButton of arrayOfButtons) {
@@ -58,6 +60,10 @@ scrollButton.addEventListener("click", function () {
 
 authorsButton.addEventListener("click", function () {
   setTimeout(function () {document.getElementsByClassName("authors-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
+});
+
+pokedexButtons.addEventListener("click", function () {
+    setTimeout(function () {document.getElementsByClassName("pokedex-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
 });
 
 // BOTÕES AUTORES

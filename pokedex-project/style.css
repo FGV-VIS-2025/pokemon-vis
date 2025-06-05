@@ -581,9 +581,21 @@ body {
 .real-content-button {
     height: 60%;
     aspect-ratio: 1 / 1;
-    background-color: var(--hover-red);
+    background-color: var(--button-red);
     border-radius: 50%;
     border: 5px solid var(--screen-medium-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.real-content-button img{
+    height: 80%;
+}
+
+.real-content-button:hover{
+    cursor: pointer;
+    background-color: var(--hover-red);
 }
 
 /* --- Authors Page --- */
