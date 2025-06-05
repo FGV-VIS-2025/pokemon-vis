@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+
 /* ======= Root Variables ======= */
 :root {
     /* Colors */
@@ -121,7 +123,11 @@ body {
     align-items: center;
     justify-content: center;
     color: var(--white);
-    font-size: 3vh;
+    font-family: "Pixelify Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 4vh;
 }
 
 /* --- Page 1 --- */

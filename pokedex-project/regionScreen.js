@@ -4,6 +4,7 @@ import { renderBarChartByRegion } from "./barchart.js";
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
 export function createRegionScreen(id_region = 3) {
+    contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
     contentScreen.style.gap = "100px";
     contentScreen.style.display = 'flex';

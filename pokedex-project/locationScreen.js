@@ -4,6 +4,7 @@ import { renderStatBarChart } from "./statsBarChart.js";
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
 export function createLocationScreen(id_location = 28) {
+    contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
     contentScreen.style.gap = "100px";
     contentScreen.style.display = 'flex';
