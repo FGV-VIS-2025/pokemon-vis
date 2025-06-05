@@ -1,6 +1,9 @@
 import { getAllPokemons } from "./dataManager.js";
 import { pokemonTypeColorsRGBA, pokemonTypeColors, genderRateMap, generationMap, growthRateMap, habitatMap } from "./consts.js";
 import { createRadarChart } from "./radarChart.js";
+import { createHeatMapDef} from "./heatMapDef.js"
+import { createHeatMapAta } from "./heatMapAta.js";
+
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 let selectedPokemons = [];
@@ -210,7 +213,7 @@ export function editPokemonsCard() {
     // caso ao menos algum pokémon tenha sido selecionado, cria o gráfico de radar
     if (selectedPokemons.length > 0) {
         createRadarChart(selectedPokemons);
-        createHeatMap(selectedPokemons);
+        createHeatMapDef(selectedPokemons);
         createHeatMapAta(selectedPokemons);
     } else {
         const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
