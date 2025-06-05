@@ -382,7 +382,7 @@ body {
 .cards-display {
     width: 95%;
     height: 45%;
-    background-color: var(--cards-green);
+    background-color: var(--light-gray-border);
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -405,6 +405,7 @@ body {
     font-size: 1.25em;
     height: auto;
     padding: 10px;
+    border: var(--white) solid 2px;
 }
 
 .card:hover {

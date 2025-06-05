@@ -93,7 +93,7 @@ export function createHeatMapAta(selectedPokemons) {
     // Adiciona imagens dos tipos no eixo Y
     types.forEach(tipo => {
         svg.append("image")
-        .attr("xlink:href", `./assets/icon-types/${tipo}.svg`)
+        .attr("xlink:href", `../assets/icon-types/${tipo}.svg`)
         .attr("x", -width/20) 
         .attr("y", y(tipo) + y.bandwidth() / 2 - width/50)
         .attr("width", width/25)
