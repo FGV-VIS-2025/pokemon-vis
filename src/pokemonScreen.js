@@ -7,7 +7,7 @@ import { genderRateMap,
         pokemonTypeColorsRGBA } from "./consts.js";
 
 import { getAllPokemons } from "./data.js";
-import { RadarChart } from "./radarChart.js";
+import { createRadarChart } from "./radarChart.js";
 import { createHeatMap } from "./heatMapDef.js";
 import { createHeatMapAta } from "./heatMapAta.js";
 
@@ -242,63 +242,6 @@ function buildRadarDataFromPokemons(selectedPokemons) {
     return formattedData;
 }
 
-/**
- * Função que define a cor que um pokémon vai ter no gráfico de radar com base no seu tipo.
- * 
- * @param {*} selectedPokemons - Array com os pokémons selecionados
- * @returns Retorna um array com as cores que vão ser usadas no gráfico de radar
- */
-function getColorRadarChart(selectedPokemons) {
-    const tiposVistos = [];
-    const cores = [];
-
-    for (const pokemon of selectedPokemons) {
-        const nomeTipo = pokemon.types[0].type_name;
-        const numeroOcorrencias = tiposVistos.filter(t => t === nomeTipo).length;
-        tiposVistos.push(nomeTipo);
-
-        const cor = pokemonTypeColorsRadar[nomeTipo]?.[String(numeroOcorrencias + 1)] ?? '#000000';
-        cores.push(cor);
-    }
-
-    return cores;
-}
-
-
-/**
- * Função responsável por configurar as variáveis necessárias e chamar a função que de fato cria o gráfico de radar.
- */
-function createRadarChart() {
-    const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
-    const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
-
-    radarSvg.style.border = "1px solid rgb(255, 255, 255)";
-    radarPaiSvg.style.padding = "15px";
-    radarPaiSvg.style.marginBottom = "20px";
-
-    const svgWidth = radarSvg.clientWidth*0.7;
-    const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
-    const width = svgWidth - margin.left - margin.right;
-    const height = svgWidth - margin.top - margin.bottom;
-
-    const data = buildRadarDataFromPokemons(selectedPokemons);
-
-    const color = d3.scaleOrdinal().range(data.map(p => p.color));
-
-    const radarChartOptions = {
-        w: width,
-        h: height,
-        margin: margin,
-        maxValue: 0.5,
-        levels: 8,
-        roundStrokes: true,
-        color: color
-    };
-
-    RadarChart(".svg-chart-1", data, radarChartOptions);
-}
-
-
 // ao mudar a tela de tamanho, reconstroi tudo para parecer dinâmico
 window.addEventListener("resize", editPokemonsCard);
 
@@ -334,7 +277,7 @@ export function editPokemonsCard() {
 
     // caso ao menos algum pokémon tenha sido selecionado, cria o gráfico de radar
     if (selectedPokemons.length > 0) {
-        createRadarChart();
+        createRadarChart(selectedPokemons);
         createHeatMap(selectedPokemons);
         createHeatMapAta(selectedPokemons);
     } else {

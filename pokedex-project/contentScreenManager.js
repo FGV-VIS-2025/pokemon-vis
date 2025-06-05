@@ -1,6 +1,6 @@
 import { createRegionScreen } from "./regionScreen.js"
 import { createLocationScreen } from "./locationScreen.js"
-import { createPokemonScreen } from "./pokemonScreen.js";
+import { createPokemonScreen, editPokemonsCard } from "./pokemonScreen.js";
 import { getRegionIdByName, getLocationIdByName } from "./dataManager.js";
 
 const regionButton = document.getElementsByClassName("region-button")[0];
@@ -31,6 +31,9 @@ async function loadMainContent(key){
         createLocationScreen(await getLocationIdByName(locationDisplay.textContent.trim()));
     } else if (key == 3) {
         await createPokemonScreen();
+        setTimeout(() => {
+            editPokemonsCard();
+        }, 10);
     } else {
         console.log("Falha ao criar a tela princial.")
     }

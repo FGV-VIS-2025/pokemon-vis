@@ -681,10 +681,9 @@ body {
     outline: 2px solid #1d15c4;
 }
 
-/* Estilo do dropdown */
 .suggestions {
     position: absolute;
-    top: 100%; /* logo abaixo do container */
+    top: 100%; 
     left: 0;
     right: 0;
 
@@ -748,6 +747,164 @@ body {
 .real-content-button:hover{
     cursor: pointer;
     background-color: var(--hover-red);
+}
+
+.pokemons-select-2{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.pokemon-card-select{
+    width: 25%;
+    aspect-ratio: 1/1;
+    background-color: #d8d8d8;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plus-button{
+    width: 30%;
+    aspect-ratio: 1 / 1;
+}
+
+.plus-button img{
+    height: 100%;
+    width: 100%;
+}
+
+.pokemon-card-select:hover{
+    cursor: pointer;
+}
+
+.pokemon-card-selected{
+    width: 25%;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pokemon-card-selected img{
+    width: 80%;
+    height: auto;
+}
+
+.pokemon-card-selected:hover{
+    cursor: pointer;
+}
+
+.pokemons-description-area{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.pokemon-description{
+    width: 25%;
+    padding: 10px;
+    gap: 10px;
+    background-color: #1b1b1b;
+    border-radius: 10px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    font-size: 1.5em;
+    overflow-y: auto;
+}
+
+.info-rows{
+    width: 100%;
+    aspect-ratio:  2 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.info-blocks{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 5px;
+    background-color: rgb(49, 49, 49);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: .8em;
+    border: 1px solid rgb(255, 255, 255);
+}
+
+.info-blocks img{
+    width: 30%;
+    aspect-ratio: 1/1;
+    margin-bottom: 5px;
+}
+
+.info-rows-2{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    justify-content: center;
+    flex-direction: row;
+    background-color: rgb(49, 49, 49);
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: .65em;;
+    border: 1px solid rgb(255, 255, 255);
+}
+
+.info-blocks-2-menor{
+    width: 45%;
+    padding: 5px;
+}
+
+.info-blocks-2-maior{
+    padding: 5px;
+    width: 55%;
+}
+
+.svg-pai-chart-1, .svg-pai-chart-2, .svg-pai-chart-3{
+    width: 90%;
+    height: auto;
+    background-color: #1b1b1b;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.svg-chart-1, .svg-chart-2, .svg-chart-3{
+    width: 100%;
+    height: auto;
+    background-color: rgb(49, 49, 49);
+    border-radius: 10px;
+    border: 1px solid rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 /* --- Authors Page --- */
