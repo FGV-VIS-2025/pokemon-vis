@@ -9,7 +9,7 @@ async function loadCsv(path, parser) {
 const locationsCacheByRegionName = new Map();
 const locationAreasCache = new Map();
 const regionIdCacheByName = new Map();
-
+const locationIdCacheByName = new Map();
 
 export async function getLocationsByRegionName(regionName) {
     if (locationsCacheByRegionName.has(regionName)) {
@@ -89,4 +89,28 @@ export async function getRegionIdByName(regionName) {
     const regionId = regionEntry.region_id;
     regionIdCacheByName.set(regionName, regionId);
     return regionId;
+}
+
+export async function getLocationIdByName(locationName) {
+    if (locationIdCacheByName.has(locationName)) {
+        return locationIdCacheByName.get(locationName);
+    }
+
+    const locationNamesData = await loadCsv('../data/location_names.csv', d => ({
+        location_id: +d.location_id,
+        local_language_id: +d.local_language_id,
+        location_name: d.name
+    }));
+
+    const locationEntry = locationNamesData.find(
+        l => l.location_name.toLowerCase() === locationName.toLowerCase() && l.local_language_id === 9
+    );
+
+    if (!locationEntry) {
+        throw new Error(`Localização "${locationName}" não encontrada.`);
+    }
+
+    const locationId = locationEntry.location_id;
+    locationIdCacheByName.set(locationName, locationId);
+    return locationId;
 }
