@@ -636,6 +636,90 @@ body {
     height: calc(100% - 70px);
     background-color: var(--screen-medium-gray);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+.pokemons-search {
+    width: 60%;
+    padding: 10px;
+    border-radius: 12px;
+    background-color: #f2f2f2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    position: relative;
+}
+
+.pokemons-search-img {
+    height: 32px;
+    width: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.pokemons-search-box {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+}
+
+.pokemons-search-box:focus {
+    outline: 2px solid #1d15c4;
+}
+
+/* Estilo do dropdown */
+.suggestions {
+    position: absolute;
+    top: 100%; /* logo abaixo do container */
+    left: 0;
+    right: 0;
+
+    background: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.search-gif{
+    height: 50px;
+    max-width: 150px;
+    justify-self: right;
+}
+
+.suggestions li:hover {
+    background-color: #efefef;
 }
 
 .content-button {
