@@ -18,6 +18,9 @@ export async function createPokemonScreen() {
     const todosPokemons = await getAllPokemons();
 
     contentScreen.innerHTML = "";
+    contentScreen.style.gap = "0";
+    contentScreen.style.justifyContent = '';
+
     // cria os elementos
     const pokemonSearch = document.createElement("div");
     pokemonSearch.classList.add("pokemons-search");
@@ -162,22 +165,11 @@ export async function createPokemonScreen() {
     svg2.appendChild(document.createElement("rect")).classList.add("svg-chart-2-rect-1");
     svgPai2.appendChild(svg2);
 
-    // área externa para o primeiro gráfico
-    const svgPai3 = document.createElement("svg");
-    svgPai3.classList.add("svg-pai-chart-3");
-
-    // área para o primeiro gráfico (radar)
-    const svg3 = document.createElement("svg");
-    svg3.classList.add("svg-chart-3");
-    svg3.appendChild(document.createElement("rect")).classList.add("svg-chart-3-rect-1");
-    svgPai3.appendChild(svg3);
-
     contentScreen.appendChild(pokemonSearch);
     contentScreen.appendChild(pokemonsSelect);
     contentScreen.appendChild(pokemonsDescriptionArea);
     contentScreen.appendChild(svgPai1);
     contentScreen.appendChild(svgPai2);
-    contentScreen.appendChild(svgPai3);
 }
 
 /**
@@ -228,12 +220,6 @@ export function editPokemonsCard() {
         const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
         heatPaiSvg.style.padding = 0;
         heatPaiSvg.style.marginBottom = 0;
-        const heatSvg2 = document.getElementsByClassName("svg-chart-3")[0];
-        heatSvg2.innerHTML = "";
-        heatSvg2.style.border = 0;
-        const heatPaiSvg2 = document.getElementsByClassName("svg-pai-chart-3")[0];
-        heatPaiSvg2.style.padding = 0;
-        heatPaiSvg2.style.marginBottom = 0;
         pokemonsDescription.style.marginBottom = 0;
     }
 }
