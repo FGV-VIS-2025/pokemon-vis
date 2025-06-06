@@ -917,6 +917,9 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: row; 
+    box-sizing: border-box;
+    padding: 15px;
+
 }
 
 /* --- Authors Page --- */

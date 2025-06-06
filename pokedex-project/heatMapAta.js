@@ -155,4 +155,19 @@ export function createHeatMapAta(selectedPokemons) {
             .duration(500)
             .style("opacity", 0); 
     });
+
+    // Add text on top of each cell
+    svg.selectAll(".cell-label")
+    .data(data, d => d.group + ':' + d.variable + ':' + d.pokemon)
+    .enter()
+    .append("text")
+    .attr("class", "cell-label")
+    .attr("x", d => x(d.group) + x.bandwidth() / 2)
+    .attr("y", d => y(d.variable) + y.bandwidth() / 2)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "central") // vertical centering
+    .style("fill", "#000") // ou ajuste com base no contraste da célula
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .text(d => `${d.value}x`);
 }
