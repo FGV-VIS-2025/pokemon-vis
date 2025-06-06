@@ -27,6 +27,7 @@ observer.observe(locationScreen, {
 const homeButtonCards = document.getElementsByClassName("home-pokemon")[0];
 
 homeButtonCards.addEventListener("click", () => {
+    count = 2;
     cardsContainer.scrollTo({
         left: 0,
         top: 0,
