@@ -7,7 +7,7 @@ const folderButton = document.getElementsByClassName("botao-4")[0];
 const leftPokemonButton = document.getElementsByClassName("left-pokemon")[0];
 const rightPokemonButton = document.getElementsByClassName("home-pokemon")[0];
 const homePokemonButton = document.getElementsByClassName("right-pokemon")[0];
-const authorsButton = document.getElementsByClassName("authors-button")[0];
+const infoButton = document.getElementsByClassName("info-button")[0];
 const scrollButton = document.getElementsByClassName("scroll-button")[0];
 const linkedinButtons = document.getElementsByClassName("linkedin-button");
 const githubButtons = document.getElementsByClassName("github-button");
@@ -21,7 +21,7 @@ const contentButtons = [regionButton,
                         homePokemonButton, 
                         rightPokemonButton, 
                         scrollButton, 
-                        authorsButton,
+                        infoButton,
                         pokedexButtons];
 
 function animatedButtons(arrayOfButtons){
@@ -58,7 +58,7 @@ scrollButton.addEventListener("click", function () {
   setTimeout(function () {document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
 });
 
-authorsButton.addEventListener("click", function () {
+infoButton.addEventListener("click", function () {
   setTimeout(function () {document.getElementsByClassName("authors-container")[0].scrollIntoView({ behavior: "smooth" })}, 150);
 });
 

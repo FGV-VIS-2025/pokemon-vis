@@ -81,7 +81,8 @@ body {
 .scroll-button,
 .linkedin-button,
 .github-button,
-.botao-4 {
+.botao-4,
+.info-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,8 +106,9 @@ body {
 .authors-button img,
 .scroll-button img,
 .linkedin-button img,
-.github-button img {
-    height: 30%;
+.github-button img, 
+.info-button img {
+    height: 40%;
 }
 
 /* --- Shared Screen Styles --- */
@@ -191,20 +193,21 @@ body {
 }
 
 .botao-4 {
-    height: 65%;
+    height: 80%;
     aspect-ratio: 1 / 1;
     margin-left: 5%;
     margin-bottom: 20px;
-    border-radius: var(--button-border-radius);
-    background-color: var(--button-yellow);
+    border-radius: 50%;
+    background-color: #26A2F0;
+    border: 10px solid var(--white);
 }
 
 .botao-4:hover {
-    background-color: var(--hover-yellow);
+    background-color: #208dd1;
 }
 
 .botao-4 img {
-    width: 35%;
+    width: 40%;
 }
 
 /* Page 1 Lower Section */
@@ -376,7 +379,7 @@ body {
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
-    padding: 15px;
+    padding: 20px;
 }
 
 .cards-display {
@@ -454,9 +457,9 @@ body {
 
 
 .pokemons-select {
-    width: 95%;
+    width: 100%;
     height: 10%;
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -474,7 +477,7 @@ body {
 }
 
 .screen-select {
-    width: 95%;
+    width: 100%;
     height: 10%;
     border-radius: var(--button-border-radius);
     display: flex;
@@ -508,35 +511,36 @@ body {
 }
 
 .second-row-buttons {
-    width: 95%;
+    width: 100%;
     height: 20%;
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
-    align-items: center;
-    justify-content: right;
+    align-items: start;
+    justify-content: center;
     flex-direction: row;
-}
-
-.authors-button,
-.scroll-button {
-    width: 20%;
-    aspect-ratio: 1 / 1;
-    background-color: var(--screen-medium-gray);
-}
-
-.authors-button {
-    border-top-left-radius: var(--button-border-radius);
-    border-bottom-left-radius: var(--button-border-radius);
+    gap: 20px;
 }
 
 .scroll-button {
-    border-top-right-radius: var(--button-border-radius);
-    border-bottom-right-radius: var(--button-border-radius);
+    width: calc(50% - 10px);
+    aspect-ratio: 3.5 / 1;
+    background-color:var(--button-blue);
+    border-radius: var(--button-border-radius);
 }
 
-.authors-button:hover,
 .scroll-button:hover {
-    background-color: var(--hover-dark-gray);
+    background-color: var(--hover-blue);
+}
+
+.info-button{
+    width: calc(50% - 10px);
+    aspect-ratio: 3.5 / 1;
+    background-color:var(--button-yellow);
+    border-radius: var(--button-border-radius);
+}
+
+.info-button:hover {
+    background-color: var(--hover-yellow);
 }
 
 .margin-right {
@@ -904,7 +908,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row; 
+    box-sizing: border-box;
+    padding: 15px;
 }
 
 .svg-chart-2 {
