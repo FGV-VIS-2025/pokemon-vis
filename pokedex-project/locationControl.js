@@ -6,6 +6,22 @@ const rightButtonRegion = document.getElementsByClassName("right-button")[0];
 const leftButtonRegion = document.getElementsByClassName("left-button")[0];
 const rightButton = document.getElementsByClassName("right-button")[1];
 const leftButton = document.getElementsByClassName("left-button")[1];
+const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
+
+mapRealContainer.addEventListener('locationSelected', async (event) => {
+    const { locationId, title } = event.detail;
+
+    listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
+    const foundIndex = listOfLocations.findIndex(loc => loc.location_id === locationId);
+
+    if (foundIndex !== -1) {
+        i = foundIndex;
+        locationDisplay.textContent = listOfLocations[i].location_name;
+    } else {
+        console.warn(`Localização com ID ${locationId} não encontrada na lista da região atual.`);
+    }
+});
+
 
 // SINCRONIA ENTRE REGION-SELECT E O LOCATION-SELECT
 let i = 0;

@@ -1,3 +1,5 @@
+import { buildMap } from "./mapManager.js";
+
 const regionDisplay = document.getElementsByClassName("region-screen")[0];
 const rightButtons = document.getElementsByClassName("right-button")[0];
 const leftButtons = document.getElementsByClassName("left-button")[0];
@@ -15,6 +17,7 @@ rightButtons.addEventListener("click", function () {
     }
     regionDisplay.textContent = listOfRegions[i];
     mapImage.src = `../assets/maps/${listOfRegions[i]}.png`
+    buildMap({ name: listOfRegions[i] });
 });
 
 leftButtons.addEventListener("click", function () {
@@ -25,4 +28,5 @@ leftButtons.addEventListener("click", function () {
     }
     regionDisplay.textContent = listOfRegions[i];
     mapImage.src = `../assets/maps/${listOfRegions[i]}.png`
+    buildMap({ name: listOfRegions[i] });
 });
