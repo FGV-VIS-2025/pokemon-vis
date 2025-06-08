@@ -3,6 +3,7 @@ import { getLocationAreaByLocation, getPokemonsByMultipleLocationAreas } from ".
 import { loadCards } from "./cardsPokedex.js";
 
 const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
+const locationElementMap = new Map();
 
 mapRealContainer.addEventListener('locationSelected', async (event) => {
     const { locationId, title } = event.detail;
@@ -131,6 +132,10 @@ export function buildMap(selectedRegion) {
                     mapRealContainer.dispatchEvent(new CustomEvent('locationSelected', { detail: { locationId: areaId, title } }));
                 });
             }
+            if (el) {
+                locationElementMap.set(areaId, el);
+            }
+
             resolve(el);
         });
     }
@@ -166,3 +171,5 @@ export function buildMap(selectedRegion) {
         mapRealContainer.appendChild(svg);
     };
 }
+
+export { locationElementMap };

@@ -1,4 +1,6 @@
 import { getLocationsByRegionName } from "./dataManager.js";
+import { locationElementMap } from "./mapManager.js";
+
 
 const regionDisplay = document.getElementsByClassName("region-screen")[0];
 const locationDisplay = document.getElementsByClassName("location-screen")[0];
@@ -33,12 +35,20 @@ rightButtonRegion.addEventListener("click", async function () {
     i = 0;
     listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
     locationDisplay.textContent = listOfLocations[0].location_name;
+
+    const currentLocationId = listOfLocations[i].location_id;
+    const el = locationElementMap.get(currentLocationId);
+    if (el) el.dispatchEvent(new Event("click"));
 });
 
 leftButtonRegion.addEventListener("click", async function () {
     i = 0;
     listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
     locationDisplay.textContent = listOfLocations[0].location_name;
+
+    const currentLocationId = listOfLocations[i].location_id;
+    const el = locationElementMap.get(currentLocationId);
+    if (el) el.dispatchEvent(new Event("click"));
 });
 
 rightButton.addEventListener("click", function () {
@@ -48,6 +58,10 @@ rightButton.addEventListener("click", function () {
         i = 0;
     }
     locationDisplay.textContent = listOfLocations[i].location_name;
+
+    const currentLocationId = listOfLocations[i].location_id;
+    const el = locationElementMap.get(currentLocationId);
+    if (el) el.dispatchEvent(new Event("click"));
 });
 
 leftButton.addEventListener("click", function () {
@@ -57,4 +71,8 @@ leftButton.addEventListener("click", function () {
         i = listOfLocations.length - 1;
     }
     locationDisplay.textContent = listOfLocations[i].location_name;
+
+    const currentLocationId = listOfLocations[i].location_id;
+    const el = locationElementMap.get(currentLocationId);
+    if (el) el.dispatchEvent(new Event("click"));
 });
