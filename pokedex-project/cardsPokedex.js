@@ -6,7 +6,7 @@ import { pokemonTypeColors } from "./consts.js";
 const homeButtonCards = document.getElementsByClassName("home-pokemon")[0];
 
 homeButtonCards.addEventListener("click", () => {
-    count = 2;
+    count = 1;
     cardsContainer.scrollTo({
         left: 0,
         top: 0,
@@ -14,7 +14,7 @@ homeButtonCards.addEventListener("click", () => {
     });
 });
 
-let count = 2;
+let count = 1;
 
 let pokemonArrayGlobal;
 const leftButtonCards = document.getElementsByClassName("left-pokemon")[0];
@@ -22,10 +22,10 @@ const rightButtonCards = document.getElementsByClassName("right-pokemon")[0];
 const listOfCards = document.getElementsByClassName("card");
 
 leftButtonCards.addEventListener("click", () => {
-    if (pokemonArrayGlobal?.length > 3 && count > 2) {
+    if (pokemonArrayGlobal?.length > 3 && count > 1) {
         count--;
-        if (listOfCards[count - 1]) {
-            listOfCards[count - 1].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        if (listOfCards[count]) {
+            listOfCards[count].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
         }
     }
 });
@@ -33,8 +33,8 @@ leftButtonCards.addEventListener("click", () => {
 rightButtonCards.addEventListener("click", () => {
     if (pokemonArrayGlobal?.length > 3 && count < pokemonArrayGlobal.length - 1) {
         count++;
-        if (listOfCards[count - 1]) {
-            listOfCards[count - 1].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        if (listOfCards[count]) {
+            listOfCards[count].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
         }
     }
 });
