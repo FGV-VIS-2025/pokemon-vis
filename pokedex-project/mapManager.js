@@ -1,13 +1,13 @@
-import { regionLocations } from "./mapsConsts.js";
-import { getLocationAreaByLocation, getPokemonsByMultipleLocationAreas } from "./dataManager.js";
 import { loadCards } from "./cardsPokedex.js";
+import { getAllLocationsPokemonCount, getLocationAreaByLocation, getPokemonsByMultipleLocationAreas } from "./dataManager.js";
+import { regionLocations } from "./mapsConsts.js";
 
 const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
 const locationElementMap = new Map();
 
 mapRealContainer.addEventListener('locationSelected', async (event) => {
     const { locationId, title } = event.detail;
-    
+
     const locationsAreaArray = await getLocationAreaByLocation(locationId);
     const pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, "Kanto");
     loadCards(pokemonsArray);
@@ -54,6 +54,17 @@ export function buildMap(selectedRegion) {
     // Track currently selected route element for highlight
     let currentSelectedEl = null;
 
+    // Carregar a contagem de pokémons para todas as localizações da região atual
+    let pokemonCountMap = new Map();
+
+    async function loadPokemonCounts() {
+        const counts = await getAllLocationsPokemonCount(selectedRegion.name);
+        counts.forEach(item => {
+            pokemonCountMap.set(item.locationId, item.count);
+        });
+        return counts;
+    }
+
     function createAreaSVG(shape, coords, title, areaId) {
         return new Promise(resolve => {
             let el = null;
@@ -92,7 +103,8 @@ export function buildMap(selectedRegion) {
             }
             if (el) {
                 el.addEventListener("mouseenter", function (e) {
-                    tooltip.textContent = title;
+                    const pokemonCount = pokemonCountMap.get(areaId) || '?';
+                    tooltip.textContent = `${title} (${pokemonCount} Pokémons)`;
                     tooltip.style.display = "block";
                     // Hover highlight if not selected
                     if (el !== currentSelectedEl) {
@@ -152,6 +164,9 @@ export function buildMap(selectedRegion) {
         });
         svg.setAttribute("viewBox", `0 0 ${img.naturalWidth} ${img.naturalHeight}`);
         svg.setAttribute("pointer-events", "none");
+
+        // Carregar contagem de pokémons antes de construir as áreas
+        await loadPokemonCounts();
 
         const regionAreas = regionLocations[selectedRegion.name];
         if (regionAreas) {

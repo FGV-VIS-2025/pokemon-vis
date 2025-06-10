@@ -300,6 +300,61 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
     return final;
 }
 
+export async function getAllLocationsPokemonCount(regionName) {
+    // Obter todas as localizações da região
+    const locations = await getLocationsByRegionName(regionName);
+
+    // Carregar dados de encontros e versões
+    const validVersionIds = gameRegionVersions[regionName];
+    const [encounters, locationAreas] = await Promise.all([
+        loadCsv('../data/encounters.csv', d => ({
+            id: +d.id,
+            version_id: +d.version_id,
+            location_area_id: +d.location_area_id,
+            pokemon_id: +d.pokemon_id
+        })),
+        loadCsv('../data/location_areas.csv', d => ({
+            locationAreaId: +d.id,
+            locationId: +d.location_id
+        }))
+    ]);
+
+    // Criar mapeamento de área para localização
+    const areaToLocationMap = new Map();
+    locationAreas.forEach(area => {
+        areaToLocationMap.set(area.locationAreaId, area.locationId);
+    });
+
+    // Filtrar encontros válidos para a região atual
+    const validEncounters = encounters.filter(enc => {
+        const locationId = areaToLocationMap.get(enc.location_area_id);
+        const locationInRegion = locations.some(loc => loc.location_id === locationId);
+        return locationInRegion && validVersionIds.includes(enc.version_id);
+    });
+
+    // Contar pokémons únicos por localização
+    const pokemonsByLocation = new Map();
+
+    validEncounters.forEach(enc => {
+        const locationId = areaToLocationMap.get(enc.location_area_id);
+        if (!locationId) return;
+
+        if (!pokemonsByLocation.has(locationId)) {
+            pokemonsByLocation.set(locationId, new Set());
+        }
+
+        pokemonsByLocation.get(locationId).add(enc.pokemon_id);
+    });
+
+    // Converter para array de resultados
+    const result = Array.from(pokemonsByLocation.entries()).map(([locationId, pokemonSet]) => ({
+        locationId,
+        count: pokemonSet.size
+    }));
+
+    return result;
+}
+
 export async function getAllPokemons() {
     if (allPokemonsPromise) return allPokemonsPromise;
     allPokemonsPromise = (async () => {
