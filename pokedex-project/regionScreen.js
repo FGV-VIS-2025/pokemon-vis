@@ -133,13 +133,19 @@ async function loadRegionPokemonSprites(regionId) {
             spriteContainer.style.justifyContent = 'center';
             spriteContainer.style.cursor = 'pointer';
 
-            // Criar o elemento de imagem
+            // Criar o elemento de imagem com lazy loading
             const img = document.createElement('img');
-            img.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
             img.width = 96;
             img.height = 96;
             img.alt = `${pokemon.name} #${pokemon.pokemon_id}`;
             img.style.imageRendering = 'pixelated';
+
+            // Usar dataset para lazy loading
+            img.dataset.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
+            // Inicialmente mostrar placeholder
+            img.src = '../assets/ball.png';
+            img.style.opacity = '0.7';
+            img.classList.add('pokemon-sprite-lazy');
 
             // Adicionar número e nome do Pokémon abaixo da imagem
             const numberLabel = document.createElement('span');
@@ -180,6 +186,9 @@ async function loadRegionPokemonSprites(regionId) {
         countMessage.style.fontWeight = 'bold';
         countMessage.style.borderTop = '1px solid rgba(255, 255, 255, 0.2)';
         spritesGrid.appendChild(countMessage);
+
+        // Inicializa o lazy loading após adicionar todos os sprites
+        initLazyLoading();
     } catch (error) {
         console.error('Erro ao carregar sprites dos Pokémons:', error);
         const spritesGrid = document.getElementById('pokemon-sprites-grid');
@@ -187,4 +196,38 @@ async function loadRegionPokemonSprites(regionId) {
             spritesGrid.innerHTML = `<p style="color: white; text-align: center; padding: 20px; grid-column: 1 / -1;">Erro ao carregar Pokémons: ${error.message}</p>`;
         }
     }
+}
+
+// Função para inicializar o lazy loading de imagens
+function initLazyLoading() {
+    // Opções para o Intersection Observer
+    const options = {
+        root: document.getElementById('right-region-container'),
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    // Callback para quando uma imagem se torna visível
+    const onIntersection = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.style.opacity = '1';
+                img.onload = () => {
+                    img.classList.remove('pokemon-sprite-lazy');
+                };
+                // Parar de observar após carregar
+                observer.unobserve(img);
+            }
+        });
+    };
+
+    // Criar o observer
+    const observer = new IntersectionObserver(onIntersection, options);
+
+    // Observar todas as imagens com a classe pokemon-sprite-lazy
+    document.querySelectorAll('.pokemon-sprite-lazy').forEach(img => {
+        observer.observe(img);
+    });
 }
