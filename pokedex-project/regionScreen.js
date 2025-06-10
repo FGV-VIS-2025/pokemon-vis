@@ -1,6 +1,29 @@
 import { renderBarChartByRegion } from "./barchart.js";
+import { createPokemonCard } from "./cardsPokedex.js";
 import { gameRegionVersions, getPokemonsByGeneration } from "./dataManager.js";
 import { updateTypeChordByRegion } from "./types.js";
+
+// Adicionar CSS para a tooltip de card do Pokémon
+const style = document.createElement('style');
+style.textContent = `
+    .pokemon-tooltip-card {
+        position: fixed;
+        z-index: 1000;
+        width: 220px;
+        height: auto;
+        pointer-events: none;
+        transform: translate(10px, 10px);
+        transition: opacity 0.2s ease;
+        opacity: 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+    }
+    
+    .pokemon-tooltip-card.active {
+        opacity: 1;
+    }
+`;
+document.head.appendChild(style);
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
@@ -157,6 +180,19 @@ async function loadRegionPokemonSprites(regionId, pokemonsList = null) {
             spriteContainer.appendChild(img);
             spriteContainer.appendChild(numberLabel);
             spritesGrid.appendChild(spriteContainer);
+
+            // Adicionar eventos para mostrar/esconder a tooltip do card
+            spriteContainer.addEventListener('mouseenter', (event) => {
+                showPokemonCardTooltip(pokemon, event);
+            });
+
+            spriteContainer.addEventListener('mouseleave', () => {
+                hidePokemonCardTooltip();
+            });
+
+            spriteContainer.addEventListener('mousemove', (event) => {
+                moveTooltip(event);
+            });
         });
         // Adicionar contador de Pokémons
         const countMessage = document.createElement('div');
@@ -231,3 +267,81 @@ function initLazyLoading() {
         observer.observe(img);
     });
 }
+
+// Função para criar a tooltip do card de Pokémon
+function createTooltipCard() {
+    // Cria o elemento tooltip que vai conter o card
+    const tooltipCard = document.createElement('div');
+    tooltipCard.classList.add('pokemon-tooltip-card');
+    document.body.appendChild(tooltipCard);
+
+    return tooltipCard;
+}
+
+// Função para mostrar o tooltip com o card do Pokémon
+function showPokemonCardTooltip(pokemon, event) {
+    // Pega ou cria a tooltip
+    let tooltipCard = document.querySelector('.pokemon-tooltip-card');
+    if (!tooltipCard) {
+        tooltipCard = createTooltipCard();
+    }
+
+    // Limpa o conteúdo atual
+    tooltipCard.innerHTML = '';
+
+    // Cria o card do Pokémon usando a função do cardsPokedex.js
+    const card = createPokemonCard(pokemon);
+
+    // Ajusta o card para servir como tooltip
+    card.style.margin = '0';
+    card.style.transform = 'none';
+    card.style.transition = 'none';
+
+    // Adiciona o card na tooltip
+    tooltipCard.appendChild(card);
+
+    // Posiciona a tooltip de acordo com a posição do mouse
+    tooltipCard.style.left = `${event.clientX}px`;
+    tooltipCard.style.top = `${event.clientY}px`;
+
+    // Ativa a tooltip
+    tooltipCard.classList.add('active');
+}
+
+// Função para esconder o tooltip com o card do Pokémon
+function hidePokemonCardTooltip() {
+    const tooltipCard = document.querySelector('.pokemon-tooltip-card');
+    if (tooltipCard) {
+        tooltipCard.classList.remove('active');
+    }
+}
+
+// Função para mover o tooltip com o mouse
+function moveTooltip(event) {
+    const tooltipCard = document.querySelector('.pokemon-tooltip-card.active');
+    if (tooltipCard) {
+        // Calcula a posição para que o tooltip não saia da tela
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const tooltipWidth = tooltipCard.offsetWidth;
+        const tooltipHeight = tooltipCard.offsetHeight;
+
+        let left = event.clientX + 15;
+        let top = event.clientY + 15;
+
+        // Ajusta a posição se o tooltip estiver saindo da tela
+        if (left + tooltipWidth > windowWidth - 20) {
+            left = event.clientX - tooltipWidth - 15;
+        }
+
+        if (top + tooltipHeight > windowHeight - 20) {
+            top = event.clientY - tooltipHeight - 15;
+        }
+
+        tooltipCard.style.left = `${left}px`;
+        tooltipCard.style.top = `${top}px`;
+    }
+}
+
+// Adiciona o listener para mover o tooltip com o mouse
+document.addEventListener('mousemove', moveTooltip);
