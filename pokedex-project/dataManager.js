@@ -1,17 +1,71 @@
 const csvCache = new Map();
-async function loadCsv(path, parser) {
-    if (!csvCache.has(path)) {
-        csvCache.set(path, d3.csv(path, parser));
-    }
-    return csvCache.get(path);
-}
-
 const locationsCacheByRegionName = new Map();
 const locationAreasCache = new Map();
 const regionIdCacheByName = new Map();
 const locationIdCacheByName = new Map();
 const pokemonsByAreaCache = new Map();
 let allPokemonsPromise;
+
+// Cache para dados comumente usados
+const commonDataCache = {
+    regions: null,
+    locations: null,
+    locationNames: null,
+    encounters: null,
+    locationAreas: null
+};
+
+// Função para pré-carregar dados comuns
+async function preloadCommonData() {
+    if (!commonDataCache.regions) {
+        [
+            commonDataCache.regions,
+            commonDataCache.locations,
+            commonDataCache.locationNames,
+            commonDataCache.encounters,
+            commonDataCache.locationAreas
+        ] = await Promise.all([
+            loadCsv('../data/region_names.csv', d => ({
+                region_id: +d.region_id,
+                local_language_id: +d.local_language_id,
+                name: d.name
+            })),
+            loadCsv('../data/locations.csv', d => ({
+                id: +d.id,
+                location_id: +d.id,
+                location_ident: d.identifier,
+                region_id: +d.region_id
+            })),
+            loadCsv('../data/location_names.csv', d => ({
+                location_id: +d.location_id,
+                local_language_id: +d.local_language_id,
+                location_name: d.name
+            })),
+            loadCsv('../data/encounters.csv', d => ({
+                id: +d.id,
+                version_id: +d.version_id,
+                location_area_id: +d.location_area_id,
+                pokemon_id: +d.pokemon_id,
+                min_level: +d.min_level,
+                max_level: +d.max_level
+            })),
+            loadCsv('../data/location_areas.csv', d => ({
+                locationAreaId: +d.id,
+                locationId: +d.location_id,
+                gameIndex: +d.game_index,
+                identifier: d.identifier
+            }))
+        ]);
+    }
+    return commonDataCache;
+}
+
+async function loadCsv(path, parser) {
+    if (!csvCache.has(path)) {
+        csvCache.set(path, d3.csv(path, parser));
+    }
+    return csvCache.get(path);
+}
 
 export const gameRegionVersions = {
     "Kanto": [1, 2, 3],
@@ -27,24 +81,7 @@ export async function getLocationsByRegionName(regionName) {
         return locationsCacheByRegionName.get(regionName);
     }
 
-    const [regions, locationData, locationNamesData] = await Promise.all([
-        loadCsv('../data/region_names.csv', d => ({
-            region_id: +d.region_id,
-            local_language_id: +d.local_language_id,
-            name: d.name
-        })),
-        loadCsv('../data/locations.csv', d => ({
-            id: +d.id,
-            location_id: +d.id,
-            location_ident: d.identifier,
-            region_id: +d.region_id
-        })),
-        loadCsv('../data/location_names.csv', d => ({
-            location_id: +d.location_id,
-            local_language_id: +d.local_language_id,
-            location_name: d.name
-        }))
-    ]);
+    const { regions, locations, locationNames } = await preloadCommonData();
 
     const regionEntry = regions.find(r => r.name.toLowerCase() === regionName.toLowerCase() && r.local_language_id === 9);
     if (!regionEntry) {
@@ -52,11 +89,10 @@ export async function getLocationsByRegionName(regionName) {
     }
 
     const regionId = regionEntry.region_id;
-
-    const filteredLocations = locationData.filter(l => l.region_id === regionId);
+    const filteredLocations = locations.filter(l => l.region_id === regionId);
 
     const namesMap = new Map(
-        locationNamesData
+        locationNames
             .filter(n => n.local_language_id === 9)
             .map(n => [n.location_id, n.location_name])
     );
@@ -76,9 +112,7 @@ export async function getLocationAreaByLocation(locationId) {
         return [];
     }
 
-    // Converter para número se for string
     const numericLocationId = +locationId;
-
     if (isNaN(numericLocationId)) {
         console.warn(`ID de localização inválido: ${locationId}`);
         return [];
@@ -88,27 +122,17 @@ export async function getLocationAreaByLocation(locationId) {
         return locationAreasCache.get(numericLocationId);
     }
 
-    try {
-        const data = await loadCsv('../data/location_areas.csv', d => ({
-            locationAreaId: +d.id,
-            locationId: +d.location_id,
-            gameIndex: +d.game_index,
-            identifier: d.identifier
-        }));
+    const { locationAreas } = await preloadCommonData();
 
-        // Filtrar apenas áreas que correspondem ao ID da localização fornecido
-        const result = data.filter(l => l.locationId === numericLocationId);
+    // Filtrar apenas áreas que correspondem ao ID da localização fornecido
+    const result = locationAreas.filter(l => l.locationId === numericLocationId);
 
-        if (result.length === 0) {
-            console.warn(`Nenhuma área encontrada para a localização ${numericLocationId}`);
-        }
-
-        locationAreasCache.set(numericLocationId, result);
-        return result;
-    } catch (error) {
-        console.error(`Erro ao carregar áreas de localização: ${error.message}`);
-        return [];
+    if (result.length === 0) {
+        console.warn(`Nenhuma área encontrada para a localização ${numericLocationId}`);
     }
+
+    locationAreasCache.set(numericLocationId, result);
+    return result;
 }
 
 export async function getRegionIdByName(regionName) {
@@ -116,11 +140,7 @@ export async function getRegionIdByName(regionName) {
         return regionIdCacheByName.get(regionName);
     }
 
-    const regions = await loadCsv('../data/region_names.csv', d => ({
-        region_id: +d.region_id,
-        local_language_id: +d.local_language_id,
-        name: d.name
-    }));
+    const { regions } = await preloadCommonData();
 
     const regionEntry = regions.find(
         r => r.name.toLowerCase() === regionName.toLowerCase() && r.local_language_id === 9
@@ -140,13 +160,9 @@ export async function getLocationIdByName(locationName) {
         return locationIdCacheByName.get(locationName);
     }
 
-    const locationNamesData = await loadCsv('../data/location_names.csv', d => ({
-        location_id: +d.location_id,
-        local_language_id: +d.local_language_id,
-        location_name: d.name
-    }));
+    const { locationNames } = await preloadCommonData();
 
-    const locationEntry = locationNamesData.find(
+    const locationEntry = locationNames.find(
         l => l.location_name.toLowerCase() === locationName.toLowerCase() && l.local_language_id === 9
     );
 
