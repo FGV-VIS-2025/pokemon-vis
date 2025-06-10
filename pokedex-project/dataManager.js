@@ -344,13 +344,28 @@ export async function getAllLocationsPokemonCount(regionName) {
         }
 
         pokemonsByLocation.get(locationId).add(enc.pokemon_id);
-    });
+    });    // Converter para array de resultados e garantir que todas as localizações estejam incluídas
+    const result = [];
 
-    // Converter para array de resultados
-    const result = Array.from(pokemonsByLocation.entries()).map(([locationId, pokemonSet]) => ({
-        locationId,
-        count: pokemonSet.size
-    }));
+    // Primeiro, adicionar localizações com pokémons
+    for (const [locationId, pokemonSet] of pokemonsByLocation.entries()) {
+        result.push({
+            locationId,
+            count: pokemonSet.size
+        });
+    }
+
+    // Depois, adicionar localizações sem pokémons (com contagem zero)
+    locations.forEach(location => {
+        const locationId = location.location_id;
+        // Se a localização ainda não estiver no resultado, adicione-a com contagem zero
+        if (!pokemonsByLocation.has(locationId)) {
+            result.push({
+                locationId,
+                count: 0
+            });
+        }
+    });
 
     return result;
 }

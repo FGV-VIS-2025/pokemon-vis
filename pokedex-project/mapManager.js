@@ -102,15 +102,42 @@ export function buildMap(selectedRegion) {
                 el = polygon;
             }
             if (el) {
+                // Verificar contagem de pokémons após carregar
+                const updateCursorStyle = () => {
+                    const pokemonCount = pokemonCountMap.get(areaId) || 0;
+                    el.style.cursor = pokemonCount > 0 ? "pointer" : "default";
+                };
+
+                // Configurar inicialmente e atualizar quando os dados estiverem disponíveis
+                updateCursorStyle();
+
                 el.addEventListener("mouseenter", function (e) {
-                    const pokemonCount = pokemonCountMap.get(areaId) || '?';
-                    tooltip.textContent = `${title} (${pokemonCount} Pokémons)`;
+                    const pokemonCount = pokemonCountMap.get(areaId) || 0;
+
+                    // Definir texto e estilo do tooltip com base na contagem de pokémons
+                    if (pokemonCount === 0) {
+                        tooltip.textContent = `${title} (0 Pokémons)`;
+                        tooltip.style.color = "#aaa"; // Cor cinza para locais sem pokémons
+                    } else {
+                        tooltip.textContent = `${title} (${pokemonCount} Pokémons)`;
+                        tooltip.style.color = "#fff"; // Cor branca normal
+                    }
+
                     tooltip.style.display = "block";
-                    // Hover highlight if not selected
+
+                    // Aplicar destaque diferente para áreas sem pokémons
                     if (el !== currentSelectedEl) {
-                        el.setAttribute("fill", "#FFD70055");
-                        el.setAttribute("stroke", "#FFD700");
-                        el.setAttribute("stroke-width", "2");
+                        if (pokemonCount === 0) {
+                            // Destaque mais suave/cinza para áreas sem pokémons
+                            el.setAttribute("fill", "#77777755");
+                            el.setAttribute("stroke", "#777777");
+                            el.setAttribute("stroke-width", "1");
+                        } else {
+                            // Destaque normal para áreas com pokémons
+                            el.setAttribute("fill", "#FFD70055");
+                            el.setAttribute("stroke", "#FFD700");
+                            el.setAttribute("stroke-width", "2");
+                        }
                     }
                 });
                 el.addEventListener("mousemove", function (e) {
@@ -129,6 +156,15 @@ export function buildMap(selectedRegion) {
                 });
                 el.addEventListener("click", function (e) {
                     e.stopPropagation();
+
+                    // Verificar se há pokémons nesta localização
+                    const pokemonCount = pokemonCountMap.get(areaId) || 0;
+
+                    // Se não houver pokémons, não permite selecionar
+                    if (pokemonCount === 0) {
+                        return;
+                    }
+
                     // Remove previous selection highlight
                     if (currentSelectedEl && currentSelectedEl !== el) {
                         currentSelectedEl.setAttribute("fill", "transparent");
