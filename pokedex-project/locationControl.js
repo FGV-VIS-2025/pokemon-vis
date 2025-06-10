@@ -10,26 +10,37 @@ const rightButton = document.getElementsByClassName("right-button")[1];
 const leftButton = document.getElementsByClassName("left-button")[1];
 const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
 
+// Variáveis globais para controle de localização
+let i = 0;
+let listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
+locationDisplay.textContent = listOfLocations[0].location_name;
+
+// Event listener para quando uma localização é selecionada no mapa
 mapRealContainer.addEventListener('locationSelected', async (event) => {
     const { locationId, title } = event.detail;
 
+    // Atualiza a lista de localizações da região atual
     listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
     const foundIndex = listOfLocations.findIndex(loc => loc.location_id === locationId);
 
     if (foundIndex !== -1) {
         i = foundIndex;
         locationDisplay.textContent = listOfLocations[i].location_name;
+
+        // Remove animação de todos os elementos anteriores
+        locationElementMap.forEach(el => {
+            el.style.animation = "";
+        });
+
+        // Aplica animação ao elemento selecionado
+        const el = locationElementMap.get(locationId);
+        if (el) {
+            el.style.animation = "blink-border 1.5s infinite";
+        }
     } else {
         console.warn(`Localização com ID ${locationId} não encontrada na lista da região atual.`);
     }
 });
-
-
-// SINCRONIA ENTRE REGION-SELECT E O LOCATION-SELECT
-let i = 0;
-
-let listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
-locationDisplay.textContent = listOfLocations[0].location_name;
 
 rightButtonRegion.addEventListener("click", async function () {
     i = 0;
