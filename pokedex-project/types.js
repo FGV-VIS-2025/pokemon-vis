@@ -1,5 +1,5 @@
 import { pokemonTypeColorsRGBA } from './consts.js';
-import { getLocationAreaByLocation } from './dataManager.js';
+import { getLocationAreaByLocation, getPokemonsByGeneration, regionToGeneration } from './dataManager.js';
 
 export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960) {
   // Limpa SVG anterior, se existir
@@ -69,8 +69,8 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
   const arc = d3.arc().innerRadius(arcInnerRadius).outerRadius(arcOuterRadius);
   const ribbon = d3.ribbon().radius(ribbonRadius);
 
-const g = svg.append("g")
-  .attr("transform", `translate(${width / 2},${height / 2 + 80})`);
+  const g = svg.append("g")
+    .attr("transform", `translate(${width / 2},${height / 2 + 80})`);
 
   const group = g.append("g")
     .attr("class", "groups")
@@ -152,7 +152,7 @@ const g = svg.append("g")
       d3.selectAll(".group path").classed("fade", false);
       tooltip.style("opacity", 0);
     });
-    
+
 }
 
 let typesData, pokemonTypesData, encountersData, locationsData;
@@ -182,16 +182,91 @@ Promise.all([
   locationsData = locations;
 });
 
-export function updateTypeChordByRegion(regionId) {
-  if (!typesData || !pokemonTypesData || !encountersData || !locationsData) return;
+export async function updateTypeChordByRegion(regionId) {
+  if (!typesData || !pokemonTypesData) return;
 
-  const regionLocations = locationsData.filter(loc => loc.region_id === regionId);
-  const locationAreaIds = new Set(regionLocations.map(loc => loc.id));
-  const filteredEncounters = encountersData.filter(e => locationAreaIds.has(e.location_area_id));
-  const regionPokemonIds = new Set(filteredEncounters.map(e => e.pokemon_id));
-  const filteredPokemonTypes = pokemonTypesData.filter(pt => regionPokemonIds.has(pt.pokemon_id));
+  try {
+    // Converter ID de região para nome
+    const regionNames = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
+    const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
 
-  renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
+    console.log(`Atualizando gráfico de tipos para região: ${regionName}`);
+
+    // Obter todos os Pokémon da geração correspondente à região
+    const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
+
+    // Se não houver Pokémon, exibir mensagem no gráfico
+    if (!pokemonsFromGeneration || pokemonsFromGeneration.length === 0) {
+      console.warn(`Nenhum Pokémon encontrado para a geração da região ${regionName}`);
+
+      // Limpar o container e mostrar mensagem de erro
+      const container = d3.select('#region-chart-container');
+      container.selectAll("*").remove();
+
+      container.append("div")
+        .style("width", "100%")
+        .style("height", "100%")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .style("color", "white")
+        .style("text-align", "center")
+        .style("padding", "20px")
+        .text(`Não foi possível carregar os dados dos Pokémon da região ${regionName}.`);
+
+      return;
+    }
+
+    console.log(`Encontrados ${pokemonsFromGeneration.length} Pokémon para a região ${regionName}`);
+
+    // Obter IDs únicos dos Pokémon da geração
+    const regionPokemonIds = new Set(pokemonsFromGeneration.map(p => p.pokemon_id));
+
+    // Filtrar os tipos dos Pokémon da geração
+    const filteredPokemonTypes = pokemonTypesData.filter(pt => regionPokemonIds.has(pt.pokemon_id));
+
+    console.log(`Encontrados ${filteredPokemonTypes.length} registros de tipos para os Pokémon da região ${regionName}`);
+
+    // Renderizar o diagrama de acordes com os dados filtrados
+    renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
+
+    // Adicionar título com informações da geração
+    const svgElement = d3.select('#region-chart-container svg');
+    if (!svgElement.empty()) {
+      // Adicionar ou atualizar o título
+      if (svgElement.select("text.chart-title").empty()) {
+        svgElement.append("text")
+          .attr("class", "chart-title")
+          .attr("x", "50%")
+          .attr("y", 30)
+          .attr("text-anchor", "middle")
+          .attr("fill", "white")
+          .style("font-size", "16px")
+          .style("font-weight", "bold")
+          .text(`Tipos de Pokémon da Geração ${regionToGeneration[regionName]} (${regionName})`);
+      } else {
+        svgElement.select("text.chart-title")
+          .text(`Tipos de Pokémon da Geração ${regionToGeneration[regionName]} (${regionName})`);
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar diagrama de acordes por região:', error);
+
+    // Mostrar mensagem de erro no gráfico
+    const container = d3.select('#region-chart-container');
+    container.selectAll("*").remove();
+
+    container.append("div")
+      .style("width", "100%")
+      .style("height", "100%")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("align-items", "center")
+      .style("color", "white")
+      .style("text-align", "center")
+      .style("padding", "20px")
+      .text(`Erro ao carregar dados: ${error.message}`);
+  }
 }
 
 export async function updateTypeChordByLocation(locationId) {

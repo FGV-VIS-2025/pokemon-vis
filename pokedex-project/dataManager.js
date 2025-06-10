@@ -61,10 +61,32 @@ async function preloadCommonData() {
 }
 
 async function loadCsv(path, parser) {
-    if (!csvCache.has(path)) {
-        csvCache.set(path, d3.csv(path, parser));
+    try {
+        if (!csvCache.has(path)) {
+            // Usar Promise com timeout para evitar travamentos
+            const fetchPromise = new Promise((resolve, reject) => {
+                console.log(`Carregando CSV: ${path}`);
+                d3.csv(path, parser)
+                    .then(data => {
+                        console.log(`CSV carregado com sucesso: ${path}, ${data.length} registros`);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        console.error(`Erro ao carregar ${path}:`, error);
+                        reject(error);
+                    });
+
+                // Timeout de 5 segundos para evitar travamentos
+                setTimeout(() => reject(new Error(`Timeout ao carregar ${path}`)), 5000);
+            });
+
+            csvCache.set(path, fetchPromise);
+        }
+        return await csvCache.get(path);
+    } catch (error) {
+        console.error(`Falha ao carregar ${path}:`, error);
+        return [];
     }
-    return csvCache.get(path);
 }
 
 export const gameRegionVersions = {
@@ -74,6 +96,16 @@ export const gameRegionVersions = {
     "Sinnoh": [12, 13, 14],
     "Unova": [17, 18, 21, 22],
     "Kalos": [23, 24, 25, 26], // X, Y, Omega Ruby, Alpha Sapphire
+}
+
+// Mapeamento de regiões para gerações
+export const regionToGeneration = {
+    "Kanto": 1,   // Red, Blue, Yellow
+    "Johto": 2,   // Gold, Silver, Crystal
+    "Hoenn": 3,   // Ruby, Sapphire, Emerald
+    "Sinnoh": 4,  // Diamond, Pearl, Platinum
+    "Unova": 5,   // Black, White, Black 2, White 2
+    "Kalos": 6,   // X, Y
 }
 
 export async function getLocationsByRegionName(regionName) {
@@ -124,7 +156,7 @@ export async function getLocationAreaByLocation(locationId) {
 
     const { locationAreas } = await preloadCommonData();
 
-    // Filtrar apenas áreas que correspondem ao ID da localização fornecido
+    // Filtrar apenas áreas que correspondem ao ID da localização fornecida
     const result = locationAreas.filter(l => l.locationId === numericLocationId);
 
     if (result.length === 0) {
@@ -521,4 +553,151 @@ export async function getAllPokemons() {
         return mergedPokemons3;
     })();
     return allPokemonsPromise;
+}
+
+/**
+ * Carrega todos os Pokémon de uma geração específica com base na região
+ * @param {string} regionName - Nome da região (ex: "Kanto", "Johto")
+ * @returns {Promise<Array>} - Array com todos os Pokémon da geração correspondente
+ */
+export async function getPokemonsByGeneration(regionName) {
+    // Obtém o ID da geração com base na região
+    const generationId = regionToGeneration[regionName];
+
+    console.log(`Buscando Pokémon da geração ${generationId} para a região ${regionName}`);
+
+    if (!generationId) {
+        console.error(`Região inválida: ${regionName}`);
+        return [];
+    }
+
+    try {
+        // Carrega o arquivo pokemon_species.csv para filtrar por geração
+        const pokemonSpecies = await loadCsv('../data/pokemon_species.csv', d => {
+            // Garantir que generation_id seja um número válido
+            const generationId = parseInt(d.generation_id);
+            return {
+                pokemon_id: +d.id,
+                identifier: d.identifier,
+                generation_id: isNaN(generationId) ? null : generationId,
+                evolves_from_species_id: d.evolves_from_species_id ? +d.evolves_from_species_id : null,
+                evolution_chain_id: +d.evolution_chain_id,
+                color_id: +d.color_id,
+                shape_id: +d.shape_id,
+                habitat_id: d.habitat_id ? +d.habitat_id : null,
+                gender_rate: +d.gender_rate,
+                capture_rate: +d.capture_rate,
+                base_happiness: +d.base_happiness,
+                is_baby: d.is_baby === "1",
+                is_legendary: d.is_legendary === "1",
+                is_mythical: d.is_mythical === "1"
+            };
+        });
+
+        console.log(`Total de espécies carregadas: ${pokemonSpecies.length}`);
+
+        // Definir faixas de IDs para cada geração como fallback
+        const generationRanges = {
+            1: { min: 1, max: 151 },     // Kanto: 1-151
+            2: { min: 152, max: 251 },   // Johto: 152-251
+            3: { min: 252, max: 386 },   // Hoenn: 252-386
+            4: { min: 387, max: 493 },   // Sinnoh: 387-493
+            5: { min: 494, max: 649 },   // Unova: 494-649
+            6: { min: 650, max: 721 },   // Kalos: 650-721
+        };
+
+        // Filtra os Pokémon da geração correspondente à região
+        let pokemonsByGeneration = pokemonSpecies.filter(pokemon => {
+            // Verificar se o pokemon tem generation_id válido e se corresponde à geração desejada
+            return pokemon.generation_id === generationId;
+        });
+
+        console.log(`Pokémon da geração ${generationId} pelo atributo generation_id: ${pokemonsByGeneration.length}`);
+
+        // Se não encontrarmos Pokémon usando o campo generation_id, usamos o fallback por ID
+        if (pokemonsByGeneration.length === 0 && generationRanges[generationId]) {
+            console.log(`Usando fallback por faixa de IDs para geração ${generationId}`);
+            const range = generationRanges[generationId];
+            pokemonsByGeneration = pokemonSpecies.filter(pokemon =>
+                pokemon.pokemon_id >= range.min && pokemon.pokemon_id <= range.max
+            );
+            console.log(`Pokémon da geração ${generationId} por faixa de IDs: ${pokemonsByGeneration.length}`);
+        }
+
+        // Carrega dados adicionais para os Pokémon
+        const [pokemonNames, pokemonTypes, types, pokemonStats] = await Promise.all([
+            loadCsv('../data/pokemon_species_names.csv', d => ({
+                pokemon_id: +d.pokemon_species_id,
+                language_id: +d.local_language_id,
+                name: d.name,
+                genus: d.genus
+            })),
+            loadCsv('../data/pokemon_types.csv', d => ({
+                pokemon_id: +d.pokemon_id,
+                type_id: +d.type_id,
+                slot: +d.slot
+            })),
+            loadCsv('../data/types.csv', d => ({
+                type_id: +d.id,
+                name: d.identifier
+            })),
+            loadCsv('../data/pokemon_stats_clean.csv', d => ({
+                Pokemon_Id: +d.Pokemon_Id,
+                Hp_Stat: +d.Hp_Stat,
+                Attack_Stat: +d.Attack_Stat,
+                Defense_Stat: +d.Defense_Stat,
+                Special_Attack_Stat: +d.Special_Attack_Stat,
+                Special_Defense_Stat: +d.Special_Defense_Stat,
+                Speed_Stat: +d.Speed_Stat
+            }))
+        ]);
+
+        // Filtrar nomes em inglês (local_language_id = 9)
+        const englishNames = pokemonNames.filter(name => name.language_id === 9);
+
+        // Criar mapas para acesso rápido
+        const namesMap = new Map(englishNames.map(name => [name.pokemon_id, name]));
+        const typeDetailsMap = new Map(types.map(type => [type.type_id, type]));
+
+        // Organizar tipos dos pokémons
+        const pokemonTypesMap = new Map();
+        pokemonTypes.forEach(pt => {
+            if (!pokemonTypesMap.has(pt.pokemon_id)) {
+                pokemonTypesMap.set(pt.pokemon_id, []);
+            }
+            const typeInfo = typeDetailsMap.get(pt.type_id);
+            if (typeInfo) {
+                pokemonTypesMap.get(pt.pokemon_id).push({
+                    slot: pt.slot,
+                    type_id: pt.type_id,
+                    type_name: typeInfo.name
+                });
+            }
+        });
+
+        // Criar mapa para estatísticas
+        const statsMap = new Map(pokemonStats.map(stats => [stats.Pokemon_Id, stats]));
+
+        // Montar o resultado final com todas as informações
+        const result = pokemonsByGeneration.map(pokemon => {
+            const types = pokemonTypesMap.get(pokemon.pokemon_id) || [];
+            const nameInfo = namesMap.get(pokemon.pokemon_id) || { name: pokemon.identifier };
+            const stats = statsMap.get(pokemon.pokemon_id) || {};
+
+            return {
+                ...pokemon,
+                name: nameInfo.name || pokemon.identifier, // Fallback para identifier se não tiver nome
+                genus: nameInfo.genus,
+                types: types,
+                ...stats
+            };
+        }).sort((a, b) => a.pokemon_id - b.pokemon_id);
+
+        console.log(`Total de Pokémon processados para a geração ${generationId}: ${result.length}`);
+
+        return result;
+    } catch (error) {
+        console.error("Erro ao carregar Pokémon por geração:", error);
+        return [];
+    }
 }

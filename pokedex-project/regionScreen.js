@@ -1,5 +1,5 @@
 import { renderBarChartByRegion } from "./barchart.js";
-import { gameRegionVersions, getLocationAreaByLocation, getLocationsByRegionName, getPokemonsByMultipleLocationAreas } from "./dataManager.js";
+import { gameRegionVersions, getPokemonsByGeneration, regionToGeneration } from "./dataManager.js";
 import { updateTypeChordByRegion } from "./types.js";
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
@@ -100,31 +100,8 @@ async function loadRegionPokemonSprites(regionId) {
         const regionNames = Object.keys(gameRegionVersions);
         const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
 
-        // Obter todas as localizações da região
-        const locations = await getLocationsByRegionName(regionName);
-
-        // Conjunto para armazenar IDs únicos de Pokémon
-        const uniquePokemonIds = new Set();
-
-        // Para cada localização, obter as áreas e seus Pokémons
-        for (const location of locations) {
-            // Obter áreas da localização
-            const locationAreas = await getLocationAreaByLocation(location.location_id);
-
-            // Se houver áreas, obter seus Pokémons
-            if (locationAreas && locationAreas.length > 0) {
-                // Obter Pokémons das áreas desta localização
-                const pokemons = await getPokemonsByMultipleLocationAreas(locationAreas, regionName);
-
-                // Adicionar IDs únicos ao conjunto
-                pokemons.forEach(pokemon => {
-                    uniquePokemonIds.add(pokemon.pokemon_id);
-                });
-            }
-        }
-
-        // Converter o conjunto para um array e ordenar
-        const pokemonIds = Array.from(uniquePokemonIds).sort((a, b) => a - b);
+        // Obter todos os Pokémon da geração correspondente à região
+        const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
 
         // Obter o elemento grid onde serão inseridos os sprites
         const spritesGrid = document.getElementById('pokemon-sprites-grid');
@@ -133,8 +110,20 @@ async function loadRegionPokemonSprites(regionId) {
         // Limpar o grid antes de adicionar novos sprites
         spritesGrid.innerHTML = '';
 
+        // Verificar se há Pokémon para exibir
+        if (pokemonsFromGeneration.length === 0) {
+            const noDataMessage = document.createElement('p');
+            noDataMessage.textContent = 'Nenhum Pokémon encontrado nesta geração.';
+            noDataMessage.style.color = 'white';
+            noDataMessage.style.gridColumn = '1 / -1';
+            noDataMessage.style.textAlign = 'center';
+            noDataMessage.style.padding = '20px';
+            spritesGrid.appendChild(noDataMessage);
+            return;
+        }
+
         // Adicionar os sprites dos Pokémons
-        pokemonIds.forEach(pokemonId => {
+        pokemonsFromGeneration.forEach(pokemon => {
             // Criar um container para o sprite e número
             const spriteContainer = document.createElement('div');
             spriteContainer.className = 'pokemon-sprite-container';
@@ -146,22 +135,23 @@ async function loadRegionPokemonSprites(regionId) {
 
             // Criar o elemento de imagem
             const img = document.createElement('img');
-            img.src = `../assets/pokemons/${pokemonId}.png`;
+            img.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
             img.width = 96;
             img.height = 96;
-            img.alt = `Pokémon #${pokemonId}`;
-            img.style.imageRendering = 'pixelated'; // Para manter o visual pixelado
+            img.alt = `${pokemon.name} #${pokemon.pokemon_id}`;
+            img.style.imageRendering = 'pixelated';
 
-            // Adicionar número do Pokémon abaixo da imagem
+            // Adicionar número e nome do Pokémon abaixo da imagem
             const numberLabel = document.createElement('span');
-            numberLabel.textContent = `#${pokemonId}`;
+            numberLabel.textContent = `#${pokemon.pokemon_id} ${pokemon.name}`;
             numberLabel.style.color = 'white';
             numberLabel.style.fontSize = '12px';
             numberLabel.style.marginTop = '5px';
             numberLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
+            numberLabel.style.textAlign = 'center';
 
-            // Adicionar tooltip com nome do Pokémon (se disponível)
-            img.title = `Pokémon #${pokemonId}`;
+            // Adicionar tooltip com nome do Pokémon
+            img.title = `${pokemon.name} #${pokemon.pokemon_id}`;
 
             // Tratamento de erro para imagens não encontradas
             img.onerror = function () {
@@ -177,33 +167,24 @@ async function loadRegionPokemonSprites(regionId) {
             spritesGrid.appendChild(spriteContainer);
         });
 
-        // Mensagem se nenhum Pokémon for encontrado
-        if (pokemonIds.length === 0) {
-            const noDataMessage = document.createElement('p');
-            noDataMessage.textContent = 'Nenhum Pokémon encontrado nesta região.';
-            noDataMessage.style.color = 'white';
-            noDataMessage.style.gridColumn = '1 / -1';
-            noDataMessage.style.textAlign = 'center';
-            noDataMessage.style.padding = '20px';
-            spritesGrid.appendChild(noDataMessage);
-        } else {
-            // Adicionar contador de Pokémons
-            const countMessage = document.createElement('div');
-            countMessage.textContent = `Total: ${pokemonIds.length} Pokémons`;
-            countMessage.style.color = 'white';
-            countMessage.style.gridColumn = '1 / -1';
-            countMessage.style.textAlign = 'center';
-            countMessage.style.padding = '15px 0';
-            countMessage.style.fontWeight = 'bold';
-            countMessage.style.borderTop = '1px solid rgba(255, 255, 255, 0.2)';
-            countMessage.style.marginTop = '15px';
-            spritesGrid.appendChild(countMessage);
-        }
+        // Adicionar contador de Pokémons
+        const countMessage = document.createElement('div');
+        countMessage.textContent = `Total: ${pokemonsFromGeneration.length} Pokémons da Geração ${regionToGeneration[regionName]}`;
+        countMessage.style.color = 'white';
+        countMessage.style.fontFamily = '"Pixelify Sans", sans-serif';
+        countMessage.style.fontSize = '16px';
+        countMessage.style.padding = '15px';
+        countMessage.style.textAlign = 'center';
+        countMessage.style.gridColumn = '1 / -1';
+        countMessage.style.marginTop = '20px';
+        countMessage.style.fontWeight = 'bold';
+        countMessage.style.borderTop = '1px solid rgba(255, 255, 255, 0.2)';
+        spritesGrid.appendChild(countMessage);
     } catch (error) {
         console.error('Erro ao carregar sprites dos Pokémons:', error);
         const spritesGrid = document.getElementById('pokemon-sprites-grid');
         if (spritesGrid) {
-            spritesGrid.innerHTML = '<p style="color: white; text-align: center;">Erro ao carregar dados dos Pokémons.</p>';
+            spritesGrid.innerHTML = `<p style="color: white; text-align: center; padding: 20px; grid-column: 1 / -1;">Erro ao carregar Pokémons: ${error.message}</p>`;
         }
     }
 }

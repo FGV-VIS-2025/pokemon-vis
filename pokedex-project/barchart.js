@@ -1,3 +1,5 @@
+import { getPokemonsByGeneration, regionToGeneration } from './dataManager.js';
+
 export function drawBarChart(containerSelector, data) {
   const width = 800;
   const height = 400;
@@ -28,16 +30,16 @@ export function drawBarChart(containerSelector, data) {
     .attr("transform", `translate(0,${height - margin.bottom})`)
     .call(d3.axisBottom(x))
     .selectAll("text")
-      .attr("transform", "rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "12px");
+    .attr("transform", "rotate(-45)")
+    .style("text-anchor", "end")
+    .style("font-size", "12px");
 
   // Eixo Y
   svg.append("g")
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(y))
     .selectAll("text")
-      .style("font-size", "12px");
+    .style("font-size", "12px");
 
   // Rótulo do eixo Y
   svg.append("text")
@@ -63,12 +65,12 @@ export function drawBarChart(containerSelector, data) {
     .data(data)
     .enter()
     .append("rect")
-      .attr("class", "bar")
-      .attr("x", d => x(d.name))
-      .attr("y", d => y(d.count))
-      .attr("width", x.bandwidth())
-      .attr("height", d => y(0) - y(d.count))
-      .attr("fill", "steelblue");
+    .attr("class", "bar")
+    .attr("x", d => x(d.name))
+    .attr("y", d => y(d.count))
+    .attr("width", x.bandwidth())
+    .attr("height", d => y(0) - y(d.count))
+    .attr("fill", "steelblue");
 
   // Rótulo do eixo X
   svg.append("text")
@@ -104,33 +106,98 @@ Promise.all([
   locationsData = locations;
   pokemonData = pokemons;
 });
-export function renderBarChartByRegion(regionId) {
-  if (!encountersData || !pokemonData || !locationsData) return;
+export async function renderBarChartByRegion(regionId) {
+  try {
+    // Converter ID de região para nome
+    const regionNames = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
+    const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
 
-  // Filtragem por região
-  const regionLocationIds = new Set(
-    locationsData.filter(loc => loc.region_id === regionId).map(loc => loc.id)
-  );
-  const filteredEncounters = encountersData.filter(e =>
-    regionLocationIds.has(e.location_area_id)
-  );
+    console.log(`Atualizando gráfico de barras para região: ${regionName}`);
 
-  const countMap = {};
-  for (const e of filteredEncounters) {
-    countMap[e.pokemon_id] = (countMap[e.pokemon_id] || 0) + 1;
+    // Obter todos os Pokémon da geração correspondente à região
+    const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
+
+    // Se não houver Pokémon, exibir mensagem no gráfico
+    if (!pokemonsFromGeneration || pokemonsFromGeneration.length === 0) {
+      console.warn(`Nenhum Pokémon encontrado para a geração da região ${regionName}`);
+
+      // Limpar o container e mostrar mensagem de erro
+      const container = d3.select('#bar-chart-container');
+      container.selectAll("*").remove();
+
+      container.append("div")
+        .style("width", "100%")
+        .style("height", "100%")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .style("color", "white")
+        .style("text-align", "center")
+        .style("padding", "20px")
+        .text(`Não foi possível carregar os dados dos Pokémon da região ${regionName}.`);
+
+      return;
+    }
+
+    console.log(`Encontrados ${pokemonsFromGeneration.length} Pokémon para a região ${regionName}`);
+
+    // Contar Pokémon por tipo
+    const typeCountMap = {};
+
+    // Para cada Pokémon, contabilizar seus tipos
+    pokemonsFromGeneration.forEach(pokemon => {
+      if (pokemon.types && pokemon.types.length) {
+        pokemon.types.forEach(typeInfo => {
+          const typeName = typeInfo.type_name;
+          // Capitalizar o nome do tipo
+          const typeNameCapitalized = typeName.charAt(0).toUpperCase() + typeName.slice(1);
+          typeCountMap[typeNameCapitalized] = (typeCountMap[typeNameCapitalized] || 0) + 1;
+        });
+      }
+    });
+
+    // Converter para array e ordenar por contagem
+    const typeCountArray = Object.entries(typeCountMap).map(([name, count]) => ({
+      name,
+      count
+    })).sort((a, b) => b.count - a.count);
+
+    console.log(`Contagem de tipos: ${typeCountArray.length} tipos diferentes encontrados`);
+
+    // Definir título do gráfico
+    const title = `Distribuição de Tipos na Geração ${regionToGeneration[regionName]} (${regionName})`;
+
+    // Desenhar o gráfico com os dados processados
+    drawBarChart('#bar-chart-container', typeCountArray);
+
+    // Adicionar título ao gráfico
+    d3.select('#bar-chart-container svg')
+      .append("text")
+      .attr("x", 400)
+      .attr("y", 30)
+      .attr("text-anchor", "middle")
+      .style("font-size", "18px")
+      .style("font-weight", "bold")
+      .style("fill", "black")
+      .text(title);
+
+  } catch (error) {
+    console.error('Erro ao renderizar gráfico de barras por região:', error);
+
+    // Mostrar mensagem de erro no gráfico
+    const container = d3.select('#bar-chart-container');
+    container.selectAll("*").remove();
+
+    container.append("div")
+      .style("width", "100%")
+      .style("height", "100%")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("align-items", "center")
+      .style("color", "white")
+      .style("text-align", "center")
+      .style("padding", "20px")
+      .text(`Erro ao carregar dados: ${error.message}`);
   }
-
-  const countArray = Object.entries(countMap).map(([id, count]) => ({
-    id: +id,
-    count,
-    name: pokemonData.find(p => p.id === +id)?.identifier || `#${id}`
-  }));
-
-  const sorted = countArray.sort((a, b) => b.count - a.count);
-  const top5 = sorted.slice(0, 5);
-  const bottom5 = sorted.slice(-5);
-  const finalData = [...top5, ...bottom5];
-
-  drawBarChart('#bar-chart-container', finalData);
 }
 
