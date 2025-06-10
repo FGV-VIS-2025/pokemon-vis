@@ -19,7 +19,7 @@ export const gameRegionVersions = {
     "Hoenn": [7, 8, 9],
     "Sinnoh": [12, 13, 14],
     "Unova": [17, 18, 21, 22],
-    "Kalos": [23, 24],
+    "Kalos": [23, 24, 25, 26], // X, Y, Omega Ruby, Alpha Sapphire
 }
 
 export async function getLocationsByRegionName(regionName) {
@@ -96,7 +96,13 @@ export async function getLocationAreaByLocation(locationId) {
             identifier: d.identifier
         }));
 
+        // Filtrar apenas áreas que correspondem ao ID da localização fornecido
         const result = data.filter(l => l.locationId === numericLocationId);
+
+        if (result.length === 0) {
+            console.warn(`Nenhuma área encontrada para a localização ${numericLocationId}`);
+        }
+
         locationAreasCache.set(numericLocationId, result);
         return result;
     } catch (error) {
@@ -165,7 +171,10 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
     const validLocationIds = new Set(locationsInRegion.map(loc => loc.location_id));
 
     // Verificar se as áreas pertencem à região correta
-    const validLocationAreas = locationAreas.filter(area => validLocationIds.has(area.locationId));
+    const validLocationAreas = locationAreas.filter(area => {
+        const locationId = area.locationId;
+        return validLocationIds.has(locationId);
+    });
 
     if (validLocationAreas.length === 0) {
         console.warn(`Nenhuma área válida encontrada para a região ${region}`);
@@ -238,11 +247,11 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
     ]);
 
     // Filtrar encontros válidos
-    const filteredEncounters = encounter.filter(
-        loc =>
-            allLocationAreaIds.includes(loc.location_area_id) &&
-            validVersionIds.includes(loc.version_id)
-    );
+    const filteredEncounters = encounter.filter(enc => {
+        const isValidArea = allLocationAreaIds.includes(enc.location_area_id);
+        const isValidVersion = validVersionIds.includes(enc.version_id);
+        return isValidArea && isValidVersion;
+    });
 
     // Filtrar pokémons por idioma (inglês)
     const filteredPokemons = pokemonsArray.filter(loc => loc.language_id === 9);
@@ -346,22 +355,17 @@ export async function getAllLocationsPokemonCount(regionName) {
     // Criar mapeamento de área para localização
     const areaToLocationMap = new Map();
     locationAreas.forEach(area => {
-        // Só mapear áreas que pertencem a localizações desta região
-        if (validLocationIds.has(area.locationId)) {
-            areaToLocationMap.set(area.locationAreaId, area.locationId);
-        }
+        areaToLocationMap.set(area.locationAreaId, area.locationId);
     });
 
     // Filtrar encontros válidos para a região atual
     const validEncounters = encounters.filter(enc => {
         const locationId = areaToLocationMap.get(enc.location_area_id);
-        // Verificar se a localização pertence à região atual E se a versão do jogo é válida
         return validLocationIds.has(locationId) && validVersionIds.includes(enc.version_id);
     });
 
     // Contar pokémons únicos por localização
     const pokemonsByLocation = new Map();
-
     validEncounters.forEach(enc => {
         const locationId = areaToLocationMap.get(enc.location_area_id);
         if (!pokemonsByLocation.has(locationId)) {
@@ -370,13 +374,11 @@ export async function getAllLocationsPokemonCount(regionName) {
         pokemonsByLocation.get(locationId).add(enc.pokemon_id);
     });
 
-    // Converter para array de resultados
-    const result = locations.map(location => ({
-        locationId: location.location_id,
-        count: (pokemonsByLocation.get(location.location_id)?.size || 0)
+    // Converter para o formato de retorno esperado
+    return Array.from(pokemonsByLocation.entries()).map(([locationId, pokemonSet]) => ({
+        locationId,
+        count: pokemonSet.size
     }));
-
-    return result;
 }
 
 export async function getAllPokemons() {
