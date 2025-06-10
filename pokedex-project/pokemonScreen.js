@@ -1,8 +1,8 @@
+import { genderRateMap, generationMap, growthRateMap, habitatMap, pokemonTypeColors, pokemonTypeColorsRGBA } from "./consts.js";
 import { getAllPokemons } from "./dataManager.js";
-import { pokemonTypeColorsRGBA, pokemonTypeColors, genderRateMap, generationMap, growthRateMap, habitatMap } from "./consts.js";
-import { createRadarChart } from "./radarChart.js";
-import { createHeatMapDef} from "./heatMapDef.js"
 import { createHeatMapAta } from "./heatMapAta.js";
+import { createHeatMapDef } from "./heatMapDef.js";
+import { createRadarChart } from "./radarChart.js";
 
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
@@ -292,7 +292,7 @@ function createSelectedPokemonDescription(selectedPokemon) {
                             ${generationMap[selectedPokemon.generation_id]}<br>
                             ${habitatMap[selectedPokemon.habitat_id]}<br>
                             ${selectedPokemon.capture_rate}<br>
-                            ${growthRateMap[selectedPokemon.growth_rate_id].name}<br>
+                            ${growthRateMap[selectedPokemon.growth_rate_id]?.name || 'Unknown'}<br>
                             ${selectedPokemon.base_happiness}<br>
                             ${selectedPokemon.is_baby == 0 ? "No" : "Yes"}<br>
                             ${selectedPokemon.is_legendary == 0 ? "No" : "Yes"}<br>
@@ -341,8 +341,8 @@ function createEmptyPokemonCard() {
     card.addEventListener("click", () => {
         const target = document.getElementsByClassName("pokemons-search-box")[0];
         if (target) {
-            target.focus();  
-            target.click(); 
+            target.focus();
+            target.click();
         } else {
             console.warn("Elemento de busca não encontrado.");
         }
