@@ -1,27 +1,6 @@
-import { getLocationIdByName, getLocationAreaByLocation, getPokemonsByMultipleLocationAreas } from "./dataManager.js";
 import { pokemonTypeColors } from "./consts.js";
 
-// TRIGGER PARA MUDANÇA NA LOCALIZAÇÃO
-
-const locationScreen = document.getElementsByClassName("location-screen")[0];
-const regionScreen = document.getElementsByClassName("region-screen")[0];
-
-const observer = new MutationObserver(async (mutationsList) => {
-    for (const mutation of mutationsList) {
-        if (mutation.type === "childList" || mutation.type === "characterData") {
-            const locationId = await getLocationIdByName(locationScreen.textContent.trim());
-            const locationsAreaArray = await getLocationAreaByLocation(locationId);
-            const pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, regionScreen.textContent.trim());
-            loadCards(pokemonsArray);
-        }
-    }
-});
-
-observer.observe(locationScreen, {
-  childList: true,
-  characterData: true,
-  subtree: true
-});
+// Os cards agora são carregados apenas pelo event listener locationSelected em mapManager.js
 
 // FUNCIONAMENTO DO CARROSSEL DE CARTAS
 const homeButtonCards = document.getElementsByClassName("home-pokemon")[0];
@@ -71,9 +50,24 @@ const cardsContainer = document.getElementsByClassName("cards-display")[0];
  * @param {*} pokemonsArray - Recebe um array com dados dos pokémons 
  */
 export async function loadCards(pokemonsArray) {
-    pokemonArrayGlobal = pokemonsArray;
+    pokemonArrayGlobal = pokemonsArray || [];
     cardsContainer.innerHTML = "";
 
+    // Verificar se há pokémons para exibir
+    if (!pokemonsArray || pokemonsArray.length === 0) {
+        // Criar mensagem de "nenhum pokémon encontrado"
+        const emptyMessage = document.createElement("div");
+        emptyMessage.classList.add("empty-cards-message");
+        emptyMessage.textContent = "Nenhum Pokémon encontrado nesta localização.";
+        emptyMessage.style.textAlign = "center";
+        emptyMessage.style.padding = "20px";
+        emptyMessage.style.color = "#777";
+        emptyMessage.style.width = "100%";
+        cardsContainer.appendChild(emptyMessage);
+        return;
+    }
+
+    // Criar cards para cada pokémon encontrado
     for (const pokemon of pokemonsArray) {
         const card = createPokemonCard(pokemon);
         cardsContainer.appendChild(card);
@@ -87,6 +81,24 @@ export async function loadCards(pokemonsArray) {
  * @returns Retorna a div da carta em questão
  */
 export function createPokemonCard(pokemon) {
+    // Verificação de segurança
+    if (!pokemon || !pokemon.types || !pokemon.types.length) {
+        console.warn("Dados de Pokémon inválidos", pokemon);
+
+        // Criar um card genérico para evitar erros
+        const errorCard = document.createElement("div");
+        errorCard.classList.add("card");
+        errorCard.style.backgroundColor = "#ddd";
+
+        const errorMessage = document.createElement("div");
+        errorMessage.textContent = "Dados insuficientes";
+        errorMessage.style.padding = "20px";
+        errorMessage.style.textAlign = "center";
+
+        errorCard.appendChild(errorMessage);
+        return errorCard;
+    }
+
     // seleção da cor base da cata
     const typeKey = pokemon.types[0].type_name;
     const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
@@ -116,6 +128,14 @@ export function createPokemonCard(pokemon) {
 
     const img = document.createElement("img");
     img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+    img.alt = pokemon.name || "Pokémon";
+    img.onerror = function () {
+        // Usar uma imagem padrão se a imagem do pokémon não for encontrada
+        this.src = "../assets/pokeball.png";
+        this.style.width = "50%";
+        this.style.height = "auto";
+        this.style.opacity = "0.7";
+    };
     img.classList.add("card-img");
 
     imgWrapper.appendChild(img);
@@ -139,6 +159,18 @@ export function createPokemonCard(pokemon) {
             card.style.boxShadow = "0 8px 16px rgba(0,0,0,0.4)";
             card.style.transform = "translateY(-5px)";
             img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+
+            // Adicionar tratamento de erro para imagem shiny também
+            img.onerror = function () {
+                this.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+                // Se a imagem normal também falhar, usar pokeball
+                this.onerror = function () {
+                    this.src = "../assets/pokeball.png";
+                    this.style.width = "50%";
+                    this.style.height = "auto";
+                    this.style.opacity = "0.7";
+                };
+            };
         }
     });
 
@@ -148,6 +180,14 @@ export function createPokemonCard(pokemon) {
             card.style.boxShadow = "none";
             card.style.transform = "translateY(+5px)";
             img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+
+            // Restaurar tratamento de erro original para imagem normal
+            img.onerror = function () {
+                this.src = "../assets/pokeball.png";
+                this.style.width = "50%";
+                this.style.height = "auto";
+                this.style.opacity = "0.7";
+            };
         }
     });
 

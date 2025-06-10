@@ -8,10 +8,36 @@ const locationElementMap = new Map();
 mapRealContainer.addEventListener('locationSelected', async (event) => {
     const { locationId, title } = event.detail;
 
-    const locationsAreaArray = await getLocationAreaByLocation(locationId);
-    const regionName = document.getElementsByClassName("region-screen")[0].textContent.trim();
-    const pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, regionName);
-    loadCards(pokemonsArray);
+    try {
+        // Atualizar interface para mostrar o carregamento
+        const cardsContainer = document.getElementsByClassName("cards-display")[0];
+        if (cardsContainer) {
+            cardsContainer.innerHTML = "<div style='text-align: center; padding: 20px;'>Carregando Pokémons...</div>";
+        }
+
+        // Buscar áreas de localização
+        const locationsAreaArray = await getLocationAreaByLocation(locationId);
+
+        if (!locationsAreaArray || locationsAreaArray.length === 0) {
+            console.warn(`Nenhuma área de localização encontrada para o ID: ${locationId}`);
+            loadCards([]);
+            return;
+        }
+
+        // Obter o nome da região atual
+        const regionName = document.getElementsByClassName("region-screen")[0].textContent.trim();
+
+        // Buscar pokémons nestas áreas
+        const pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, regionName);
+
+        // Carregar os cards com os pokémons encontrados
+        loadCards(pokemonsArray);
+
+        console.log(`Carregados ${pokemonsArray?.length || 0} Pokémons da localização: ${title}`);
+    } catch (error) {
+        console.error("Erro ao carregar Pokémons:", error);
+        loadCards([]);
+    }
 });
 
 export function buildMap(selectedRegion) {
@@ -180,10 +206,10 @@ export function buildMap(selectedRegion) {
                         el.setAttribute("fill", "#00CAFF55");
                         el.setAttribute("stroke", "#00CAFF");
                         el.setAttribute("stroke-width", "3");
-                        
+
                         // Adicionar animação de piscar na borda
                         el.style.animation = "blink-border 1.5s infinite";
-                        
+
                         // Notify selection
                         mapRealContainer.dispatchEvent(new CustomEvent('locationSelected', { detail: { locationId: areaId, title } }));
                     });
