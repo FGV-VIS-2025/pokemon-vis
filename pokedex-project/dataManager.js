@@ -71,11 +71,38 @@ export async function getLocationsByRegionName(regionName) {
 }
 
 export async function getLocationAreaByLocation(locationId) {
-    if (locationAreasCache.has(locationId)) return locationAreasCache.get(locationId);
-    const data = await loadCsv('../data/location_areas.csv', d => ({ locationAreaId: +d.id, locationId: +d.location_id, gameIndex: +d.game_index, identifier: d.identifier }));
-    const result = data.filter(l => l.locationId === +locationId);
-    locationAreasCache.set(locationId, result);
-    return result;
+    if (!locationId) {
+        console.warn("ID de localização inválido fornecido");
+        return [];
+    }
+
+    // Converter para número se for string
+    const numericLocationId = +locationId;
+
+    if (isNaN(numericLocationId)) {
+        console.warn(`ID de localização inválido: ${locationId}`);
+        return [];
+    }
+
+    if (locationAreasCache.has(numericLocationId)) {
+        return locationAreasCache.get(numericLocationId);
+    }
+
+    try {
+        const data = await loadCsv('../data/location_areas.csv', d => ({
+            locationAreaId: +d.id,
+            locationId: +d.location_id,
+            gameIndex: +d.game_index,
+            identifier: d.identifier
+        }));
+
+        const result = data.filter(l => l.locationId === numericLocationId);
+        locationAreasCache.set(numericLocationId, result);
+        return result;
+    } catch (error) {
+        console.error(`Erro ao carregar áreas de localização: ${error.message}`);
+        return [];
+    }
 }
 
 export async function getRegionIdByName(regionName) {
@@ -127,177 +154,229 @@ export async function getLocationIdByName(locationName) {
 }
 
 export async function getPokemonsByMultipleLocationAreas(locationAreas, region) {
-    const allLocationAreaIds = locationAreas.map(loc => loc.locationAreaId);
-    const key = allLocationAreaIds.sort().join(',');
+    // Verificar se o array de áreas de localização é válido
+    if (!locationAreas || locationAreas.length === 0) {
+        console.warn("Nenhuma área de localização fornecida para busca de pokémons.");
+        return [];
+    }
+
+    // Obter localizações válidas da região
+    const locationsInRegion = await getLocationsByRegionName(region);
+    const validLocationIds = new Set(locationsInRegion.map(loc => loc.location_id));
+
+    // Verificar se as áreas pertencem à região correta
+    const validLocationAreas = locationAreas.filter(area => validLocationIds.has(area.locationId));
+
+    if (validLocationAreas.length === 0) {
+        console.warn(`Nenhuma área válida encontrada para a região ${region}`);
+        return [];
+    }
+
+    const allLocationAreaIds = validLocationAreas.map(loc => loc.locationAreaId);
+    const key = `${region}-${allLocationAreaIds.sort().join(',')}`;
 
     if (pokemonsByAreaCache.has(key)) return pokemonsByAreaCache.get(key);
 
     const validVersionIds = gameRegionVersions[region];
 
+    // Verificar se a região é válida
+    if (!validVersionIds) {
+        console.warn(`Região inválida: ${region}`);
+        return [];
+    }
+
     // Carregamento único dos CSVs
     const [encounter, pokemonsArray, typesArray, pokemonsTypeArray, pokemonsSpeciesArray, pokemonsArray2, finalStats] = await Promise.all([
-        loadCsv('../data/encounters.csv', d => ({ id: +d.id, version_id: +d.version_id, location_area_id: +d.location_area_id, pokemon_id: +d.pokemon_id, min_level: +d.min_level, max_level: +d.max_level })),
-        loadCsv('../data/pokemon_species_names.csv', d => ({ pokemon_id: +d.pokemon_species_id, language_id: +d.local_language_id, name: d.name, genus: d.genus })),
-        loadCsv('../data/types.csv', d => ({ type_id: +d.id, name: d.identifier, generation_id: +d.generation_id, damage_class_id: +d.damage_class_id })),
-        loadCsv('../data/pokemon_types.csv', d => ({ pokemon_id: +d.pokemon_id, type_id: +d.type_id, slot: +d.slot })),
+        loadCsv('../data/encounters.csv', d => ({
+            id: +d.id,
+            version_id: +d.version_id,
+            location_area_id: +d.location_area_id,
+            pokemon_id: +d.pokemon_id,
+            min_level: +d.min_level,
+            max_level: +d.max_level
+        })),
+        loadCsv('../data/pokemon_species_names.csv', d => ({
+            pokemon_id: +d.pokemon_species_id,
+            language_id: +d.local_language_id,
+            name: d.name,
+            genus: d.genus
+        })),
+        loadCsv('../data/types.csv', d => ({
+            type_id: +d.id,
+            name: d.identifier
+        })),
+        loadCsv('../data/pokemon_types.csv', d => ({
+            pokemon_id: +d.pokemon_id,
+            type_id: +d.type_id,
+            slot: +d.slot
+        })),
         loadCsv('../data/pokemon_species.csv', d => ({
             pokemon_id: +d.id,
             identifier: d.identifier,
-            generation_id: +d.generation_id,
-            evolves_from_species_id: +d.evolves_from_species_id,
             evolution_chain_id: +d.evolution_chain_id,
-            color_id: +d.color_id,
-            shape_id: +d.shape_id,
-            habitat_id: +d.habitat_id,
-            gender_rate: +d.gender_rate,
             capture_rate: +d.capture_rate,
             base_happiness: +d.base_happiness,
             is_baby: +d.is_baby,
-            hatch_counter: +d.hatch_counter,
-            has_gender_differences: +d.has_gender_differences,
-            growth_rate_id: +d.growth_rate_id,
-            forms_switchable: +d.forms_switchable,
             is_legendary: +d.is_legendary,
-            is_mythical: +d.is_mythical,
-            order: +d.order,
-            conquest_order: +d.conquest_order
+            is_mythical: +d.is_mythical
         })),
         loadCsv('../data/pokemon.csv', d => ({
             pokemon_id: +d.id,
-            identifier: d.identifier,
             height: +d.height,
             weight: +d.weight,
-            base_experience: +d.base_experience,
-            order: +d.order,
-            is_default: +d.is_default,
+            base_experience: +d.base_experience
         })),
         loadCsv('../data/pokemon_stats_clean.csv', d => ({
             Pokemon_Id: +d.Pokemon_Id,
             Hp_Stat: +d.Hp_Stat,
-            Hp_Effort: +d.Hp_Effort,
             Attack_Stat: +d.Attack_Stat,
-            Attack_Effort: +d.Attack_Effort,
             Defense_Stat: +d.Defense_Stat,
-            Defense_Effort: +d.Defense_Effort,
             Special_Attack_Stat: +d.Special_Attack_Stat,
-            Special_Attack_Effort: +d.Special_Attack_Effort,
             Special_Defense_Stat: +d.Special_Defense_Stat,
-            Special_Defense_Effort: +d.Special_Defense_Effort,
-            Speed_Stat: +d.Speed_Stat,
-            Speed_Effort: +d.Speed_Effort
+            Speed_Stat: +d.Speed_Stat
         }))
     ]);
 
+    // Filtrar encontros válidos
     const filteredEncounters = encounter.filter(
         loc =>
             allLocationAreaIds.includes(loc.location_area_id) &&
             validVersionIds.includes(loc.version_id)
     );
 
+    // Filtrar pokémons por idioma (inglês)
     const filteredPokemons = pokemonsArray.filter(loc => loc.language_id === 9);
 
+    // Criar mapa de detalhes dos pokémons
     const pokemonDetailsMap = new Map();
     filteredPokemons.forEach(pokemon => {
         pokemonDetailsMap.set(pokemon.pokemon_id, {
             name: pokemon.name,
-            genus: pokemon.genus,
-            language_id: pokemon.language_id
+            genus: pokemon.genus
         });
     });
 
-    const mergedData = filteredEncounters.map(enc => {
-        const pokemonDetails = pokemonDetailsMap.get(enc.pokemon_id);
-        return {
-            ...enc,
-            ...(pokemonDetails || {})
-        };
-    });
-
+    // Criar mapa de tipos
     const typeDetailsMap = new Map();
     typesArray.forEach(type => {
         typeDetailsMap.set(type.type_id, {
-            type_name: type.name,
-            generation_id: +type.generation_id,
-            damage_class_id: +type.damage_class_id
+            type_name: type.name
         });
     });
 
-    const mergedPokemonTypes = pokemonsTypeArray.map(pokemonType => {
-        const typeDetails = typeDetailsMap.get(pokemonType.type_id);
-        return {
-            ...pokemonType,
-            ...(typeDetails || {})
-        };
-    });
-
-    const pokemonTypesGrouped = new Map();
-    mergedPokemonTypes.forEach(pt => {
-        if (!pokemonTypesGrouped.has(pt.pokemon_id)) {
-            pokemonTypesGrouped.set(pt.pokemon_id, []);
+    // Organizar tipos dos pokémons
+    const pokemonTypesMap = new Map();
+    pokemonsTypeArray.forEach(pt => {
+        if (!pokemonTypesMap.has(pt.pokemon_id)) {
+            pokemonTypesMap.set(pt.pokemon_id, []);
         }
-        const existingSlot = pokemonTypesGrouped.get(pt.pokemon_id).find(t => t.slot === pt.slot);
-        if (!existingSlot) {
-            pokemonTypesGrouped.get(pt.pokemon_id).push({
-                type_id: pt.type_id,
+        const typeDetails = typeDetailsMap.get(pt.type_id);
+        if (typeDetails) {
+            pokemonTypesMap.get(pt.pokemon_id).push({
                 slot: pt.slot,
-                type_name: pt.type_name,
-                generation_id: pt.generation_id,
-                damage_class_id: pt.damage_class_id
+                type_name: typeDetails.type_name
             });
         }
     });
 
-    // Agrupamento de Pokémon únicos
+    // Agrupar pokémons únicos com seus detalhes
     const uniquePokemonsMap = new Map();
-    mergedData.forEach(data => {
-        const pokemonId = data.pokemon_id;
-
-        if (!uniquePokemonsMap.has(pokemonId)) {
-            const typesForPokemon = pokemonTypesGrouped.get(pokemonId) || [];
-            uniquePokemonsMap.set(pokemonId, {
-                pokemon_id: pokemonId,
-                name: data.name,
-                genus: data.genus,
-                language_id: data.language_id,
-                types: typesForPokemon,
-                encounters: [],
-                overall_min_level: Infinity,
-                overall_max_level: -Infinity
+    filteredEncounters.forEach(encounter => {
+        if (!uniquePokemonsMap.has(encounter.pokemon_id)) {
+            const pokemonDetails = pokemonDetailsMap.get(encounter.pokemon_id);
+            const types = pokemonTypesMap.get(encounter.pokemon_id) || [];
+            uniquePokemonsMap.set(encounter.pokemon_id, {
+                pokemon_id: encounter.pokemon_id,
+                name: pokemonDetails?.name || 'Unknown',
+                genus: pokemonDetails?.genus || '',
+                types: types.sort((a, b) => a.slot - b.slot),
+                min_level: Math.min(encounter.min_level, uniquePokemonsMap.get(encounter.pokemon_id)?.min_level || Infinity),
+                max_level: Math.max(encounter.max_level, uniquePokemonsMap.get(encounter.pokemon_id)?.max_level || -Infinity)
             });
         }
-
-        const current = uniquePokemonsMap.get(pokemonId);
-        current.encounters.push({
-            id: data.id,
-            version_id: data.version_id,
-            location_area_id: data.location_area_id,
-            min_level: data.min_level,
-            max_level: data.max_level
-        });
-
-        current.overall_min_level = Math.min(current.overall_min_level, data.min_level);
-        current.overall_max_level = Math.max(current.overall_max_level, data.max_level);
     });
 
-    // Merge com outras informações
+    // Criar mapas auxiliares para outras informações
     const speciesMap = new Map(pokemonsSpeciesArray.map(species => [species.pokemon_id, species]));
     const pokemonsMap2 = new Map(pokemonsArray2.map(p => [p.pokemon_id, p]));
-    const pokemonsMap3 = new Map(finalStats.map(p => [p.Pokemon_Id, p]));
+    const statsMap = new Map(finalStats.map(p => [p.Pokemon_Id, p]));
 
-    const final = Array.from(uniquePokemonsMap.values()).map(pokemon => ({
-        ...pokemon,
-        ...(speciesMap.get(pokemon.pokemon_id) || {}),
-        ...(pokemonsMap2.get(pokemon.pokemon_id) || {}),
-        ...(pokemonsMap3.get(pokemon.pokemon_id) || {})
-    }));
-
-    // Ordenação final
-    final
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, b) => a.types[0].type_name.localeCompare(b.types[0].type_name));
+    // Combinar todas as informações
+    const final = Array.from(uniquePokemonsMap.values())
+        .map(pokemon => ({
+            ...pokemon,
+            ...(speciesMap.get(pokemon.pokemon_id) || {}),
+            ...(pokemonsMap2.get(pokemon.pokemon_id) || {}),
+            ...(statsMap.get(pokemon.pokemon_id) || {})
+        }))
+        .sort((a, b) => {
+            // Ordenar primeiro por tipo principal, depois por nome
+            const typeA = a.types[0]?.type_name || '';
+            const typeB = b.types[0]?.type_name || '';
+            if (typeA !== typeB) return typeA.localeCompare(typeB);
+            return a.name.localeCompare(b.name);
+        });
 
     pokemonsByAreaCache.set(key, final);
     return final;
+}
+
+export async function getAllLocationsPokemonCount(regionName) {
+    // Obter todas as localizações da região
+    const locations = await getLocationsByRegionName(regionName);
+
+    // Criar um Set com os IDs das localizações válidas para esta região
+    const validLocationIds = new Set(locations.map(loc => loc.location_id));
+
+    // Carregar dados de encontros e versões
+    const validVersionIds = gameRegionVersions[regionName];
+    const [encounters, locationAreas] = await Promise.all([
+        loadCsv('../data/encounters.csv', d => ({
+            id: +d.id,
+            version_id: +d.version_id,
+            location_area_id: +d.location_area_id,
+            pokemon_id: +d.pokemon_id
+        })),
+        loadCsv('../data/location_areas.csv', d => ({
+            locationAreaId: +d.id,
+            locationId: +d.location_id
+        }))
+    ]);
+
+    // Criar mapeamento de área para localização
+    const areaToLocationMap = new Map();
+    locationAreas.forEach(area => {
+        // Só mapear áreas que pertencem a localizações desta região
+        if (validLocationIds.has(area.locationId)) {
+            areaToLocationMap.set(area.locationAreaId, area.locationId);
+        }
+    });
+
+    // Filtrar encontros válidos para a região atual
+    const validEncounters = encounters.filter(enc => {
+        const locationId = areaToLocationMap.get(enc.location_area_id);
+        // Verificar se a localização pertence à região atual E se a versão do jogo é válida
+        return validLocationIds.has(locationId) && validVersionIds.includes(enc.version_id);
+    });
+
+    // Contar pokémons únicos por localização
+    const pokemonsByLocation = new Map();
+
+    validEncounters.forEach(enc => {
+        const locationId = areaToLocationMap.get(enc.location_area_id);
+        if (!pokemonsByLocation.has(locationId)) {
+            pokemonsByLocation.set(locationId, new Set());
+        }
+        pokemonsByLocation.get(locationId).add(enc.pokemon_id);
+    });
+
+    // Converter para array de resultados
+    const result = locations.map(location => ({
+        locationId: location.location_id,
+        count: (pokemonsByLocation.get(location.location_id)?.size || 0)
+    }));
+
+    return result;
 }
 
 export async function getAllPokemons() {

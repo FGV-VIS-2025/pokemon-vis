@@ -1123,3 +1123,19 @@ body {
   stroke-width: 0.5px;
   transition: fill-opacity 0.3s;
 }
+
+/* Animação de piscar para a borda da localização selecionada */
+@keyframes blink-border {
+    0% {
+        stroke-opacity: 1;
+        stroke: #00CAFF;
+    }
+    50% {
+        stroke-opacity: 0.3;
+        stroke: #1E90FF;
+    }
+    100% {
+        stroke-opacity: 1;
+        stroke: #00CAFF;
+    }
+}

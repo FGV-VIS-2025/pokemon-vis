@@ -38,7 +38,11 @@ rightButtonRegion.addEventListener("click", async function () {
 
     const currentLocationId = listOfLocations[i].location_id;
     const el = locationElementMap.get(currentLocationId);
-    if (el) el.dispatchEvent(new Event("click"));
+    if (el) {
+        el.dispatchEvent(new Event("click"));
+        // Garantir que a animação seja aplicada
+        el.style.animation = "blink-border 1.5s infinite";
+    }
 });
 
 leftButtonRegion.addEventListener("click", async function () {
@@ -48,7 +52,11 @@ leftButtonRegion.addEventListener("click", async function () {
 
     const currentLocationId = listOfLocations[i].location_id;
     const el = locationElementMap.get(currentLocationId);
-    if (el) el.dispatchEvent(new Event("click"));
+    if (el) {
+        el.dispatchEvent(new Event("click"));
+        // Garantir que a animação seja aplicada
+        el.style.animation = "blink-border 1.5s infinite";
+    }
 });
 
 rightButton.addEventListener("click", function () {
@@ -61,7 +69,11 @@ rightButton.addEventListener("click", function () {
 
     const currentLocationId = listOfLocations[i].location_id;
     const el = locationElementMap.get(currentLocationId);
-    if (el) el.dispatchEvent(new Event("click"));
+    if (el) {
+        el.dispatchEvent(new Event("click"));
+        // Garantir que a animação seja aplicada
+        el.style.animation = "blink-border 1.5s infinite";
+    }
 });
 
 leftButton.addEventListener("click", function () {
@@ -74,5 +86,9 @@ leftButton.addEventListener("click", function () {
 
     const currentLocationId = listOfLocations[i].location_id;
     const el = locationElementMap.get(currentLocationId);
-    if (el) el.dispatchEvent(new Event("click"));
+    if (el) {
+        el.dispatchEvent(new Event("click"));
+        // Garantir que a animação seja aplicada
+        el.style.animation = "blink-border 1.5s infinite";
+    }
 });
