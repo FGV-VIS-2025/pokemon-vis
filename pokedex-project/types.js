@@ -1,7 +1,7 @@
 import { pokemonTypeColorsRGBA } from './consts.js';
 import { getLocationAreaByLocation, getPokemonsByGeneration, regionToGeneration } from './dataManager.js';
 
-export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960) {
+export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960, pokemonsFromGeneration = [], onFilter = null) {
   // Limpa SVG anterior, se existir
   d3.select(containerSelector).selectAll("svg").remove();
   d3.select("body").selectAll(".tooltip").remove();
@@ -81,19 +81,44 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
 
   group.append("path")
     .attr("fill", d => color(filteredTypeNames[d.index]))
-    .attr("d", arc);
-
-  group.append("text")
-    .each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
-    .attr("dy", ".35em")
-    .attr("transform", d => `
-      rotate(${(d.angle * 180 / Math.PI - 90)})
-      translate(${arcOuterRadius + 10})
-      ${d.angle > Math.PI ? "rotate(180)" : ""}
-    `)
-    .attr("text-anchor", d => d.angle > Math.PI ? "end" : "start")
-    .attr("fill", "white")
-    .text(d => filteredTypeNames[d.index]);
+    .attr("d", arc)
+    .style("cursor", "pointer")
+    .attr("data-type", d => filteredTypeNames[d.index])
+    .on("mouseover", function (event, d) {
+      d3.select(this).classed("fade", false).classed("active", true);
+      d3.selectAll(".group path").filter(function () { return this !== event.currentTarget; }).classed("fade", true);
+      tooltip
+        .style("opacity", 1)
+        .html(`<strong>${filteredTypeNames[d.index]}</strong><br>${typeCounts[filteredTypeNames[d.index]]} Pokémon`)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function () {
+      d3.selectAll(".group path").classed("fade", false).classed("active", false);
+      tooltip.style("opacity", 0);
+      // Se houver filtro, reativa destaque do filtro
+      if (currentFilter && currentFilter.length === 2) {
+        d3.selectAll(".group path").filter(function () {
+          return currentFilter.includes(d3.select(this).attr("data-type"));
+        }).classed("active", true);
+      } else if (currentFilter && currentFilter.length === 1) {
+        d3.selectAll(".group path").filter(function () {
+          return d3.select(this).attr("data-type") === currentFilter[0];
+        }).classed("active", true);
+      }
+    })
+    .on("click", (event, d) => {
+      const typeName = filteredTypeNames[d.index];
+      filterSpritesByTypes(typeName);
+      d3.selectAll(".group path").classed("active", false);
+      if (currentFilter && currentFilter.length === 2) {
+        d3.selectAll(".group path").filter(function () {
+          return currentFilter.includes(d3.select(this).attr("data-type"));
+        }).classed("active", true);
+      } else {
+        d3.select(event.currentTarget).classed("active", true);
+      }
+    });
 
   const defs = svg.append("defs");
   chord.forEach((d, i) => {
@@ -129,14 +154,13 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .attr("d", ribbon)
     .attr("fill", (d, i) => `url(#grad${i})`)
     .attr("stroke", "none")
+    .style("cursor", "pointer")
     .on("mouseover", function (event, d) {
       d3.selectAll(".ribbon").classed("fade", true);
       d3.select(this).classed("fade", false);
-
       d3.selectAll(".group path").classed("fade", true);
       group.filter(g => g.index === d.source.index || g.index === d.target.index)
         .select("path").classed("fade", false);
-
       tooltip
         .style("opacity", 1)
         .html(`
@@ -149,10 +173,104 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     })
     .on("mouseout", () => {
       d3.selectAll(".ribbon").classed("fade", false);
-      d3.selectAll(".group path").classed("fade", false);
+      d3.selectAll(".group path").classed("fade", false).classed("active", false);
       tooltip.style("opacity", 0);
+      if (currentFilter && currentFilter.length === 2) {
+        d3.selectAll(".group path").filter(function () {
+          return currentFilter.includes(d3.select(this).attr("data-type"));
+        }).classed("active", true);
+      } else if (currentFilter && currentFilter.length === 1) {
+        d3.selectAll(".group path").filter(function () {
+          return d3.select(this).attr("data-type") === currentFilter[0];
+        }).classed("active", true);
+      }
+    })
+    .on("click", (event, d) => {
+      const typeA = filteredTypeNames[d.source.index];
+      const typeB = filteredTypeNames[d.target.index];
+      filterSpritesByTypes(typeA, typeB);
+      d3.selectAll(".group path").classed("active", false);
+      d3.selectAll(".group path").filter(function () {
+        return currentFilter && currentFilter.length === 2 && currentFilter.includes(d3.select(this).attr("data-type"));
+      }).classed("active", true);
     });
 
+  // Adiciona variáveis para controle de filtro
+  let currentFilter = null;
+
+  // Função para filtrar e atualizar os sprites
+  function filterSpritesByTypes(typeA, typeB = null) {
+    if (!Array.isArray(pokemonsFromGeneration) || pokemonsFromGeneration.length === 0) return;
+    let filtered = [];
+    if (typeB) {
+      filtered = pokemonsFromGeneration.filter(p => {
+        if (!p.types) return false;
+        const tnames = p.types.map(t => t.type_name);
+        return tnames.includes(typeA) && tnames.includes(typeB);
+      });
+    } else {
+      filtered = pokemonsFromGeneration.filter(p => {
+        if (!p.types) return false;
+        return p.types.some(t => t.type_name === typeA);
+      });
+    }
+    if (onFilter) onFilter(filtered, typeA, typeB);
+    currentFilter = typeB ? [typeA, typeB] : [typeA];
+    showClearFilterButton();
+  }
+
+  // Função para restaurar todos os sprites
+  function clearSpritesFilter() {
+    if (onFilter) onFilter(pokemonsFromGeneration, null, null);
+    currentFilter = null;
+    hideClearFilterButton();
+    d3.selectAll(".group path").classed("active", false);
+  }
+
+  // Botão para limpar filtro
+  function showClearFilterButton() {
+    let btn = document.getElementById('clear-type-filter-btn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'clear-type-filter-btn';
+      btn.textContent = 'Limpar filtro de tipo';
+      btn.style.margin = '10px auto 0 auto';
+      btn.style.display = 'block';
+      btn.style.background = '#222';
+      btn.style.color = 'white';
+      btn.style.border = '1px solid #fff';
+      btn.style.borderRadius = '8px';
+      btn.style.padding = '8px 16px';
+      btn.style.cursor = 'pointer';
+      btn.onclick = clearSpritesFilter;
+      const grid = document.getElementById('pokemon-sprites-grid');
+      if (grid && grid.parentElement) grid.parentElement.insertBefore(btn, grid);
+    } else {
+      btn.style.display = 'block';
+    }
+  }
+  function hideClearFilterButton() {
+    const btn = document.getElementById('clear-type-filter-btn');
+    if (btn) btn.style.display = 'none';
+  }
+
+  // CSS para destaque
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .group path.active {
+      stroke: #fff;
+      stroke-width: 4px;
+      filter: drop-shadow(0 0 8px #fff8);
+      opacity: 1 !important;
+    }
+    .group path.fade {
+      opacity: 0.3;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Expor função global para integração externa (opcional)
+  window.clearSpritesFilter = clearSpritesFilter;
 }
 
 let typesData, pokemonTypesData, encountersData, locationsData;
@@ -184,7 +302,6 @@ Promise.all([
 
 export async function updateTypeChordByRegion(regionId) {
   if (!typesData || !pokemonTypesData) return;
-
   try {
     // Converter ID de região para nome
     const regionNames = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
@@ -221,14 +338,14 @@ export async function updateTypeChordByRegion(regionId) {
 
     // Obter IDs únicos dos Pokémon da geração
     const regionPokemonIds = new Set(pokemonsFromGeneration.map(p => p.pokemon_id));
-
-    // Filtrar os tipos dos Pokémon da geração
     const filteredPokemonTypes = pokemonTypesData.filter(pt => regionPokemonIds.has(pt.pokemon_id));
-
-    console.log(`Encontrados ${filteredPokemonTypes.length} registros de tipos para os Pokémon da região ${regionName}`);
-
-    // Renderizar o diagrama de acordes com os dados filtrados
-    renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes);
+    // Renderizar o diagrama de acordes com os dados filtrados e passar pokemonsFromGeneration e callback de filtro
+    renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes, 960, 960, pokemonsFromGeneration, (filtered, typeA, typeB) => {
+      // Atualiza os sprites ao lado
+      if (typeof window.updateRegionSpritesGrid === 'function') {
+        window.updateRegionSpritesGrid(filtered, typeA, typeB);
+      }
+    });
 
     // Adicionar título com informações da geração
     const svgElement = d3.select('#region-chart-container svg');

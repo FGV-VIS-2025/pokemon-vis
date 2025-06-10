@@ -1,8 +1,70 @@
 import { renderBarChartByRegion } from "./barchart.js";
-import { gameRegionVersions, getPokemonsByGeneration, regionToGeneration } from "./dataManager.js";
+import { gameRegionVersions, getPokemonsByGeneration } from "./dataManager.js";
 import { updateTypeChordByRegion } from "./types.js";
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
+
+function createChordContainer() {
+    const leftChordContainer = document.createElement('div');
+    leftChordContainer.id = 'region-chart-container';
+    leftChordContainer.style.width = '48%';
+    leftChordContainer.style.aspectRatio = '1 / 1';
+    leftChordContainer.style.display = 'flex';
+    leftChordContainer.style.justifyContent = 'center';
+    leftChordContainer.style.alignItems = 'center';
+    leftChordContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+    leftChordContainer.style.borderRadius = '10px';
+    return leftChordContainer;
+}
+
+function createSpritesContainer() {
+    const rightContainer = document.createElement('div');
+    rightContainer.id = 'right-region-container';
+    rightContainer.style.width = '48%';
+    rightContainer.style.aspectRatio = '1 / 1';
+    rightContainer.style.display = 'flex';
+    rightContainer.style.flexDirection = 'column';
+    rightContainer.style.justifyContent = 'flex-start';
+    rightContainer.style.alignItems = 'center';
+    rightContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+    rightContainer.style.borderRadius = '10px';
+    rightContainer.style.padding = '20px';
+    rightContainer.style.overflow = 'auto';
+
+    // Título do container de sprites
+    const title = document.createElement('h2');
+    title.textContent = "Pokémons da Região";
+    title.style.color = 'white';
+    title.style.marginBottom = '15px';
+    title.style.fontFamily = '"Pixelify Sans", sans-serif';
+    rightContainer.appendChild(title);
+
+    // Grid para os sprites
+    const grid = document.createElement('div');
+    grid.id = 'pokemon-sprites-grid';
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(96px, 1fr))';
+    grid.style.gap = '10px';
+    grid.style.width = '100%';
+    grid.style.justifyItems = 'center';
+    rightContainer.appendChild(grid);
+
+    return rightContainer;
+}
+
+function createBarChartContainer() {
+    const barChartContainer = document.createElement('div');
+    barChartContainer.id = 'bar-chart-container';
+    barChartContainer.style.width = '98%';
+    barChartContainer.style.height = '600px';
+    barChartContainer.style.display = 'flex';
+    barChartContainer.style.justifyContent = 'center';
+    barChartContainer.style.alignItems = 'center';
+    barChartContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+    barChartContainer.style.borderRadius = '10px';
+    barChartContainer.style.marginBottom = '50px';
+    return barChartContainer;
+}
 
 export function createRegionScreen(id_region = 3) {
     contentScreen.scrollTo(0, 0);
@@ -22,60 +84,10 @@ export function createRegionScreen(id_region = 3) {
     topContainer.style.gap = '20px';
     topContainer.style.marginBottom = '50px';
 
-    // Container da esquerda para o gráfico chord
-    const leftChordContainer = document.createElement('div');
-    leftChordContainer.id = 'region-chart-container';
-    leftChordContainer.style.width = '48%';
-    leftChordContainer.style.aspectRatio = '1 / 1';
-    leftChordContainer.style.display = 'flex';
-    leftChordContainer.style.justifyContent = 'center';
-    leftChordContainer.style.alignItems = 'center';
-    leftChordContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-    leftChordContainer.style.borderRadius = '10px';
-
-    // Container da direita para os sprites dos Pokémons
-    const rightContainer = document.createElement('div');
-    rightContainer.id = 'right-region-container';
-    rightContainer.style.width = '48%';
-    rightContainer.style.aspectRatio = '1 / 1';
-    rightContainer.style.display = 'flex';
-    rightContainer.style.flexDirection = 'column';
-    rightContainer.style.justifyContent = 'flex-start';
-    rightContainer.style.alignItems = 'center';
-    rightContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-    rightContainer.style.borderRadius = '10px';
-    rightContainer.style.padding = '20px';
-    rightContainer.style.overflow = 'auto';
-
-    // Título do container de sprites
-    const spritesTitle = document.createElement('h2');
-    spritesTitle.textContent = "Pokémons da Região";
-    spritesTitle.style.color = 'white';
-    spritesTitle.style.marginBottom = '15px';
-    spritesTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
-    rightContainer.appendChild(spritesTitle);
-
-    // Grid para os sprites
-    const spritesGrid = document.createElement('div');
-    spritesGrid.id = 'pokemon-sprites-grid';
-    spritesGrid.style.display = 'grid';
-    spritesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(96px, 1fr))';
-    spritesGrid.style.gap = '10px';
-    spritesGrid.style.width = '100%';
-    spritesGrid.style.justifyItems = 'center';
-    rightContainer.appendChild(spritesGrid);
-
-    // Container inferior para o gráfico de barras
-    const barChartContainer = document.createElement('div');
-    barChartContainer.id = 'bar-chart-container';
-    barChartContainer.style.width = '98%';
-    barChartContainer.style.height = '600px';
-    barChartContainer.style.display = 'flex';
-    barChartContainer.style.justifyContent = 'center';
-    barChartContainer.style.alignItems = 'center';
-    barChartContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-    barChartContainer.style.borderRadius = '10px';
-    barChartContainer.style.marginBottom = '50px';
+    // Modularizado: containers
+    const leftChordContainer = createChordContainer();
+    const rightContainer = createSpritesContainer();
+    const barChartContainer = createBarChartContainer();
 
     // Adiciona os containers superiores ao topContainer
     topContainer.appendChild(leftChordContainer);
@@ -94,23 +106,15 @@ export function createRegionScreen(id_region = 3) {
 }
 
 // Função para carregar os sprites dos Pokémons de uma região
-async function loadRegionPokemonSprites(regionId) {
+async function loadRegionPokemonSprites(regionId, pokemonsList = null) {
     try {
-        // Converter ID de região para nome (necessário para usar funções do dataManager)
         const regionNames = Object.keys(gameRegionVersions);
-        const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
-
-        // Obter todos os Pokémon da geração correspondente à região
-        const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
-
-        // Obter o elemento grid onde serão inseridos os sprites
+        const regionName = regionNames[regionId - 1] || "Kanto";
+        // Se receber uma lista filtrada, usa ela, senão busca todos da geração
+        const pokemonsFromGeneration = pokemonsList || await getPokemonsByGeneration(regionName);
         const spritesGrid = document.getElementById('pokemon-sprites-grid');
         if (!spritesGrid) return;
-
-        // Limpar o grid antes de adicionar novos sprites
         spritesGrid.innerHTML = '';
-
-        // Verificar se há Pokémon para exibir
         if (pokemonsFromGeneration.length === 0) {
             const noDataMessage = document.createElement('p');
             noDataMessage.textContent = 'Nenhum Pokémon encontrado nesta geração.';
@@ -121,10 +125,7 @@ async function loadRegionPokemonSprites(regionId) {
             spritesGrid.appendChild(noDataMessage);
             return;
         }
-
-        // Adicionar os sprites dos Pokémons
         pokemonsFromGeneration.forEach(pokemon => {
-            // Criar um container para o sprite e número
             const spriteContainer = document.createElement('div');
             spriteContainer.className = 'pokemon-sprite-container';
             spriteContainer.style.display = 'flex';
@@ -132,22 +133,15 @@ async function loadRegionPokemonSprites(regionId) {
             spriteContainer.style.alignItems = 'center';
             spriteContainer.style.justifyContent = 'center';
             spriteContainer.style.cursor = 'pointer';
-
-            // Criar o elemento de imagem com lazy loading
             const img = document.createElement('img');
             img.width = 96;
             img.height = 96;
             img.alt = `${pokemon.name} #${pokemon.pokemon_id}`;
             img.style.imageRendering = 'pixelated';
-
-            // Usar dataset para lazy loading
             img.dataset.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
-            // Inicialmente mostrar placeholder
             img.src = '../assets/ball.png';
             img.style.opacity = '0.7';
             img.classList.add('pokemon-sprite-lazy');
-
-            // Adicionar número e nome do Pokémon abaixo da imagem
             const numberLabel = document.createElement('span');
             numberLabel.textContent = `#${pokemon.pokemon_id} ${pokemon.name}`;
             numberLabel.style.color = 'white';
@@ -155,27 +149,18 @@ async function loadRegionPokemonSprites(regionId) {
             numberLabel.style.marginTop = '5px';
             numberLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
             numberLabel.style.textAlign = 'center';
-
-            // Adicionar tooltip com nome do Pokémon
             img.title = `${pokemon.name} #${pokemon.pokemon_id}`;
-
-            // Tratamento de erro para imagens não encontradas
             img.onerror = function () {
-                this.src = '../assets/ball.png'; // Imagem de fallback
+                this.src = '../assets/ball.png';
                 this.style.opacity = '0.5';
             };
-
-            // Adicionar elementos ao container
             spriteContainer.appendChild(img);
             spriteContainer.appendChild(numberLabel);
-
-            // Adicionar o container ao grid
             spritesGrid.appendChild(spriteContainer);
         });
-
         // Adicionar contador de Pokémons
         const countMessage = document.createElement('div');
-        countMessage.textContent = `Total: ${pokemonsFromGeneration.length} Pokémons da Geração ${regionToGeneration[regionName]}`;
+        countMessage.textContent = `Total: ${pokemonsFromGeneration.length} Pokémons exibidos`;
         countMessage.style.color = 'white';
         countMessage.style.fontFamily = '"Pixelify Sans", sans-serif';
         countMessage.style.fontSize = '16px';
@@ -186,8 +171,6 @@ async function loadRegionPokemonSprites(regionId) {
         countMessage.style.fontWeight = 'bold';
         countMessage.style.borderTop = '1px solid rgba(255, 255, 255, 0.2)';
         spritesGrid.appendChild(countMessage);
-
-        // Inicializa o lazy loading após adicionar todos os sprites
         initLazyLoading();
     } catch (error) {
         console.error('Erro ao carregar sprites dos Pokémons:', error);
@@ -197,6 +180,23 @@ async function loadRegionPokemonSprites(regionId) {
         }
     }
 }
+
+// Expor função global para integração com o diagrama de acordes
+window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB) => {
+    // Descobre a região atual pelo título do container
+    const regionTitle = document.querySelector('#right-region-container h2');
+    let regionId = 3; // fallback Hoenn
+    if (regionTitle) {
+        const regionNames = Object.keys(gameRegionVersions);
+        for (let i = 0; i < regionNames.length; i++) {
+            if (regionTitle.textContent.includes(regionNames[i])) {
+                regionId = i + 1;
+                break;
+            }
+        }
+    }
+    loadRegionPokemonSprites(regionId, filteredPokemons);
+};
 
 // Função para inicializar o lazy loading de imagens
 function initLazyLoading() {
