@@ -89,7 +89,7 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
       d3.selectAll(".group path").filter(function () { return this !== event.currentTarget; }).classed("fade", true);
       tooltip
         .style("opacity", 1)
-        .html(`<strong>${filteredTypeNames[d.index]}</strong><br>${typeCounts[filteredTypeNames[d.index]]} Pokémon`)
+        .html(`<strong>${filteredTypeNames[d.index].charAt(0).toUpperCase() + filteredTypeNames[d.index].slice(1)}</strong><br>${typeCounts[filteredTypeNames[d.index]]} Pokémon`)
         .style("left", (event.pageX + 10) + "px")
         .style("top", (event.pageY - 28) + "px");
     })
@@ -119,6 +119,21 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
         d3.select(event.currentTarget).classed("active", true);
       }
     });
+
+  // Adiciona o texto com os nomes dos tipos na parte exterior do círculo
+  group.append("text")
+    .each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
+    .attr("dy", ".35em")
+    .attr("transform", d => `
+      rotate(${(d.angle * 180 / Math.PI - 90)})
+      translate(${arcOuterRadius + 10})
+      ${d.angle > Math.PI ? "rotate(180)" : ""}
+    `)
+    .attr("text-anchor", d => d.angle > Math.PI ? "end" : "start")
+    .attr("fill", "white")
+    .text(d => filteredTypeNames[d.index].charAt(0).toUpperCase() + filteredTypeNames[d.index].slice(1))
+    .style("font-size", "14px")
+    .style("font-weight", "bold");
 
   const defs = svg.append("defs");
   chord.forEach((d, i) => {
@@ -164,8 +179,8 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
       tooltip
         .style("opacity", 1)
         .html(`
-          <strong>${filteredTypeNames[d.source.index]}</strong> + 
-          <strong>${filteredTypeNames[d.target.index]}</strong><br>
+          <strong>${filteredTypeNames[d.source.index].charAt(0).toUpperCase() + filteredTypeNames[d.source.index].slice(1)}</strong> + 
+          <strong>${filteredTypeNames[d.target.index].charAt(0).toUpperCase() + filteredTypeNames[d.target.index].slice(1)}</strong><br>
           ${d.source.value} Pokémon
         `)
         .style("left", (event.pageX + 10) + "px")
