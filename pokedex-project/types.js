@@ -1,5 +1,5 @@
 import { pokemonTypeColorsRGBA } from './consts.js';
-import { getLocationAreaByLocation, getPokemonsByGeneration, regionToGeneration } from './dataManager.js';
+import { getLocationAreaByLocation, getPokemonsByGeneration } from './dataManager.js';
 
 export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960, pokemonsFromGeneration = [], onFilter = null) {
   // Limpa SVG anterior, se existir
@@ -242,31 +242,19 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     d3.selectAll(".group path").classed("active", false);
   }
 
-  // Botão para limpar filtro
+  // Usar o botão de filtro existente do regionScreen
   function showClearFilterButton() {
-    let btn = document.getElementById('clear-type-filter-btn');
-    if (!btn) {
-      btn = document.createElement('button');
-      btn.id = 'clear-type-filter-btn';
-      btn.textContent = 'Limpar filtro de tipo';
-      btn.style.margin = '10px auto 0 auto';
-      btn.style.display = 'block';
-      btn.style.background = '#222';
-      btn.style.color = 'white';
-      btn.style.border = '1px solid #fff';
-      btn.style.borderRadius = '8px';
-      btn.style.padding = '8px 16px';
-      btn.style.cursor = 'pointer';
-      btn.onclick = clearSpritesFilter;
-      const grid = document.getElementById('pokemon-sprites-grid');
-      if (grid && grid.parentElement) grid.parentElement.insertBefore(btn, grid);
-    } else {
-      btn.style.display = 'block';
+    // Dispara evento para mostrar o botão do regionScreen
+    if (window.showClearFilterButton) {
+      window.showClearFilterButton();
     }
   }
+
   function hideClearFilterButton() {
-    const btn = document.getElementById('clear-type-filter-btn');
-    if (btn) btn.style.display = 'none';
+    // Dispara evento para esconder o botão do regionScreen
+    if (window.hideClearFilterButton) {
+      window.hideClearFilterButton();
+    }
   }
 
   // CSS para destaque
@@ -330,7 +318,7 @@ export async function updateTypeChordByRegion(regionId) {
       console.warn(`Nenhum Pokémon encontrado para a geração da região ${regionName}`);
 
       // Limpar o container e mostrar mensagem de erro
-      const container = d3.select('#region-chart-container');
+      const container = d3.select('#chord-graph-container');
       container.selectAll("*").remove();
 
       container.append("div")
@@ -350,38 +338,20 @@ export async function updateTypeChordByRegion(regionId) {
     // Obter IDs únicos dos Pokémon da geração
     const regionPokemonIds = new Set(pokemonsFromGeneration.map(p => p.pokemon_id));
     const filteredPokemonTypes = pokemonTypesData.filter(pt => regionPokemonIds.has(pt.pokemon_id));
+
     // Renderizar o diagrama de acordes com os dados filtrados e passar pokemonsFromGeneration e callback de filtro
-    renderTypeChord('#region-chart-container', typesData, filteredPokemonTypes, 960, 960, pokemonsFromGeneration, (filtered, typeA, typeB) => {
+    renderTypeChord('#chord-graph-container', typesData, filteredPokemonTypes, 860, 860, pokemonsFromGeneration, (filtered, typeA, typeB) => {
       // Atualiza os sprites ao lado
       if (typeof window.updateRegionSpritesGrid === 'function') {
         window.updateRegionSpritesGrid(filtered, typeA, typeB);
       }
     });
 
-    // Adicionar título com informações da geração
-    const svgElement = d3.select('#region-chart-container svg');
-    if (!svgElement.empty()) {
-      // Adicionar ou atualizar o título
-      if (svgElement.select("text.chart-title").empty()) {
-        svgElement.append("text")
-          .attr("class", "chart-title")
-          .attr("x", "50%")
-          .attr("y", 30)
-          .attr("text-anchor", "middle")
-          .attr("fill", "white")
-          .style("font-size", "16px")
-          .style("font-weight", "bold")
-          .text(`Tipos de Pokémon da Geração ${regionToGeneration[regionName]} (${regionName})`);
-      } else {
-        svgElement.select("text.chart-title")
-          .text(`Tipos de Pokémon da Geração ${regionToGeneration[regionName]} (${regionName})`);
-      }
-    }
   } catch (error) {
     console.error('Erro ao atualizar diagrama de acordes por região:', error);
 
     // Mostrar mensagem de erro no gráfico
-    const container = d3.select('#region-chart-container');
+    const container = d3.select('#chord-graph-container');
     container.selectAll("*").remove();
 
     container.append("div")
