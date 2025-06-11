@@ -44,78 +44,83 @@ Promise.all([
  * Renderiza um radar chart com as estatísticas médias dos pokémon da localização
  */
 export async function renderStatRadarChart(locationId) {
-    if (!encountersData || !locationsData || !pokemonStatsData || !statsData) {
-        console.warn("Dados ainda não carregados.");
-        return;
-    }
-
     // Armazenar o ID da localização atual
     currentLocationId = locationId;
 
-    const locationAreaIds_ = await getLocationAreaByLocation(locationId);
-
-    // Extrai os locationAreaId e coloca em um Set
-    const locationAreaIdSet = new Set(locationAreaIds_.map(obj => obj.locationAreaId));
-
-    if (locationAreaIdSet.size === 0) {
-        console.warn(`Nenhuma location_area encontrada para location_id ${locationId}`);
-        return;
-    }
-
-    // Filtra Pokémon encontrados nas location_areas associadas
-    const pokemonIds = new Set(
-        encountersData
-            .filter(e => locationAreaIdSet.has(e.location_area_id))
-            .map(e => e.pokemon_id)
-    );
-
-    if (pokemonIds.size === 0) {
-        console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
-        return;
-    }
-
-    const mainStatIds = new Set([1, 2, 3, 4, 5, 6]);
-
-    const statSums = {};
-    const statCounts = {};
-
-    for (const entry of pokemonStatsData) {
-        if (!pokemonIds.has(entry.pokemon_id)) continue;
-        if (!mainStatIds.has(entry.stat_id)) continue;
-
-        const statRow = statsData.find(s => s.id === entry.stat_id);
-        if (!statRow || !statRow.identifier) continue;
-
-        const statName = statRow.identifier;
-
-        statSums[statName] = (statSums[statName] || 0) + entry.base_stat;
-        statCounts[statName] = (statCounts[statName] || 0) + 1;
-    }
-
-    const avgStats = {};
-    Object.keys(statSums).forEach(stat => {
-        avgStats[stat] = statSums[stat] / statCounts[stat];
-    });
-
-    if (Object.keys(avgStats).length === 0) {
-        console.warn("Nenhuma estatística disponível para os pokémon encontrados.");
-        return;
-    }
-
-    // Determinar cor baseada no tipo mais comum na localização
-    let radarColor = "#4A90E2"; // cor padrão
-
     try {
-        // Buscar tipos dos pokémons da localização
-        const pokemonTypes = await getPokemonsByMultipleLocationAreas(
-            Array.from(locationAreaIdSet),
-            "Kanto" // região padrão, pode ser melhorada
+        const locationAreaIds_ = await getLocationAreaByLocation(locationId);
+
+        if (locationAreaIds_.length === 0) {
+            console.warn(`Nenhuma location_area encontrada para location_id ${locationId}`);
+            return;
+        }
+
+        // Determinar a região baseada na localização
+        const regionName = await getRegionByLocationId(locationId);
+
+        // Usar a mesma função que o scatter plot para obter os pokémon
+        const pokemonsWithTypes = await getPokemonsByMultipleLocationAreas(
+            locationAreaIds_, // usar o array completo retornado por getLocationAreaByLocation
+            regionName
         );
 
-        if (pokemonTypes && pokemonTypes.length > 0) {
+        if (pokemonsWithTypes.length === 0) {
+            console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
+            return;
+        }
+
+        // Calcular estatísticas médias usando os dados dos pokémon carregados
+        const statSums = {
+            'hp': 0,
+            'attack': 0,
+            'defense': 0,
+            'special-attack': 0,
+            'special-defense': 0,
+            'speed': 0
+        };
+
+        let validPokemonCount = 0;
+
+        // Para cada pokémon, somar suas estatísticas (cada pokémon conta apenas uma vez)
+        pokemonsWithTypes.forEach(pokemon => {
+            // Verificar se o pokémon tem dados de estatísticas do arquivo pokemon_stats_clean.csv
+            if (pokemon.Hp_Stat !== undefined &&
+                pokemon.Attack_Stat !== undefined &&
+                pokemon.Defense_Stat !== undefined &&
+                pokemon.Special_Attack_Stat !== undefined &&
+                pokemon.Special_Defense_Stat !== undefined &&
+                pokemon.Speed_Stat !== undefined) {
+
+                statSums['hp'] += pokemon.Hp_Stat;
+                statSums['attack'] += pokemon.Attack_Stat;
+                statSums['defense'] += pokemon.Defense_Stat;
+                statSums['special-attack'] += pokemon.Special_Attack_Stat;
+                statSums['special-defense'] += pokemon.Special_Defense_Stat;
+                statSums['speed'] += pokemon.Speed_Stat;
+
+                validPokemonCount++;
+            }
+        });
+
+        if (validPokemonCount === 0) {
+            console.warn("Nenhuma estatística válida encontrada para os pokémon da localização.");
+            return;
+        }
+
+        // Calcular médias
+        const avgStats = {};
+        Object.keys(statSums).forEach(stat => {
+            avgStats[stat] = statSums[stat] / validPokemonCount;
+        });
+
+        // Determinar cor baseada no tipo mais comum na localização (usando os mesmos pokémon)
+        let radarColor = "#4A90E2"; // cor padrão
+
+        if (pokemonsWithTypes && pokemonsWithTypes.length > 0) {
+            // Contar tipos primários
             // Contar tipos primários
             const typeCounts = {};
-            pokemonTypes.forEach(pokemon => {
+            pokemonsWithTypes.forEach(pokemon => {
                 if (pokemon.types && pokemon.types.length > 0) {
                     const primaryType = pokemon.types[0].type_name;
                     typeCounts[primaryType] = (typeCounts[primaryType] || 0) + 1;
@@ -130,37 +135,32 @@ export async function renderStatRadarChart(locationId) {
                 radarColor = pokemonTypeColorsRGBA[mostCommonType].replace('0.7)', '1)'); // remover transparência
             }
         }
+
+        // Criar array de estatísticas na ordem correta: HP, Attack, Defense, Speed, Sp. Defense, Sp. Attack
+        const statsArray = [
+            { label: 'HP', value: Number(avgStats['hp'].toFixed(2)) || 0 },
+            { label: 'Attack', value: Number(avgStats['attack'].toFixed(2)) || 0 },
+            { label: 'Defense', value: Number(avgStats['defense'].toFixed(2)) || 0 },
+            { label: 'Speed', value: Number(avgStats['speed'].toFixed(2)) || 0 },
+            { label: 'Sp. Defense', value: Number(avgStats['special-defense'].toFixed(2)) || 0 },
+            { label: 'Sp. Attack', value: Number(avgStats['special-attack'].toFixed(2)) || 0 }
+        ];
+
+        // Limpar container do radar antes de renderizar
+        const container = document.querySelector("#radar-chart-location");
+        if (container) container.innerHTML = '';
+
+        // Usar a função modular para renderizar com a cor do tipo mais comum
+        renderRadarChart(
+            "#radar-chart-location",
+            "Estatísticas Médias",
+            statsArray,
+            radarColor
+        );
+
     } catch (error) {
-        console.warn("Erro ao determinar cor do tipo:", error);
+        console.error("Erro ao calcular estatísticas médias:", error);
     }
-
-    // Mapeamento para os nomes usados no radar chart
-    const statMapping = {
-        'hp': 'HP',
-        'attack': 'Attack',
-        'defense': 'Defense',
-        'speed': 'Speed',
-        'special-defense': 'Sp. Defense',
-        'special-attack': 'Sp. Attack'
-    };
-
-    // Criar array de estatísticas na ordem correta
-    const statsArray = [
-        { label: 'HP', value: avgStats['hp'] || 0 },
-        { label: 'Attack', value: avgStats['attack'] || 0 },
-        { label: 'Defense', value: avgStats['defense'] || 0 },
-        { label: 'Speed', value: avgStats['speed'] || 0 },
-        { label: 'Sp. Defense', value: avgStats['special-defense'] || 0 },
-        { label: 'Sp. Attack', value: avgStats['special-attack'] || 0 }
-    ];
-
-    // Usar a função modular para renderizar com a cor do tipo mais comum
-    renderRadarChart(
-        "#radar-chart-location",
-        "Estatísticas Médias",
-        statsArray,
-        radarColor
-    );
 }
 
 // Expor funções globalmente para integração com scatterPlot.js
