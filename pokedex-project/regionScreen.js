@@ -1,6 +1,6 @@
-import { renderBarChartByRegion } from "./barchart.js";
 import { createPokemonCard } from "./cardsPokedex.js";
 import { gameRegionVersions, getPokemonsByGeneration } from "./dataManager.js";
+import { drawDistributionPlot } from "./distributplot.js";
 import { updateTypeChordByRegion } from "./types.js";
 
 // Adicionar CSS para a tooltip de card do Pokémon
@@ -122,7 +122,11 @@ export function createRegionScreen(id_region = 3) {
 
     // Chama os renderizadores passando os ids dos containers correspondentes
     updateTypeChordByRegion(id_region);          // irá desenhar no #region-chart-container
-    renderBarChartByRegion(id_region);            // irá desenhar no #bar-chart-container
+
+    // Carrega os pokémons da geração e desenha o boxplot
+    getPokemonsByGeneration(Object.keys(gameRegionVersions)[id_region - 1] || "Kanto").then(pokemons => {
+        drawDistributionPlot('#bar-chart-container', pokemons);
+    });
 
     // Carrega os sprites dos Pokémons da região
     loadRegionPokemonSprites(id_region);

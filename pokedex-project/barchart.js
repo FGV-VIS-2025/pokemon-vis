@@ -112,8 +112,6 @@ export async function renderBarChartByRegion(regionId) {
     const regionNames = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
     const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
 
-    console.log(`Atualizando gráfico de barras para região: ${regionName}`);
-
     // Obter todos os Pokémon da geração correspondente à região
     const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
 
@@ -139,8 +137,6 @@ export async function renderBarChartByRegion(regionId) {
       return;
     }
 
-    console.log(`Encontrados ${pokemonsFromGeneration.length} Pokémon para a região ${regionName}`);
-
     // Contar Pokémon por tipo
     const typeCountMap = {};
 
@@ -161,8 +157,6 @@ export async function renderBarChartByRegion(regionId) {
       name,
       count
     })).sort((a, b) => b.count - a.count);
-
-    console.log(`Contagem de tipos: ${typeCountArray.length} tipos diferentes encontrados`);
 
     // Definir título do gráfico
     const title = `Distribuição de Tipos na Geração ${regionToGeneration[regionName]} (${regionName})`;

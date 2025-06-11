@@ -65,10 +65,8 @@ async function loadCsv(path, parser) {
         if (!csvCache.has(path)) {
             // Usar Promise com timeout para evitar travamentos
             const fetchPromise = new Promise((resolve, reject) => {
-                console.log(`Carregando CSV: ${path}`);
                 d3.csv(path, parser)
                     .then(data => {
-                        console.log(`CSV carregado com sucesso: ${path}, ${data.length} registros`);
                         resolve(data);
                     })
                     .catch(error => {
@@ -564,8 +562,6 @@ export async function getPokemonsByGeneration(regionName) {
     // Obtém o ID da geração com base na região
     const generationId = regionToGeneration[regionName];
 
-    console.log(`Buscando Pokémon da geração ${generationId} para a região ${regionName}`);
-
     if (!generationId) {
         console.error(`Região inválida: ${regionName}`);
         return [];
@@ -594,8 +590,6 @@ export async function getPokemonsByGeneration(regionName) {
             };
         });
 
-        console.log(`Total de espécies carregadas: ${pokemonSpecies.length}`);
-
         // Definir faixas de IDs para cada geração como fallback
         const generationRanges = {
             1: { min: 1, max: 151 },     // Kanto: 1-151
@@ -612,16 +606,12 @@ export async function getPokemonsByGeneration(regionName) {
             return pokemon.generation_id === generationId;
         });
 
-        console.log(`Pokémon da geração ${generationId} pelo atributo generation_id: ${pokemonsByGeneration.length}`);
-
         // Se não encontrarmos Pokémon usando o campo generation_id, usamos o fallback por ID
         if (pokemonsByGeneration.length === 0 && generationRanges[generationId]) {
-            console.log(`Usando fallback por faixa de IDs para geração ${generationId}`);
             const range = generationRanges[generationId];
             pokemonsByGeneration = pokemonSpecies.filter(pokemon =>
                 pokemon.pokemon_id >= range.min && pokemon.pokemon_id <= range.max
             );
-            console.log(`Pokémon da geração ${generationId} por faixa de IDs: ${pokemonsByGeneration.length}`);
         }
 
         // Carrega dados adicionais para os Pokémon
@@ -692,8 +682,6 @@ export async function getPokemonsByGeneration(regionName) {
                 ...stats
             };
         }).sort((a, b) => a.pokemon_id - b.pokemon_id);
-
-        console.log(`Total de Pokémon processados para a geração ${generationId}: ${result.length}`);
 
         return result;
     } catch (error) {

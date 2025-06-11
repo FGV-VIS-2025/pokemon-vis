@@ -34,7 +34,5 @@ async function loadMainContent(key){
         setTimeout(() => {
             editPokemonsCard();
         }, 10);
-    } else {
-        console.log("Falha ao criar a tela princial.")
     }
 }

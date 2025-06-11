@@ -322,8 +322,6 @@ export async function updateTypeChordByRegion(regionId) {
     const regionNames = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
     const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
 
-    console.log(`Atualizando gráfico de tipos para região: ${regionName}`);
-
     // Obter todos os Pokémon da geração correspondente à região
     const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
 
@@ -348,8 +346,6 @@ export async function updateTypeChordByRegion(regionId) {
 
       return;
     }
-
-    console.log(`Encontrados ${pokemonsFromGeneration.length} Pokémon para a região ${regionName}`);
 
     // Obter IDs únicos dos Pokémon da geração
     const regionPokemonIds = new Set(pokemonsFromGeneration.map(p => p.pokemon_id));

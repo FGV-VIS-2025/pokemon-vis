@@ -41,7 +41,6 @@ mapRealContainer.addEventListener('locationSelected', async (event) => {
         // Buscar pokémons nestas áreas
         const pokemonsArray = await getPokemonsByMultipleLocationAreas(locationsAreaArray, regionName);
         loadCards(pokemonsArray);
-        console.log(`Carregados ${pokemonsArray?.length || 0} Pokémons da localização: ${title}`);
     } catch (error) {
         console.error("Erro ao carregar Pokémons:", error);
         loadCards([]);
