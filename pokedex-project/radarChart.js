@@ -1,6 +1,88 @@
 import { pokemonTypeColorsRadar } from "./consts.js";
 
 /**
+ * Função modular para renderizar radar chart
+ * @param {string} containerSelector - Seletor do container (ex: "#radar-chart-location")
+ * @param {string} title - Título a ser exibido
+ * @param {Array} stats - Array com estatísticas no formato [{label, value}, ...]
+ * @param {string} color - Cor do gráfico (hex)
+ * @param {Object} options - Opções adicionais (opcional)
+ */
+export function renderRadarChart(containerSelector, title, stats, color = "#4A90E2", options = {}) {
+    // Configurações padrão
+    const defaultOptions = {
+        width: 350,
+        height: 350,
+        margin: { top: 40, right: 40, bottom: 40, left: 40 },
+        levels: 6,
+        maxValue: 0,
+        labelFactor: 1.2,
+        wrapWidth: 60,
+        opacityArea: 0.35,
+        dotRadius: 4,
+        strokeWidth: 2,
+        roundStrokes: true
+    };
+
+    // Mesclar opções
+    const cfg = { ...defaultOptions, ...options };
+
+    // Ajustar dimensões se o container for específico
+    const container = document.querySelector(containerSelector);
+    if (container && containerSelector.includes('location')) {
+        // Usar dimensões fixas para evitar crescimento progressivo do gráfico
+        const fixedChartSize = 320; // Tamanho fixo para consistência
+
+        cfg.width = fixedChartSize;
+        cfg.height = fixedChartSize;
+        cfg.margin = {
+            top: 60,     // Margem fixa para dar espaço aos labels
+            right: 60,
+            bottom: 60,
+            left: 60
+        };
+        cfg.labelFactor = 1.2; // Mantido em 1.2 conforme solicitado
+        cfg.wrapWidth = 65; // Área de wrap fixa para os labels
+        cfg.dotRadius = 4;
+        cfg.strokeWidth = 2;
+    }
+
+    // Formatar dados para o radar chart
+    const axes = stats.map(stat => ({
+        axis: stat.label,
+        value: stat.value || 0,
+        name: title
+    }));
+
+    const radarData = [{
+        name: title,
+        axes: axes,
+        total: axes.reduce((sum, stat) => sum + (stat.value || 0), 0),
+        color: color
+    }];
+
+    // Configurações do radar chart
+    const radarChartOptions = {
+        w: cfg.width,
+        h: cfg.height,
+        margin: cfg.margin,
+        maxValue: cfg.maxValue,
+        levels: cfg.levels,
+        roundStrokes: cfg.roundStrokes,
+        color: d3.scaleOrdinal().range([color]),
+        labelFactor: cfg.labelFactor,
+        wrapWidth: cfg.wrapWidth,
+        dotRadius: cfg.dotRadius,
+        strokeWidth: cfg.strokeWidth,
+        opacityArea: cfg.opacityArea,
+        tooltipOffset: Math.max(15, cfg.width * 0.05)
+    };
+
+    // Renderizar o radar chart
+    RadarChart(containerSelector, radarData, radarChartOptions);
+}
+
+/**
  * Função que tem como objetivo formatar os dados para um formato amigável para a construção do gráfico de radar.
  * 
  * @param {*} selectedPokemons - Array com todos os pokémons selecionados e que vão compor o gráfico de radar. 
@@ -8,7 +90,7 @@ import { pokemonTypeColorsRadar } from "./consts.js";
  */
 function buildRadarDataFromPokemons(selectedPokemons) {
     const statLabels = [
-        { key: "Hp_Stat", label: "Hp" },
+        { key: "Hp_Stat", label: "HP" },
         { key: "Attack_Stat", label: "Attack" },
         { key: "Defense_Stat", label: "Defense" },
         { key: "Speed_Stat", label: "Speed" },
@@ -87,7 +169,7 @@ export function RadarChart(className, data, options) {
         margin: { top: 20, right: 20, bottom: 20, left: 20 },
         levels: 3,
         maxValue: 0,
-        labelFactor: 1.35, // Aumentado para afastar mais os labels
+        labelFactor: 1.22, // Aumentado para afastar mais os labels
         wrapWidth: 60,
         opacityArea: 0.35,
         dotRadius: 4,
@@ -125,7 +207,10 @@ export function RadarChart(className, data, options) {
     var svg = d3.select(className).append("svg")
         .attr("width", cfg.w + cfg.margin.left + cfg.margin.right)
         .attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
-        .attr("class", "radar" + className);
+        .attr("class", "radar" + className)
+        .style("max-width", "100%")
+        .style("max-height", "100%")
+        .style("overflow", "visible");
 
     // adição do título no gráfico
     var g = svg.append("g")
@@ -186,8 +271,14 @@ export function RadarChart(className, data, options) {
     // Configuração dos títulos dos eixos
     axis.append("text")
         .attr("class", "legend")
-        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right) / 45}px`)
+        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right) / 42}px`)
         .attr("fill", "#ffffff")
+        .style("stroke", "#000000")
+        .style("stroke-width", "4px")
+        .style("stroke-linejoin", "round")
+        .style("stroke-linecap", "round")
+        .style("paint-order", "stroke fill")
+        .style("font-weight", "bold")
         .attr("text-anchor", "middle")
         .attr("dy", "0.35em")
         .attr("x", (d, i) => rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2))

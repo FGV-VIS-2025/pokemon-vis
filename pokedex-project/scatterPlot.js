@@ -1,5 +1,5 @@
 import { getLocationAreaByLocation } from './dataManager.js';
-import { RadarChart } from './radarChart.js';
+import { renderRadarChart } from './radarChart.js';
 
 // Dados globais para o scatter plot
 let encountersData, locationsData, pokemonData, pokemonStatsData, statsData;
@@ -332,6 +332,11 @@ function drawScatterPlot(containerSelector, data) {
 
             // Marcar novo pokémon selecionado
             selectedPokemonId = d.id;
+            // Sincronizar com locationScreen
+            if (window.setSelectedPokemonId) {
+                window.setSelectedPokemonId(d.id);
+            }
+
             d3.select(this)
                 .style("stroke-width", 4)
                 .style("fill-opacity", 1);
@@ -343,6 +348,7 @@ function drawScatterPlot(containerSelector, data) {
     // Botão para limpar seleção (estilo similar ao regionScreen)
     const clearButton = container
         .append("div")
+        .attr("class", "clear-button")
         .style("position", "absolute")
         .style("top", "15px")
         .style("right", "15px")
@@ -373,6 +379,11 @@ function drawScatterPlot(containerSelector, data) {
 
     clearButton.on("click", function () {
         selectedPokemonId = null;
+        // Sincronizar com locationScreen
+        if (window.setSelectedPokemonId) {
+            window.setSelectedPokemonId(null);
+        }
+
         dots.style("stroke-width", 2)
             .style("fill-opacity", 0.8);
         clearPokemonStats();
@@ -400,27 +411,12 @@ async function renderPokemonStats(pokemonId) {
         // Mapear IDs de estatísticas para nomes
         const mainStatIds = new Set([1, 2, 3, 4, 5, 6]);
         const statMapping = {
-            1: 'Hp_Stat',      // hp
-            2: 'Attack_Stat',  // attack  
-            3: 'Defense_Stat', // defense
-            4: 'Special_Attack_Stat',  // special-attack
-            5: 'Special_Defense_Stat', // special-defense
-            6: 'Speed_Stat'    // speed
-        };
-
-        const statLabels = {
-            1: 'HP',
-            2: 'Attack',
-            3: 'Defense',
-            4: 'Sp. Attack',
-            5: 'Sp. Defense',
-            6: 'Speed'
-        };
-
-        // Criar objeto pokémon com estatísticas
-        const pokemonWithStats = {
-            name: pokemon.identifier.charAt(0).toUpperCase() + pokemon.identifier.slice(1),
-            types: [{ type_name: "normal" }] // tipo neutro para cor padrão
+            1: 'HP',      // hp
+            2: 'Attack',  // attack  
+            3: 'Defense', // defense
+            4: 'Speed',   // speed
+            5: 'Sp. Defense', // special-defense
+            6: 'Sp. Attack'   // special-attack
         };
 
         // Buscar estatísticas do pokémon
@@ -428,66 +424,55 @@ async function renderPokemonStats(pokemonId) {
             stat.pokemon_id === pokemonId && mainStatIds.has(stat.stat_id)
         );
 
+        // Criar array de estatísticas na ordem correta
+        const statsArray = [
+            { label: 'HP', value: 0 },
+            { label: 'Attack', value: 0 },
+            { label: 'Defense', value: 0 },
+            { label: 'Speed', value: 0 },
+            { label: 'Sp. Defense', value: 0 },
+            { label: 'Sp. Attack', value: 0 }
+        ];
+
+        // Preencher os valores das estatísticas
         pokemonStats.forEach(stat => {
-            const statKey = statMapping[stat.stat_id];
-            if (statKey) {
-                pokemonWithStats[statKey] = stat.base_stat;
+            const statLabel = statMapping[stat.stat_id];
+            const statIndex = statsArray.findIndex(s => s.label === statLabel);
+            if (statIndex >= 0) {
+                statsArray[statIndex].value = stat.base_stat;
             }
         });
 
-        // Formatar dados para o radar chart
-        const axes = Object.entries(statLabels).map(([statId, label]) => {
-            const statKey = statMapping[parseInt(statId)];
-            return {
-                axis: label,
-                value: pokemonWithStats[statKey] || 0,
-                name: pokemonWithStats.name
-            };
-        });
+        const pokemonName = pokemon.identifier.charAt(0).toUpperCase() + pokemon.identifier.slice(1);
 
-        const radarData = [{
-            name: pokemonWithStats.name,
-            axes: axes,
-            total: axes.reduce((sum, stat) => sum + (stat.value || 0), 0),
-            color: "#ff6b6b" // Cor vermelha para pokémon selecionado
-        }];
-
-        // Configurar e renderizar o radar chart com dimensões FIXAS
-        const container = document.getElementById('radar-chart-location');
-        if (!container) return;
-
-        // DIMENSÕES FIXAS - não recalcular baseado no container
-        const fixedSize = 280; // Tamanho fixo do gráfico
-        const fixedMargin = 40; // Margem fixa
-
-        const margin = { top: fixedMargin, right: fixedMargin, bottom: fixedMargin, left: fixedMargin };
-        const width = fixedSize;
-        const height = fixedSize;
-
-        const color = d3.scaleOrdinal().range([radarData[0].color]);
-
-        const radarChartOptions = {
-            w: width,
-            h: height,
-            margin: margin,
-            maxValue: 0,
-            levels: 6,
-            roundStrokes: true,
-            color: color,
-            labelFactor: 1.25,
-            wrapWidth: 60, // Valor fixo
-            dotRadius: 4,  // Valor fixo
-            strokeWidth: 2, // Valor fixo
-            opacityArea: 0.4,
-            tooltipOffset: 20 // Valor fixo
-        };
-
-        RadarChart("#radar-chart-location", radarData, radarChartOptions);
+        // Usar a função modular para renderizar
+        renderRadarChart(
+            "#radar-chart-location",
+            pokemonName,
+            statsArray,
+            "#ff6b6b"
+        );
 
         // Atualizar título do container do radar
         const radarTitle = document.querySelector('#location-radar-container h2');
         if (radarTitle) {
-            radarTitle.textContent = `Estatísticas de ${pokemonWithStats.name}`;
+            radarTitle.textContent = `Estatísticas de ${pokemonName}`;
+        }
+
+        // Mostrar botão de limpar seleção do radar
+        const clearRadarBtn = document.getElementById('clear-radar-selection-btn');
+        if (clearRadarBtn) {
+            clearRadarBtn.style.display = 'block';
+            clearRadarBtn.style.opacity = '1';
+        }
+
+        // Também mostrar o botão do scatter plot se existir
+        const scatterContainer = document.querySelector('#location-scatter-container');
+        if (scatterContainer) {
+            const clearScatterBtn = scatterContainer.querySelector('.clear-button');
+            if (clearScatterBtn) {
+                clearScatterBtn.style.opacity = '1';
+            }
         }
 
     } catch (error) {
@@ -499,6 +484,29 @@ async function renderPokemonStats(pokemonId) {
  * Limpa as estatísticas do pokémon e volta para as estatísticas médias
  */
 async function clearPokemonStats() {
+    // Limpar seleção visual do scatter plot
+    selectedPokemonId = null;
+    // Sincronizar com locationScreen
+    if (window.setSelectedPokemonId) {
+        window.setSelectedPokemonId(null);
+    }
+
+    const scatterContainer = document.querySelector('#location-scatter-container');
+    if (scatterContainer) {
+        const dots = scatterContainer.querySelectorAll('.dot');
+        dots.forEach(dot => {
+            d3.select(dot)
+                .style("stroke-width", 2)
+                .style("fill-opacity", 0.8);
+        });
+
+        // Atualizar botão do scatter plot
+        const clearScatterBtn = scatterContainer.querySelector('.clear-button');
+        if (clearScatterBtn) {
+            clearScatterBtn.style.opacity = '0.6';
+        }
+    }
+
     if (currentLocationId) {
         // Renderizar novamente as estatísticas médias usando a função local com dimensões fixas
         try {
@@ -511,6 +519,13 @@ async function clearPokemonStats() {
         const radarTitle = document.querySelector('#location-radar-container h2');
         if (radarTitle) {
             radarTitle.textContent = "Estatísticas Médias dos Pokémons";
+        }
+
+        // Ocultar botão de limpar seleção do radar
+        const clearRadarBtn = document.getElementById('clear-radar-selection-btn');
+        if (clearRadarBtn) {
+            clearRadarBtn.style.display = 'none';
+            clearRadarBtn.style.opacity = '0.7';
         }
     }
 }
@@ -575,80 +590,21 @@ async function renderLocationStatRadarChart(locationId) {
         return;
     }
 
-    // Mapeamento para os nomes usados no radar chart
-    const statMapping = {
-        'hp': 'Hp_Stat',
-        'attack': 'Attack_Stat',
-        'defense': 'Defense_Stat',
-        'special-attack': 'Special_Attack_Stat',
-        'special-defense': 'Special_Defense_Stat',
-        'speed': 'Speed_Stat'
-    };
-
-    // Criar objeto com formato esperado pelo radar chart
-    const pokemonMedio = {
-        name: "Estatísticas Médias",
-        types: [{ type_name: "normal" }]
-    };
-
-    // Adicionar as estatísticas no formato esperado
-    Object.keys(statMapping).forEach(statKey => {
-        const radarKey = statMapping[statKey];
-        pokemonMedio[radarKey] = avgStats[statKey] || 0;
-    });
-
-    // Formatar dados para o radar chart (similar ao buildRadarDataFromPokemons)
-    const statLabels = [
-        { key: "Hp_Stat", label: "HP" },
-        { key: "Attack_Stat", label: "Attack" },
-        { key: "Defense_Stat", label: "Defense" },
-        { key: "Speed_Stat", label: "Speed" },
-        { key: "Special_Defense_Stat", label: "Sp. Defense" },
-        { key: "Special_Attack_Stat", label: "Sp. Attack" }
+    // Criar array de estatísticas na ordem correta
+    const statsArray = [
+        { label: 'HP', value: avgStats['hp'] || 0 },
+        { label: 'Attack', value: avgStats['attack'] || 0 },
+        { label: 'Defense', value: avgStats['defense'] || 0 },
+        { label: 'Speed', value: avgStats['speed'] || 0 },
+        { label: 'Sp. Defense', value: avgStats['special-defense'] || 0 },
+        { label: 'Sp. Attack', value: avgStats['special-attack'] || 0 }
     ];
 
-    const axes = statLabels.map(stat => ({
-        axis: stat.label,
-        value: pokemonMedio[stat.key] || 0,
-        name: pokemonMedio.name
-    }));
-
-    const radarData = [{
-        name: pokemonMedio.name,
-        axes: axes,
-        total: axes.reduce((sum, stat) => sum + (stat.value || 0), 0),
-        color: "#4A90E2"
-    }];
-
-    // Configurar e renderizar o radar chart com dimensões FIXAS
-    const container = document.getElementById('radar-chart-location');
-    if (!container) return;
-
-    // DIMENSÕES FIXAS - não recalcular baseado no container
-    const fixedSize = 280; // Tamanho fixo do gráfico
-    const fixedMargin = 40; // Margem fixa
-
-    const margin = { top: fixedMargin, right: fixedMargin, bottom: fixedMargin, left: fixedMargin };
-    const width = fixedSize;
-    const height = fixedSize;
-
-    const color = d3.scaleOrdinal().range([radarData[0].color]);
-
-    const radarChartOptions = {
-        w: width,
-        h: height,
-        margin: margin,
-        maxValue: 0,
-        levels: 6,
-        roundStrokes: true,
-        color: color,
-        labelFactor: 1.25,
-        wrapWidth: 60, // Valor fixo
-        dotRadius: 4,  // Valor fixo
-        strokeWidth: 2, // Valor fixo
-        opacityArea: 0.4,
-        tooltipOffset: 20 // Valor fixo
-    };
-
-    RadarChart("#radar-chart-location", radarData, radarChartOptions);
+    // Usar a função modular para renderizar
+    renderRadarChart(
+        "#radar-chart-location",
+        "Estatísticas Médias",
+        statsArray,
+        "#4A90E2"
+    );
 }

@@ -1,11 +1,17 @@
 import { getLocationAreaByLocation, getLocationsByRegionName } from "./dataManager.js";
-import { RadarChart } from "./radarChart.js";
+import { renderRadarChart } from "./radarChart.js";
 import { renderLocationScatterPlot } from "./scatterPlot.js";
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
 // Dados globais para o gráfico de radar
 let encountersData, locationsData, pokemonStatsData, statsData;
+
+// Variável para armazenar o ID da localização atual
+let currentLocationId = null;
+
+// Variável para controlar pokémon selecionado (compartilhada com scatterPlot)
+let selectedPokemonId = null;
 
 // Carregar dados necessários para o gráfico de radar
 Promise.all([
@@ -40,6 +46,9 @@ export async function renderStatRadarChart(locationId) {
         console.warn("Dados ainda não carregados.");
         return;
     }
+
+    // Armazenar o ID da localização atual
+    currentLocationId = locationId;
 
     const locationAreaIds_ = await getLocationAreaByLocation(locationId);
 
@@ -93,79 +102,94 @@ export async function renderStatRadarChart(locationId) {
 
     // Mapeamento para os nomes usados no radar chart
     const statMapping = {
-        'hp': 'Hp_Stat',
-        'attack': 'Attack_Stat',
-        'defense': 'Defense_Stat',
-        'special-attack': 'Special_Attack_Stat',
-        'special-defense': 'Special_Defense_Stat',
-        'speed': 'Speed_Stat'
+        'hp': 'HP',
+        'attack': 'Attack',
+        'defense': 'Defense',
+        'speed': 'Speed',
+        'special-defense': 'Sp. Defense',
+        'special-attack': 'Sp. Attack'
     };
 
-    // Criar objeto com formato esperado pelo radar chart
-    const pokemonMedio = {
-        name: "Estatísticas Médias",
-        types: [{ type_name: "normal" }] // tipo neutro para cor padrão
-    };
-
-    // Adicionar as estatísticas no formato esperado
-    Object.keys(statMapping).forEach(statKey => {
-        const radarKey = statMapping[statKey];
-        pokemonMedio[radarKey] = avgStats[statKey] || 0;
-    });
-
-    // Formatar dados para o radar chart (similar ao buildRadarDataFromPokemons)
-    const statLabels = [
-        { key: "Hp_Stat", label: "HP" },
-        { key: "Attack_Stat", label: "Attack" },
-        { key: "Defense_Stat", label: "Defense" },
-        { key: "Speed_Stat", label: "Speed" },
-        { key: "Special_Defense_Stat", label: "Sp. Defense" },
-        { key: "Special_Attack_Stat", label: "Sp. Attack" }
+    // Criar array de estatísticas na ordem correta
+    const statsArray = [
+        { label: 'HP', value: avgStats['hp'] || 0 },
+        { label: 'Attack', value: avgStats['attack'] || 0 },
+        { label: 'Defense', value: avgStats['defense'] || 0 },
+        { label: 'Speed', value: avgStats['speed'] || 0 },
+        { label: 'Sp. Defense', value: avgStats['special-defense'] || 0 },
+        { label: 'Sp. Attack', value: avgStats['special-attack'] || 0 }
     ];
 
-    const axes = statLabels.map(stat => ({
-        axis: stat.label,
-        value: pokemonMedio[stat.key] || 0,
-        name: pokemonMedio.name
-    }));
-
-    const radarData = [{
-        name: pokemonMedio.name,
-        axes: axes,
-        total: axes.reduce((sum, stat) => sum + (stat.value || 0), 0),
-        color: "#4A90E2" // Cor azul para estatísticas médias
-    }];    // Configurar e renderizar o radar chart
-    const container = document.getElementById('radar-chart-location');
-    if (!container) return;
-
-    // DIMENSÕES FIXAS - não recalcular baseado no container
-    const fixedSize = 280; // Tamanho fixo do gráfico
-    const fixedMargin = 40; // Margem fixa
-
-    const margin = { top: fixedMargin, right: fixedMargin, bottom: fixedMargin, left: fixedMargin };
-    const width = fixedSize;
-    const height = fixedSize;
-
-    const color = d3.scaleOrdinal().range([radarData[0].color]);
-
-    const radarChartOptions = {
-        w: width,
-        h: height,
-        margin: margin,
-        maxValue: 0,
-        levels: 6,
-        roundStrokes: true,
-        color: color,
-        labelFactor: 1.25,
-        wrapWidth: 60, // Valor fixo
-        dotRadius: 4,  // Valor fixo
-        strokeWidth: 2, // Valor fixo
-        opacityArea: 0.4,
-        tooltipOffset: 20 // Valor fixo
-    };
-
-    RadarChart("#radar-chart-location", radarData, radarChartOptions);
+    // Usar a função modular para renderizar
+    renderRadarChart(
+        "#radar-chart-location",
+        "Estatísticas Médias",
+        statsArray,
+        "#4A90E2"
+    );
 }
+
+// Função para limpar seleção do radar chart
+function clearRadarSelection() {
+    if (typeof currentLocationId !== 'undefined' && currentLocationId !== null) {
+        // Limpar seleção visual do scatter plot também
+        selectedPokemonId = null;
+
+        const scatterContainer = document.querySelector('#location-scatter-container');
+        if (scatterContainer) {
+            const dots = scatterContainer.querySelectorAll('.dot');
+            dots.forEach(dot => {
+                d3.select(dot)
+                    .style("stroke-width", 2)
+                    .style("fill-opacity", 0.8);
+            });
+
+            // Atualizar botão do scatter plot
+            const clearScatterBtn = scatterContainer.querySelector('.clear-button');
+            if (clearScatterBtn) {
+                clearScatterBtn.style.opacity = '0.6';
+            }
+        }
+
+        // Re-renderizar as estatísticas médias da localização
+        renderStatRadarChart(currentLocationId);
+
+        // Ocultar o botão de limpar
+        const clearBtn = document.getElementById('clear-radar-selection-btn');
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+            clearBtn.style.opacity = '0.7';
+        }
+
+        // Restaurar título original
+        const radarTitle = document.querySelector('#location-radar-container h2');
+        if (radarTitle) {
+            radarTitle.textContent = "Estatísticas Médias dos Pokémons";
+        }
+    }
+}
+
+// Função para mostrar/ocultar o botão de limpar seleção do radar
+function toggleRadarClearButton(show = false) {
+    const clearBtn = document.getElementById('clear-radar-selection-btn');
+    if (clearBtn) {
+        if (show) {
+            clearBtn.style.display = 'block';
+            clearBtn.style.opacity = '1';
+        } else {
+            clearBtn.style.display = 'none';
+            clearBtn.style.opacity = '0.7';
+        }
+    }
+}
+
+// Expor funções globalmente para integração com scatterPlot.js
+window.clearRadarSelection = clearRadarSelection;
+window.toggleRadarClearButton = toggleRadarClearButton;
+
+// Expor variáveis globalmente para sincronização entre gráficos
+window.getSelectedPokemonId = () => selectedPokemonId;
+window.setSelectedPokemonId = (id) => { selectedPokemonId = id; };
 
 // Função para determinar a região baseada na localização
 async function getRegionByLocationId(locationId) {
@@ -303,14 +327,60 @@ function createChartContainer() {
     const radarChart = document.createElement('div');
     radarChart.id = 'radar-chart-location';
     radarChart.style.width = '100%';
-    radarChart.style.height = 'calc(100% - 40px)'; // Altura ajustada
+    radarChart.style.height = 'calc(100% - 90px)'; // Altura ajustada para o botão
     radarChart.style.display = 'flex';
     radarChart.style.justifyContent = 'center';
     radarChart.style.alignItems = 'center';
-    radarChart.style.minHeight = '350px'; // Altura mínima reduzida
-    radarChart.style.padding = '20px'; // Padding aumentado para os labels
+    radarChart.style.minHeight = '450px'; // Altura mínima fixa para estabilidade
+    radarChart.style.maxHeight = '450px'; // Altura máxima para evitar crescimento
+    radarChart.style.padding = '30px'; // Padding aumentado para dar mais área aos labels
     radarChart.style.overflow = 'visible'; // Permitir tooltips fora do container
     radarChart.style.boxSizing = 'border-box';
+    radarChart.style.position = 'relative';
+
+    // Botão para limpar seleção no radar chart
+    const clearRadarButton = document.createElement('button');
+    clearRadarButton.id = 'clear-radar-selection-btn';
+    clearRadarButton.innerHTML = '✕ Limpar Seleção';
+    clearRadarButton.style.position = 'absolute';
+    clearRadarButton.style.top = '10px';
+    clearRadarButton.style.right = '10px';
+    clearRadarButton.style.backgroundColor = '#4a90e2';
+    clearRadarButton.style.color = 'white';
+    clearRadarButton.style.border = 'none';
+    clearRadarButton.style.padding = '6px 12px';
+    clearRadarButton.style.borderRadius = '6px';
+    clearRadarButton.style.fontSize = '0.8em';
+    clearRadarButton.style.fontFamily = '"Pixelify Sans", sans-serif';
+    clearRadarButton.style.cursor = 'pointer';
+    clearRadarButton.style.transition = 'background-color 0.2s ease';
+    clearRadarButton.style.zIndex = '1000';
+    clearRadarButton.style.opacity = '0.7'; // Inicialmente semi-transparente
+    clearRadarButton.style.display = 'none'; // Inicialmente oculto
+
+    clearRadarButton.addEventListener('mouseenter', function () {
+        this.style.backgroundColor = '#357abd';
+    });
+
+    clearRadarButton.addEventListener('mouseleave', function () {
+        this.style.backgroundColor = '#4a90e2';
+    });
+
+    clearRadarButton.addEventListener('click', function () {
+        // Função para limpar seleção e voltar às estatísticas médias
+        if (typeof clearRadarSelection === 'function') {
+            clearRadarSelection();
+        } else {
+            // Fallback caso a função global não esteja disponível
+            if (currentLocationId) {
+                renderStatRadarChart(currentLocationId);
+                this.style.display = 'none';
+                this.style.opacity = '0.7';
+            }
+        }
+    });
+
+    radarChart.appendChild(clearRadarButton);
     rightContainer.appendChild(radarChart);
 
     chartContainer.appendChild(leftScatterContainer);
@@ -396,6 +466,28 @@ export async function createLocationScreen(id_location = 28) {
             renderLocationScatterPlot(id_location, '#location-scatter-container');
             renderStatRadarChart(id_location);
         }, 100); // Pequeno delay para garantir que os containers estejam no DOM
+
+        // Adicionar listener para redimensionamento da janela
+        const resizeHandler = () => {
+            // Debounce para evitar muitos re-renders
+            clearTimeout(window.locationScreenResizeTimeout);
+            window.locationScreenResizeTimeout = setTimeout(() => {
+                if (document.getElementById('location-scatter-container') &&
+                    document.getElementById('radar-chart-location')) {
+                    renderLocationScatterPlot(id_location, '#location-scatter-container');
+                    renderStatRadarChart(id_location);
+                }
+            }, 300);
+        };
+
+        // Remover listener anterior se existir
+        if (window.locationScreenResizeHandler) {
+            window.removeEventListener('resize', window.locationScreenResizeHandler);
+        }
+
+        // Adicionar novo listener
+        window.locationScreenResizeHandler = resizeHandler;
+        window.addEventListener('resize', resizeHandler);
 
     } catch (error) {
         console.error("Erro ao criar tela de localização:", error);
