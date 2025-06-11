@@ -1,4 +1,4 @@
-import {pokemonTypeColorsRadar} from "./consts.js"
+import { pokemonTypeColorsRadar } from "./consts.js";
 
 /**
  * Função que tem como objetivo formatar os dados para um formato amigável para a construção do gráfico de radar.
@@ -11,9 +11,9 @@ function buildRadarDataFromPokemons(selectedPokemons) {
         { key: "Hp_Stat", label: "Hp" },
         { key: "Attack_Stat", label: "Attack" },
         { key: "Defense_Stat", label: "Defense" },
+        { key: "Speed_Stat", label: "Speed" },
         { key: "Special_Attack_Stat", label: "Special Attack" },
         { key: "Special_Defense_Stat", label: "Special Defense" },
-        { key: "Speed_Stat", label: "Speed" }
     ];
 
     const tiposVistos = {};
@@ -49,7 +49,7 @@ export function createRadarChart(selectedPokemons) {
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    const svgWidth = radarSvg.clientWidth*0.45;
+    const svgWidth = radarSvg.clientWidth * 0.45;
     const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgWidth - margin.top - margin.bottom;
@@ -79,7 +79,7 @@ export function createRadarChart(selectedPokemons) {
  * @param {*} options - Uma série de configurações do gráfico de radar
  */
 export function RadarChart(className, data, options) {
-    
+
     // Configurações globais padrão
     var cfg = {
         w: 600,
@@ -87,7 +87,7 @@ export function RadarChart(className, data, options) {
         margin: { top: 20, right: 20, bottom: 20, left: 20 },
         levels: 3,
         maxValue: 0,
-        labelFactor: 1.25,
+        labelFactor: 1.35, // Aumentado para afastar mais os labels
         wrapWidth: 60,
         opacityArea: 0.35,
         dotRadius: 4,
@@ -128,15 +128,6 @@ export function RadarChart(className, data, options) {
         .attr("class", "radar" + className);
 
     // adição do título no gráfico
-    svg.append("text")
-        .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
-        .attr("y", cfg.margin.top / 3)
-        .attr("text-anchor", "middle")
-        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right)/45}px`)
-        .style("font-weight", "bold")
-        .style("fill", "#ffffff")
-        .text("Pokémon Attribute Comparison");
-
     var g = svg.append("g")
         .attr("transform", `translate(${cfg.w / 2 + cfg.margin.left},${cfg.h / 2 + cfg.margin.top})`);
 
@@ -147,7 +138,7 @@ export function RadarChart(className, data, options) {
         feMergeNode_1 = feMerge.append('feMergeNode').attr('in', 'coloredBlur'),
         feMergeNode_2 = feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    
+
     // Construção dos circulos
     var axisGrid = g.append("g").attr("class", "axisWrapper");
 
@@ -171,7 +162,7 @@ export function RadarChart(className, data, options) {
         .attr("x", 4)
         .attr("y", d => -d * radius / cfg.levels)
         .attr("dy", "0.4em")
-        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right)/50}px`)
+        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right) / 50}px`)
         .style("font-weight", "bold")
         .attr("fill", "#ffffff")
         .text(d => Format(maxValue * d / cfg.levels));
@@ -195,7 +186,7 @@ export function RadarChart(className, data, options) {
     // Configuração dos títulos dos eixos
     axis.append("text")
         .attr("class", "legend")
-        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right)/45}px`)
+        .style("font-size", `${(cfg.w + cfg.margin.left + cfg.margin.right) / 45}px`)
         .attr("fill", "#ffffff")
         .attr("text-anchor", "middle")
         .attr("dy", "0.35em")
@@ -217,15 +208,21 @@ export function RadarChart(className, data, options) {
         .attr("rx", 5)
         .attr("ry", 5)
         .style("fill", "white")
-        .style("opacity", 0.8);
+        .style("opacity", 0.95)
+        .style("stroke", "#333")
+        .style("stroke-width", "1px")
+        .style("filter", "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))");
 
     // Configuração do texto da tooltip
     var tooltipText = tooltip.append("text")
         .attr("x", 0)
         .attr("y", 0)
         .attr("text-anchor", "middle")
-        .style("font-size", "20px")
-        .style("fill", "black");
+        .attr("dominant-baseline", "middle")
+        .style("font-size", "14px")
+        .style("font-weight", "600")
+        .style("fill", "#333")
+        .style("font-family", "Arial, sans-serif");
 
     // Radar line
     var radarLine = d3.lineRadial()
@@ -245,8 +242,8 @@ export function RadarChart(className, data, options) {
         .attr("d", d => radarLine(d))
         .style("fill", (d, i) => cfg.color(i))
         .style("fill-opacity", cfg.opacityArea)
-        .on('mouseover', function(event, d) {
-            
+        .on('mouseover', function (event, d) {
+
             // faz o tooltip aparecer na camada superior
             tooltip.node().parentNode.appendChild(tooltip.node());
 
@@ -259,29 +256,54 @@ export function RadarChart(className, data, options) {
 
             tooltip.style("opacity", 1);
 
-            // define o título da tooltip simples (só o nome do pokémon)
-            tooltipText.text(d[0].name);
+            // Melhorar o título da tooltip com informação mais detalhada
+            const pokemonName = d[0].name;
+            const totalStats = d.reduce((sum, stat) => sum + (stat.value || 0), 0);
+            tooltipText.text(`${pokemonName} (Total: ${totalStats})`);
 
             // ajusta a largura do tooltip com base no tanto de texto
             const bbox = tooltipText.node().getBBox();
-            const padding = 10;
+            const padding = 12;
             tooltipRect
                 .attr("width", bbox.width + padding * 2)
-                .attr("x", - (bbox.width / 2) - padding);
+                .attr("x", - (bbox.width / 2) - padding)
+                .attr("height", bbox.height + padding)
+                .attr("y", - (bbox.height / 2) - padding / 2);
 
-            
-            // move o tooltip para onde o mouse está passando
+
+            // move o tooltip para onde o mouse está passando, com ajuste de posição
             const [x, y] = d3.pointer(event);
-            tooltip.attr('transform', `translate(${x},${y - 40})`);
+            let tooltipX = x;
+            let tooltipY = y - 45;
+
+            // Ajustar posição para evitar cortes
+            const tooltipOffset = cfg.tooltipOffset || 40;
+            if (x > cfg.w * 0.8) tooltipX = x - bbox.width / 2 - padding;
+            if (x < cfg.w * 0.2) tooltipX = x + bbox.width / 2 + padding;
+            if (y < cfg.h * 0.2) tooltipY = y + tooltipOffset;
+
+            tooltip.attr('transform', `translate(${tooltipX},${tooltipY})`);
         })
 
-        .on('mousemove', function(event) {
-            // atualiza a posição do tooltip
+        .on('mousemove', function (event, d) {
+            // atualiza a posição do tooltip com posicionamento inteligente
             const [x, y] = d3.pointer(event);
-            tooltip.attr('transform', `translate(${x},${y - 40})`);
+            const bbox = tooltipText.node().getBBox();
+            const padding = 12;
+
+            let tooltipX = x;
+            let tooltipY = y - 45;
+
+            // Ajustar posição para evitar cortes
+            const tooltipOffset = cfg.tooltipOffset || 40;
+            if (x > cfg.w * 0.8) tooltipX = x - bbox.width / 2 - padding;
+            if (x < cfg.w * 0.2) tooltipX = x + bbox.width / 2 + padding;
+            if (y < cfg.h * 0.2) tooltipY = y + tooltipOffset;
+
+            tooltip.attr('transform', `translate(${tooltipX},${tooltipY})`);
         })
 
-        .on('mouseout', function() {
+        .on('mouseout', function () {
             // ajusta a opacidade da área do gráfico para o padrão e esconde o tooltip
             d3.selectAll(".radarArea")
                 .transition().duration(200)
@@ -290,7 +312,7 @@ export function RadarChart(className, data, options) {
             tooltip.style("opacity", 0);
         });
 
-    
+
     // Configuração das linhas que envolvem a área do gráfico
     blobWrapper.append("path")
         .attr("class", "radarStroke")
@@ -301,7 +323,7 @@ export function RadarChart(className, data, options) {
         .style("filter", "url(#glow)");
 
     // Configuração dos cículos do gráfico 
-    blobWrapper.each(function(dataSeries, seriesIndex) {
+    blobWrapper.each(function (dataSeries, seriesIndex) {
         d3.select(this).selectAll(".radarCircle")
             .data(dataSeries)
             .enter().append("circle")
@@ -328,38 +350,56 @@ export function RadarChart(className, data, options) {
         .attr("cy", (d, i) => rScale(d.value) * Math.sin(angleSlice * i - Math.PI / 2))
         .style("fill", "none")
         .style("pointer-events", "all")
-        
-        // ao passar o mouse sobre um dos círculos, vai exibir o nome do pokemón e seu valor 
-        .on("mouseover", function(event, d) {
-            var newX = parseFloat(d3.select(this).attr('cx'));
-            var newY = parseFloat(d3.select(this).attr('cy')) - 25;
 
-            tooltip.attr("transform", `translate(${newX},${newY})`);
-            tooltipText.text(`${d.name}: ${d.value}`);
+        // ao passar o mouse sobre um dos círculos, vai exibir o nome do pokemón e seu valor 
+        .on("mouseover", function (event, d) {
+            var newX = parseFloat(d3.select(this).attr('cx'));
+            var newY = parseFloat(d3.select(this).attr('cy'));
+
+            // Ajustar posição do tooltip para evitar cortes nas bordas
+            const tooltipOffset = cfg.tooltipOffset || 35;
+            const svgBounds = g.node().getBoundingClientRect();
+            const containerBounds = document.querySelector(className).getBoundingClientRect();
+
+            // Calcular posição do tooltip com base na posição do ponto e limites do container
+            let tooltipX = newX;
+            let tooltipY = newY - tooltipOffset;
+
+            // Verificar se o tooltip sairia das bordas e ajustar
+            if (newX > cfg.w * 0.7) tooltipX = newX - 80; // Se muito à direita, mover para esquerda
+            if (newX < cfg.w * 0.3) tooltipX = newX + 80; // Se muito à esquerda, mover para direita
+            if (newY < cfg.h * 0.3) tooltipY = newY + tooltipOffset; // Se muito acima, mostrar abaixo
+
+            tooltip.attr("transform", `translate(${tooltipX},${tooltipY})`);
+
+            // Melhorar o texto do tooltip para incluir o nome da estatística
+            tooltipText.text(`${d.axis}: ${d.value}`);
 
             // ajuste da largura da tooltip com base na largura do texto
             const bbox = tooltipText.node().getBBox();
-            const padding = 8;
+            const padding = 10;
             tooltipRect
                 .attr("width", bbox.width + padding * 2)
-                .attr("x", - (bbox.width / 2) - padding);
+                .attr("x", - (bbox.width / 2) - padding)
+                .attr("height", bbox.height + padding)
+                .attr("y", - (bbox.height / 2) - padding / 2);
 
             tooltip.style("opacity", 1);
         })
         // esconde o tooltip ao tirar o mouse
-        .on("mouseout", function() {
+        .on("mouseout", function () {
             tooltip.style("opacity", 0);
         });
 
     // Função auxiliar que quebra automaticamente a linha do texto do svg para não ultrapassar a largura do gráfico
     function wrap(text, width) {
-        text.each(function() {
+        text.each(function () {
             var text = d3.select(this),
                 words = text.text().split(/\s+/).reverse(),
                 word,
                 line = [],
                 lineNumber = 0,
-                lineHeight = 1.4, 
+                lineHeight = 1.4,
                 y = text.attr("y"),
                 x = text.attr("x"),
                 dy = parseFloat(text.attr("dy")),
