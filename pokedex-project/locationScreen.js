@@ -3,60 +3,83 @@ import { updateTypeChordByLocation } from "./types.js";
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
+function createChordContainer() {
+    const leftChordContainer = document.createElement('div');
+    leftChordContainer.id = 'location-chart-container';
+    leftChordContainer.style.width = '48%';
+    leftChordContainer.style.aspectRatio = '1 / 1';
+    leftChordContainer.style.display = 'flex';
+    leftChordContainer.style.justifyContent = 'center';
+    leftChordContainer.style.alignItems = 'center';
+    leftChordContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+    leftChordContainer.style.borderRadius = '10px';
+    return leftChordContainer;
+}
+
+function createBarChartContainer() {
+    const rightContainer = document.createElement('div');
+    rightContainer.id = 'location-bar-container';
+    rightContainer.style.width = '48%';
+    rightContainer.style.aspectRatio = '1 / 1';
+    rightContainer.style.display = 'flex';
+    rightContainer.style.flexDirection = 'column';
+    rightContainer.style.justifyContent = 'center';
+    rightContainer.style.alignItems = 'center';
+    rightContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+    rightContainer.style.borderRadius = '10px';
+    rightContainer.style.padding = '20px';
+
+    // Título do container de bar chart
+    const title = document.createElement('h2');
+    title.textContent = "Estatísticas dos Pokémons";
+    title.style.color = 'white';
+    title.style.marginBottom = '15px';
+    title.style.fontFamily = '"Pixelify Sans", sans-serif';
+    rightContainer.appendChild(title);
+
+    // Container para o gráfico de barras
+    const barChart = document.createElement('div');
+    barChart.id = 'bar-chart-location';
+    barChart.style.width = '100%';
+    barChart.style.height = '100%';
+    barChart.style.display = 'flex';
+    barChart.style.justifyContent = 'center';
+    barChart.style.alignItems = 'center';
+    rightContainer.appendChild(barChart);
+
+    return rightContainer;
+}
+
 export function createLocationScreen(id_location = 28) {
     contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
-    contentScreen.style.gap = "50px";
     contentScreen.style.display = 'flex';
-    contentScreen.style.justifyContent = 'center';
+    contentScreen.style.flexDirection = 'column';
+    contentScreen.style.justifyContent = 'flex-start';
     contentScreen.style.alignItems = 'center';
-    contentScreen.style.flexDirection = 'row';
-    contentScreen.style.padding = '20px';
+    contentScreen.style.gap = "50px";
+    contentScreen.style.padding = "50px 0";
 
-    // Div principal da esquerda - Gráfico de Acordes
-    const leftDiv = document.createElement('div');
-    leftDiv.id = 'location-left-div';
-    leftDiv.style.width = '50%';
-    leftDiv.style.height = '100%';
-    leftDiv.style.display = 'flex';
-    leftDiv.style.justifyContent = 'center';
-    leftDiv.style.alignItems = 'center';
-    leftDiv.style.flexDirection = 'column';
+    // Container para as duas divs superiores (lado a lado)
+    const topContainer = document.createElement('div');
+    topContainer.style.display = 'flex';
+    topContainer.style.width = '100%';
+    topContainer.style.justifyContent = 'center';
+    topContainer.style.gap = '20px';
+    topContainer.style.marginBottom = '50px';
 
-    const chartContainer = document.createElement('div');
-    chartContainer.id = 'location-chart-container';
-    chartContainer.style.width = '100%';
-    chartContainer.style.height = '100%';
-    chartContainer.style.display = 'flex';
-    chartContainer.style.justifyContent = 'center';
-    chartContainer.style.alignItems = 'center';
+    // Modularizado: containers
+    const leftChordContainer = createChordContainer();
+    const rightContainer = createBarChartContainer();
 
-    leftDiv.appendChild(chartContainer);
+    // Adiciona os containers superiores ao topContainer
+    topContainer.appendChild(leftChordContainer);
+    topContainer.appendChild(rightContainer);
 
-    // Div principal da direita - Bar Chart
-    const rightDiv = document.createElement('div');
-    rightDiv.id = 'location-right-div';
-    rightDiv.style.width = '50%';
-    rightDiv.style.height = '100%';
-    rightDiv.style.display = 'flex';
-    rightDiv.style.justifyContent = 'center';
-    rightDiv.style.alignItems = 'center';
-    rightDiv.style.flexDirection = 'column';
+    // Adiciona os containers ao contentScreen
+    contentScreen.appendChild(topContainer);
 
-    const barChartContainer = document.createElement('div');
-    barChartContainer.id = 'bar-chart-location';
-    barChartContainer.style.width = '100%';
-    barChartContainer.style.height = '100%';
-    barChartContainer.style.display = 'flex';
-    barChartContainer.style.justifyContent = 'center';
-    barChartContainer.style.alignItems = 'center';
-
-    rightDiv.appendChild(barChartContainer);
-
-    // Adiciona as duas divs principais na tela
-    contentScreen.appendChild(leftDiv);
-    contentScreen.appendChild(rightDiv);
-
+    // Chama os renderizadores passando os ids dos containers correspondentes
     updateTypeChordByLocation(id_location);
     renderStatBarChart(id_location);
 }
