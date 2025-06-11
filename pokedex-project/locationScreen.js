@@ -163,63 +163,7 @@ export async function renderStatRadarChart(locationId) {
     );
 }
 
-// Função para limpar seleção do radar chart
-function clearRadarSelection() {
-    if (typeof currentLocationId !== 'undefined' && currentLocationId !== null) {
-        // Limpar seleção visual do scatter plot também
-        selectedPokemonId = null;
-
-        const scatterContainer = document.querySelector('#location-scatter-container');
-        if (scatterContainer) {
-            const dots = scatterContainer.querySelectorAll('.dot');
-            dots.forEach(dot => {
-                d3.select(dot)
-                    .style("stroke-width", 2)
-                    .style("fill-opacity", 0.8);
-            });
-
-            // Atualizar botão do scatter plot
-            const clearScatterBtn = scatterContainer.querySelector('.clear-button');
-            if (clearScatterBtn) {
-                clearScatterBtn.style.opacity = '0.6';
-            }
-        }
-
-        // Re-renderizar as estatísticas médias da localização
-        renderStatRadarChart(currentLocationId);
-
-        // Ocultar o botão de limpar
-        const clearBtn = document.getElementById('clear-radar-selection-btn');
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-            clearBtn.style.opacity = '0.7';
-        }
-
-        // Restaurar título original
-        const radarTitle = document.querySelector('#location-radar-container h2');
-        if (radarTitle) {
-            radarTitle.textContent = "Estatísticas Médias dos Pokémons";
-        }
-    }
-}
-
-// Função para mostrar/ocultar o botão de limpar seleção do radar
-function toggleRadarClearButton(show = false) {
-    const clearBtn = document.getElementById('clear-radar-selection-btn');
-    if (clearBtn) {
-        if (show) {
-            clearBtn.style.display = 'block';
-            clearBtn.style.opacity = '1';
-        } else {
-            clearBtn.style.display = 'none';
-            clearBtn.style.opacity = '0.7';
-        }
-    }
-}
-
 // Expor funções globalmente para integração com scatterPlot.js
-window.clearRadarSelection = clearRadarSelection;
-window.toggleRadarClearButton = toggleRadarClearButton;
 
 // Expor variáveis globalmente para sincronização entre gráficos
 window.getSelectedPokemonId = () => selectedPokemonId;
@@ -304,30 +248,43 @@ function createChartContainer() {
     leftScatterContainer.style.width = '58%'; // Aumentado para maior destaque
     leftScatterContainer.style.height = '100%';
     leftScatterContainer.style.display = 'flex';
+    leftScatterContainer.style.flexDirection = 'column';
     leftScatterContainer.style.justifyContent = 'center';
     leftScatterContainer.style.alignItems = 'center';
     leftScatterContainer.style.backgroundColor = '#1b1b1b';
     leftScatterContainer.style.borderRadius = '20px';
     leftScatterContainer.style.border = '3px solid #ffffff';
-    leftScatterContainer.style.padding = '25px';
+    leftScatterContainer.style.padding = '15px';
     leftScatterContainer.style.boxSizing = 'border-box';
     leftScatterContainer.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4)';
-    leftScatterContainer.style.position = 'relative';
 
-    // Título melhorado para o scatter plot
-    const scatterTitle = document.createElement('div');
-    scatterTitle.style.position = 'absolute';
-    scatterTitle.style.top = '15px';
-    scatterTitle.style.left = '50%';
-    scatterTitle.style.transform = 'translateX(-50%)';
+    // Título do container de scatter plot (mesma lógica do radar chart)
+    const scatterTitle = document.createElement('h2');
+    scatterTitle.textContent = "Dimensões dos Pokémons na Localização";
     scatterTitle.style.color = 'white';
+    scatterTitle.style.marginBottom = '10px';
+    scatterTitle.style.marginTop = '0px';
     scatterTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
-    scatterTitle.style.fontSize = '1.3em';
-    scatterTitle.style.fontWeight = 'bold';
+    scatterTitle.style.fontSize = '1.1em';
     scatterTitle.style.textAlign = 'center';
     scatterTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
-    scatterTitle.textContent = 'Peso vs Altura dos Pokémons';
     leftScatterContainer.appendChild(scatterTitle);
+
+    // Container para o gráfico scatter plot
+    const scatterChart = document.createElement('div');
+    scatterChart.id = 'scatter-chart-container';
+    scatterChart.style.width = '100%';
+    scatterChart.style.height = 'calc(100% - 50px)';
+    scatterChart.style.display = 'flex';
+    scatterChart.style.justifyContent = 'center';
+    scatterChart.style.alignItems = 'center';
+    scatterChart.style.minHeight = '450px';
+    scatterChart.style.maxHeight = '450px';
+    scatterChart.style.overflow = 'visible';
+    scatterChart.style.boxSizing = 'border-box';
+    scatterChart.style.position = 'relative';
+
+    leftScatterContainer.appendChild(scatterChart);
 
     // Container expandido para o radar chart
     const rightContainer = document.createElement('div');
@@ -361,7 +318,7 @@ function createChartContainer() {
     const radarChart = document.createElement('div');
     radarChart.id = 'radar-chart-location';
     radarChart.style.width = '100%';
-    radarChart.style.height = 'calc(100% - 90px)'; // Altura ajustada para o botão
+    radarChart.style.height = 'calc(100% - 50px)'; // Altura ajustada sem botão
     radarChart.style.display = 'flex';
     radarChart.style.justifyContent = 'center';
     radarChart.style.alignItems = 'center';
@@ -372,82 +329,12 @@ function createChartContainer() {
     radarChart.style.boxSizing = 'border-box';
     radarChart.style.position = 'relative';
 
-    // Botão para limpar seleção no radar chart
-    const clearRadarButton = document.createElement('button');
-    clearRadarButton.id = 'clear-radar-selection-btn';
-    clearRadarButton.innerHTML = '✕ Limpar Seleção';
-    clearRadarButton.style.position = 'absolute';
-    clearRadarButton.style.top = '10px';
-    clearRadarButton.style.right = '10px';
-    clearRadarButton.style.backgroundColor = '#4a90e2';
-    clearRadarButton.style.color = 'white';
-    clearRadarButton.style.border = 'none';
-    clearRadarButton.style.padding = '6px 12px';
-    clearRadarButton.style.borderRadius = '6px';
-    clearRadarButton.style.fontSize = '0.8em';
-    clearRadarButton.style.fontFamily = '"Pixelify Sans", sans-serif';
-    clearRadarButton.style.cursor = 'pointer';
-    clearRadarButton.style.transition = 'background-color 0.2s ease';
-    clearRadarButton.style.zIndex = '1000';
-    clearRadarButton.style.opacity = '0.7'; // Inicialmente semi-transparente
-    clearRadarButton.style.display = 'none'; // Inicialmente oculto
-
-    clearRadarButton.addEventListener('mouseenter', function () {
-        this.style.backgroundColor = '#357abd';
-    });
-
-    clearRadarButton.addEventListener('mouseleave', function () {
-        this.style.backgroundColor = '#4a90e2';
-    });
-
-    clearRadarButton.addEventListener('click', function () {
-        // Função para limpar seleção e voltar às estatísticas médias
-        if (typeof clearRadarSelection === 'function') {
-            clearRadarSelection();
-        } else {
-            // Fallback caso a função global não esteja disponível
-            if (currentLocationId) {
-                renderStatRadarChart(currentLocationId);
-                this.style.display = 'none';
-                this.style.opacity = '0.7';
-            }
-        }
-    });
-
-    radarChart.appendChild(clearRadarButton);
     rightContainer.appendChild(radarChart);
 
     chartContainer.appendChild(leftScatterContainer);
     chartContainer.appendChild(rightContainer);
 
     return chartContainer;
-}
-
-function createInteractionHints() {
-    const hintsContainer = document.createElement("div");
-    hintsContainer.classList.add("interaction-hints");
-    hintsContainer.style.width = "90%";
-    hintsContainer.style.padding = "15px";
-    hintsContainer.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
-    hintsContainer.style.borderRadius = "10px";
-    hintsContainer.style.marginBottom = "20px";
-    hintsContainer.style.fontFamily = '"Pixelify Sans", sans-serif';
-    hintsContainer.style.fontSize = "0.9em";
-    hintsContainer.style.color = "#555";
-    hintsContainer.style.textAlign = "center";
-    hintsContainer.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
-
-    const hintsText = document.createElement("div");
-    hintsText.innerHTML = `
-        <strong>💡 Dicas de Interação:</strong><br>
-        • Passe o mouse sobre os <span style="color: #2196F3; font-weight: bold;">pontos</span> para ver detalhes dos pokémons<br>
-        • O <span style="color: #FF9800; font-weight: bold;">tamanho</span> dos pontos representa o total de estatísticas<br>
-        • A <span style="color: #4CAF50; font-weight: bold;">cor</span> dos pontos representa o tipo primário do pokémon
-    `;
-    hintsText.style.lineHeight = "1.5";
-
-    hintsContainer.appendChild(hintsText);
-    return hintsContainer;
 }
 
 export async function createLocationScreen(id_location = 28) {
@@ -488,16 +375,14 @@ export async function createLocationScreen(id_location = 28) {
         // Criar elementos da interface
         const locationInfo = createLocationInfoBar(locationName);
         const chartContainer = createChartContainer();
-        const hintsContainer = createInteractionHints();
 
         // Adicionar todos os elementos ao contentScreen
         contentScreen.appendChild(locationInfo);
         contentScreen.appendChild(chartContainer);
-        contentScreen.appendChild(hintsContainer);
 
         // Chama os renderizadores passando os ids dos containers correspondentes
         setTimeout(() => {
-            renderLocationScatterPlot(id_location, '#location-scatter-container');
+            renderLocationScatterPlot(id_location, '#scatter-chart-container');
             renderStatRadarChart(id_location);
         }, 100); // Pequeno delay para garantir que os containers estejam no DOM
 
@@ -506,9 +391,9 @@ export async function createLocationScreen(id_location = 28) {
             // Debounce para evitar muitos re-renders
             clearTimeout(window.locationScreenResizeTimeout);
             window.locationScreenResizeTimeout = setTimeout(() => {
-                if (document.getElementById('location-scatter-container') &&
+                if (document.getElementById('scatter-chart-container') &&
                     document.getElementById('radar-chart-location')) {
-                    renderLocationScatterPlot(id_location, '#location-scatter-container');
+                    renderLocationScatterPlot(id_location, '#scatter-chart-container');
                     renderStatRadarChart(id_location);
                 }
             }, 300);
