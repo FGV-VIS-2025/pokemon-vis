@@ -1,6 +1,6 @@
 import { getLocationAreaByLocation, getLocationsByRegionName } from "./dataManager.js";
 import { RadarChart } from "./radarChart.js";
-import { updateTypeChordByLocation } from "./types.js";
+import { renderLocationScatterPlot } from "./scatterPlot.js";
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
@@ -246,41 +246,41 @@ function createChartContainer() {
     chartContainer.style.marginTop = "30px";
     chartContainer.style.marginBottom = "30px";
 
-    // Container expandido para o chord diagram
-    const leftChordContainer = document.createElement('div');
-    leftChordContainer.id = 'location-chart-container';
-    leftChordContainer.style.width = '58%'; // Aumentado para maior destaque
-    leftChordContainer.style.height = '100%';
-    leftChordContainer.style.display = 'flex';
-    leftChordContainer.style.justifyContent = 'center';
-    leftChordContainer.style.alignItems = 'center';
-    leftChordContainer.style.backgroundColor = '#1b1b1b';
-    leftChordContainer.style.borderRadius = '20px';
-    leftChordContainer.style.border = '3px solid #ffffff';
-    leftChordContainer.style.padding = '25px';
-    leftChordContainer.style.boxSizing = 'border-box';
-    leftChordContainer.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4)';
-    leftChordContainer.style.position = 'relative';
+    // Container expandido para o scatter plot
+    const leftScatterContainer = document.createElement('div');
+    leftScatterContainer.id = 'location-scatter-container';
+    leftScatterContainer.style.width = '58%'; // Aumentado para maior destaque
+    leftScatterContainer.style.height = '100%';
+    leftScatterContainer.style.display = 'flex';
+    leftScatterContainer.style.justifyContent = 'center';
+    leftScatterContainer.style.alignItems = 'center';
+    leftScatterContainer.style.backgroundColor = '#1b1b1b';
+    leftScatterContainer.style.borderRadius = '20px';
+    leftScatterContainer.style.border = '3px solid #ffffff';
+    leftScatterContainer.style.padding = '25px';
+    leftScatterContainer.style.boxSizing = 'border-box';
+    leftScatterContainer.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4)';
+    leftScatterContainer.style.position = 'relative';
 
-    // Título melhorado para o chord diagram
-    const chordTitle = document.createElement('div');
-    chordTitle.style.position = 'absolute';
-    chordTitle.style.top = '15px';
-    chordTitle.style.left = '50%';
-    chordTitle.style.transform = 'translateX(-50%)';
-    chordTitle.style.color = 'white';
-    chordTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
-    chordTitle.style.fontSize = '1.3em';
-    chordTitle.style.fontWeight = 'bold';
-    chordTitle.style.textAlign = 'center';
-    chordTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
-    chordTitle.textContent = 'Diagrama de Relações entre Tipos';
-    leftChordContainer.appendChild(chordTitle);
+    // Título melhorado para o scatter plot
+    const scatterTitle = document.createElement('div');
+    scatterTitle.style.position = 'absolute';
+    scatterTitle.style.top = '15px';
+    scatterTitle.style.left = '50%';
+    scatterTitle.style.transform = 'translateX(-50%)';
+    scatterTitle.style.color = 'white';
+    scatterTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
+    scatterTitle.style.fontSize = '1.3em';
+    scatterTitle.style.fontWeight = 'bold';
+    scatterTitle.style.textAlign = 'center';
+    scatterTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
+    scatterTitle.textContent = 'Peso vs Altura dos Pokémons';
+    leftScatterContainer.appendChild(scatterTitle);
 
     // Container expandido para o radar chart
     const rightContainer = document.createElement('div');
     rightContainer.id = 'location-radar-container';
-    rightContainer.style.width = '42%'; // Balanceado com o chord diagram
+    rightContainer.style.width = '42%'; // Balanceado com o scatter plot
     rightContainer.style.height = '100%';
     rightContainer.style.display = 'flex';
     rightContainer.style.flexDirection = 'column';
@@ -319,7 +319,7 @@ function createChartContainer() {
     radarChart.style.boxSizing = 'border-box';
     rightContainer.appendChild(radarChart);
 
-    chartContainer.appendChild(leftChordContainer);
+    chartContainer.appendChild(leftScatterContainer);
     chartContainer.appendChild(rightContainer);
 
     return chartContainer;
@@ -342,9 +342,9 @@ function createInteractionHints() {
     const hintsText = document.createElement("div");
     hintsText.innerHTML = `
         <strong>💡 Dicas de Interação:</strong><br>
-        • Passe o mouse sobre os <span style="color: #2196F3; font-weight: bold;">arcos</span> para ver detalhes dos tipos<br>
-        • Clique nas <span style="color: #FF9800; font-weight: bold;">conexões</span> para filtrar pokémons por combinação de tipos<br>
-        • Explore o <span style="color: #4CAF50; font-weight: bold;">radar chart</span> com as estatísticas médias dos pokémons
+        • Passe o mouse sobre os <span style="color: #2196F3; font-weight: bold;">pontos</span> para ver detalhes dos pokémons<br>
+        • O <span style="color: #FF9800; font-weight: bold;">tamanho</span> dos pontos representa o total de estatísticas<br>
+        • A <span style="color: #4CAF50; font-weight: bold;">cor</span> também indica o total de estatísticas (escala viridis)
     `;
     hintsText.style.lineHeight = "1.5";
 
@@ -399,7 +399,7 @@ export async function createLocationScreen(id_location = 28) {
 
         // Chama os renderizadores passando os ids dos containers correspondentes
         setTimeout(() => {
-            updateTypeChordByLocation(id_location);
+            renderLocationScatterPlot(id_location, '#location-scatter-container');
             renderStatRadarChart(id_location);
         }, 100); // Pequeno delay para garantir que os containers estejam no DOM
 
