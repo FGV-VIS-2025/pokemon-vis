@@ -119,8 +119,8 @@ async function renderStatRadarChart(locationId) {
         { key: "Attack_Stat", label: "Attack" },
         { key: "Defense_Stat", label: "Defense" },
         { key: "Speed_Stat", label: "Speed" },
-        { key: "Special_Defense_Stat", label: "Special Defense" },
-        { key: "Special_Attack_Stat", label: "Special Attack" }
+        { key: "Special_Defense_Stat", label: "Sp. Defense" },
+        { key: "Special_Attack_Stat", label: "Sp. Attack" }
     ];
 
     const axes = statLabels.map(stat => ({
