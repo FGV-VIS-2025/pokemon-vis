@@ -1,4 +1,5 @@
-import { getLocationAreaByLocation } from './dataManager.js';
+import { pokemonTypeColorsRGBA } from './consts.js';
+import { getLocationAreaByLocation, getLocationsByRegionName, getPokemonsByMultipleLocationAreas } from './dataManager.js';
 import { renderRadarChart } from './radarChart.js';
 
 // Dados globais para o scatter plot
@@ -56,58 +57,57 @@ export async function renderLocationScatterPlot(locationId, containerSelector) {
             return;
         }
 
-        // Filtra Pokémon encontrados nas location_areas associadas
-        const pokemonIds = new Set(
-            encountersData
-                .filter(e => locationAreaIdSet.has(e.location_area_id))
-                .map(e => e.pokemon_id)
+        // Determinar a região atual baseada na localização
+        const regionName = await getRegionByLocationId(locationId);
+
+        // Buscar pokémons completos da localização com tipos
+        const pokemonsWithTypes = await getPokemonsByMultipleLocationAreas(
+            locationAreaIds_, // usar o array completo retornado por getLocationAreaByLocation
+            regionName
         );
 
-        if (pokemonIds.size === 0) {
+        if (pokemonsWithTypes.length === 0) {
             console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
             return;
         }
 
-        // Cria mapa dos dados dos pokémons
+        // Criar mapa dos dados básicos dos pokémons
         const pokemonMap = new Map();
         pokemonData.forEach(p => {
-            if (pokemonIds.has(p.id)) {
-                pokemonMap.set(p.id, {
-                    id: p.id,
-                    identifier: p.identifier,
-                    height: p.height,
-                    weight: p.weight
-                });
-            }
+            pokemonMap.set(p.id, {
+                id: p.id,
+                identifier: p.identifier,
+                height: p.height,
+                weight: p.weight
+            });
         });
 
-        // Calcula total de status para cada pokémon
+        // Calcular total de status para cada pokémon
         const pokemonStatsMap = new Map();
         pokemonStatsData.forEach(stat => {
-            if (pokemonIds.has(stat.pokemon_id)) {
-                if (!pokemonStatsMap.has(stat.pokemon_id)) {
-                    pokemonStatsMap.set(stat.pokemon_id, 0);
-                }
-                pokemonStatsMap.set(stat.pokemon_id, pokemonStatsMap.get(stat.pokemon_id) + stat.base_stat);
+            if (!pokemonStatsMap.has(stat.pokemon_id)) {
+                pokemonStatsMap.set(stat.pokemon_id, 0);
             }
+            pokemonStatsMap.set(stat.pokemon_id, pokemonStatsMap.get(stat.pokemon_id) + stat.base_stat);
         });
 
-        // Prepara dados para o scatter plot
+        // Preparar dados para o scatter plot combinando todas as informações
         const scatterData = [];
-        for (const pokemonId of pokemonIds) {
-            const pokemon = pokemonMap.get(pokemonId);
-            const totalStats = pokemonStatsMap.get(pokemonId);
+        pokemonsWithTypes.forEach(pokemon => {
+            const basicData = pokemonMap.get(pokemon.pokemon_id);
+            const totalStats = pokemonStatsMap.get(pokemon.pokemon_id);
 
-            if (pokemon && totalStats && pokemon.height > 0 && pokemon.weight > 0) {
+            if (basicData && totalStats && basicData.height > 0 && basicData.weight > 0) {
                 scatterData.push({
-                    id: pokemonId,
-                    name: pokemon.identifier,
-                    height: pokemon.height / 10, // Converte de decímetros para metros
-                    weight: pokemon.weight / 10, // Converte de hectogramas para kg
-                    totalStats: totalStats
+                    id: pokemon.pokemon_id,
+                    name: pokemon.name || basicData.identifier,
+                    height: basicData.height / 10, // Converte de decímetros para metros
+                    weight: basicData.weight / 10, // Converte de hectogramas para kg
+                    totalStats: totalStats,
+                    types: pokemon.types || []
                 });
             }
-        }
+        });
 
         if (scatterData.length === 0) {
             console.warn("Nenhum dado válido para o scatter plot");
@@ -120,6 +120,25 @@ export async function renderLocationScatterPlot(locationId, containerSelector) {
     } catch (error) {
         console.error("Erro ao renderizar scatter plot:", error);
     }
+}
+
+// Função auxiliar para determinar a região baseada na localização
+async function getRegionByLocationId(locationId) {
+    const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
+
+    for (const region of regions) {
+        try {
+            const locations = await getLocationsByRegionName(region);
+            const foundLocation = locations.find(loc => loc.location_id === locationId);
+            if (foundLocation) {
+                return region;
+            }
+        } catch (error) {
+            console.warn(`Erro ao buscar localização na região ${region}:`, error);
+        }
+    }
+
+    return "Kanto"; // Fallback para Kanto se não encontrar
 }
 
 /**
@@ -158,14 +177,19 @@ function drawScatterPlot(containerSelector, data) {
         .range([height, 0])
         .nice();
 
+    // Escala de raio baseada no total de stats
     const radiusScale = d3.scaleSqrt()
         .domain(d3.extent(data, d => d.totalStats))
         .range([6, 24]);
 
-    // Escala de cores vibrantes para fundo escuro
-    const colorScale = d3.scaleSequential()
-        .domain(d3.extent(data, d => d.totalStats))
-        .interpolator(d3.interpolateTurbo);
+    // Função para obter a cor baseada no tipo primário do pokémon
+    const getColorByType = (pokemon) => {
+        if (pokemon.types && pokemon.types.length > 0) {
+            const primaryType = pokemon.types[0].type_name;
+            return pokemonTypeColorsRGBA[primaryType] || 'rgba(200, 200, 200, 0.7)';
+        }
+        return 'rgba(200, 200, 200, 0.7)';
+    };
 
     // Grid de fundo
     const gridLines = g.append("g").attr("class", "grid-lines");
@@ -274,7 +298,7 @@ function drawScatterPlot(containerSelector, data) {
         .attr("cx", d => xScale(d.weight))
         .attr("cy", d => yScale(d.height))
         .attr("r", d => radiusScale(d.totalStats))
-        .style("fill", d => colorScale(d.totalStats))
+        .style("fill", d => getColorByType(d))
         .style("fill-opacity", 0.8)
         .style("stroke", "white")
         .style("stroke-width", d => selectedPokemonId === d.id ? 4 : 2)
@@ -294,8 +318,15 @@ function drawScatterPlot(containerSelector, data) {
 
             tooltip.html(`
                 <div style="text-align: center;">
-                    <strong style="font-size: 15px; color: #ffdd44;">${d.name.charAt(0).toUpperCase() + d.name.slice(1)}</strong><br/>
+                    <strong style="font-size: 15px; color: #ffdd44; margin-bottom: 10px; display: block;">${d.name.charAt(0).toUpperCase() + d.name.slice(1)}</strong>
+                    <div style="margin-bottom: 10px;">
+                        <img src="../assets/pokemons/${d.id}.png" 
+                             style="width: 96px; height: 96px; image-rendering: pixelated;" 
+                             onerror="this.src='../assets/ball.png'; this.style.opacity='0.7';"
+                             alt="${d.name}">
+                    </div>
                     <div style="margin: 8px 0; font-size: 12px;">
+                        <div><strong>Tipo:</strong> ${d.types && d.types.length > 0 ? d.types.map(t => t.type_name.charAt(0).toUpperCase() + t.type_name.slice(1)).join(', ') : 'Desconhecido'}</div>
                         <div><strong>Peso:</strong> ${d.weight.toFixed(1)} kg</div>
                         <div><strong>Altura:</strong> ${d.height.toFixed(1)} m</div>
                         <div><strong>Total Stats:</strong> ${d.totalStats}</div>
@@ -401,11 +432,36 @@ async function renderPokemonStats(pokemonId) {
     }
 
     try {
-        // Buscar dados do pokémon
+        // Buscar dados do pokémon incluindo tipos
         const pokemon = pokemonData.find(p => p.id === pokemonId);
         if (!pokemon) {
             console.warn(`Pokémon com ID ${pokemonId} não encontrado.`);
             return;
+        }
+
+        // Buscar dados dos pokémons da localização atual para encontrar tipos
+        let pokemonFromData = null;
+        if (currentLocationId) {
+            try {
+                const locationAreaIds_ = await getLocationAreaByLocation(currentLocationId);
+                const regionName = await getRegionByLocationId(currentLocationId);
+                const pokemonsWithTypes = await getPokemonsByMultipleLocationAreas(
+                    locationAreaIds_, // usar o array completo
+                    regionName // usar a região correta
+                );
+                pokemonFromData = pokemonsWithTypes.find(p => p.pokemon_id === pokemonId);
+            } catch (error) {
+                console.warn("Erro ao buscar tipos do pokémon:", error);
+            }
+        }
+
+        // Determinar cor baseada no tipo primário
+        let radarColor = "#4A90E2"; // cor padrão
+        if (pokemonFromData && pokemonFromData.types && pokemonFromData.types.length > 0) {
+            const primaryType = pokemonFromData.types[0].type_name;
+            radarColor = pokemonTypeColorsRGBA[primaryType] ?
+                pokemonTypeColorsRGBA[primaryType].replace('0.7)', '1)') : // remover transparência
+                "#4A90E2";
         }
 
         // Mapear IDs de estatísticas para nomes
@@ -445,12 +501,12 @@ async function renderPokemonStats(pokemonId) {
 
         const pokemonName = pokemon.identifier.charAt(0).toUpperCase() + pokemon.identifier.slice(1);
 
-        // Usar a função modular para renderizar
+        // Usar a função modular para renderizar com a cor do tipo
         renderRadarChart(
             "#radar-chart-location",
             pokemonName,
             statsArray,
-            "#ff6b6b"
+            radarColor
         );
 
         // Atualizar título do container do radar
@@ -590,6 +646,40 @@ async function renderLocationStatRadarChart(locationId) {
         return;
     }
 
+    // Determinar cor baseada no tipo mais comum na localização
+    let radarColor = "#4A90E2"; // cor padrão
+
+    try {
+        // Buscar os dados dos pokémons para obter os tipos
+        const locationAreaIds_ = await getLocationAreaByLocation(locationId);
+        const regionName = await getRegionByLocationId(locationId);
+        const locationPokemonData = await getPokemonsByMultipleLocationAreas(
+            locationAreaIds_, // usar o array completo
+            regionName // usar a região correta
+        );
+
+        if (locationPokemonData && locationPokemonData.length > 0) {
+            // Contar tipos primários
+            const typeCounts = {};
+            locationPokemonData.forEach(pokemon => {
+                if (pokemon.types && pokemon.types.length > 0) {
+                    const primaryType = pokemon.types[0].type_name;
+                    typeCounts[primaryType] = (typeCounts[primaryType] || 0) + 1;
+                }
+            });
+
+            // Encontrar o tipo mais comum
+            const mostCommonType = Object.entries(typeCounts)
+                .reduce((a, b) => typeCounts[a[0]] > typeCounts[b[0]] ? a : b)?.[0];
+
+            if (mostCommonType && pokemonTypeColorsRGBA[mostCommonType]) {
+                radarColor = pokemonTypeColorsRGBA[mostCommonType].replace('0.7)', '1)'); // remover transparência
+            }
+        }
+    } catch (error) {
+        console.warn("Erro ao determinar cor do tipo:", error);
+    }
+
     // Criar array de estatísticas na ordem correta
     const statsArray = [
         { label: 'HP', value: avgStats['hp'] || 0 },
@@ -600,11 +690,11 @@ async function renderLocationStatRadarChart(locationId) {
         { label: 'Sp. Attack', value: avgStats['special-attack'] || 0 }
     ];
 
-    // Usar a função modular para renderizar
+    // Usar a função modular para renderizar com a cor do tipo mais comum
     renderRadarChart(
         "#radar-chart-location",
         "Estatísticas Médias",
         statsArray,
-        "#4A90E2"
+        radarColor
     );
 }

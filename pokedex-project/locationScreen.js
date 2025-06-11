@@ -1,6 +1,8 @@
-import { getLocationAreaByLocation, getLocationsByRegionName } from "./dataManager.js";
+import { getLocationAreaByLocation, getLocationsByRegionName, getPokemonsByMultipleLocationAreas } from "./dataManager.js";
 import { renderRadarChart } from "./radarChart.js";
 import { renderLocationScatterPlot } from "./scatterPlot.js";
+
+import { pokemonTypeColorsRGBA } from './consts.js';
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
@@ -100,6 +102,38 @@ export async function renderStatRadarChart(locationId) {
         return;
     }
 
+    // Determinar cor baseada no tipo mais comum na localização
+    let radarColor = "#4A90E2"; // cor padrão
+
+    try {
+        // Buscar tipos dos pokémons da localização
+        const pokemonTypes = await getPokemonsByMultipleLocationAreas(
+            Array.from(locationAreaIdSet),
+            "Kanto" // região padrão, pode ser melhorada
+        );
+
+        if (pokemonTypes && pokemonTypes.length > 0) {
+            // Contar tipos primários
+            const typeCounts = {};
+            pokemonTypes.forEach(pokemon => {
+                if (pokemon.types && pokemon.types.length > 0) {
+                    const primaryType = pokemon.types[0].type_name;
+                    typeCounts[primaryType] = (typeCounts[primaryType] || 0) + 1;
+                }
+            });
+
+            // Encontrar o tipo mais comum
+            const mostCommonType = Object.entries(typeCounts)
+                .reduce((a, b) => typeCounts[a[0]] > typeCounts[b[0]] ? a : b)?.[0];
+
+            if (mostCommonType && pokemonTypeColorsRGBA[mostCommonType]) {
+                radarColor = pokemonTypeColorsRGBA[mostCommonType].replace('0.7)', '1)'); // remover transparência
+            }
+        }
+    } catch (error) {
+        console.warn("Erro ao determinar cor do tipo:", error);
+    }
+
     // Mapeamento para os nomes usados no radar chart
     const statMapping = {
         'hp': 'HP',
@@ -120,12 +154,12 @@ export async function renderStatRadarChart(locationId) {
         { label: 'Sp. Attack', value: avgStats['special-attack'] || 0 }
     ];
 
-    // Usar a função modular para renderizar
+    // Usar a função modular para renderizar com a cor do tipo mais comum
     renderRadarChart(
         "#radar-chart-location",
         "Estatísticas Médias",
         statsArray,
-        "#4A90E2"
+        radarColor
     );
 }
 
@@ -408,7 +442,7 @@ function createInteractionHints() {
         <strong>💡 Dicas de Interação:</strong><br>
         • Passe o mouse sobre os <span style="color: #2196F3; font-weight: bold;">pontos</span> para ver detalhes dos pokémons<br>
         • O <span style="color: #FF9800; font-weight: bold;">tamanho</span> dos pontos representa o total de estatísticas<br>
-        • A <span style="color: #4CAF50; font-weight: bold;">cor</span> também indica o total de estatísticas (escala viridis)
+        • A <span style="color: #4CAF50; font-weight: bold;">cor</span> dos pontos representa o tipo primário do pokémon
     `;
     hintsText.style.lineHeight = "1.5";
 
