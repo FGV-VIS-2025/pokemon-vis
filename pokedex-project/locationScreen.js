@@ -35,7 +35,7 @@ Promise.all([
 /**
  * Renderiza um radar chart com as estatísticas médias dos pokémon da localização
  */
-async function renderStatRadarChart(locationId) {
+export async function renderStatRadarChart(locationId) {
     if (!encountersData || !locationsData || !pokemonStatsData || !statsData) {
         console.warn("Dados ainda não carregados.");
         return;
@@ -138,19 +138,13 @@ async function renderStatRadarChart(locationId) {
     const container = document.getElementById('radar-chart-location');
     if (!container) return;
 
-    // Dimensionamento dinâmico baseado no container
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    // DIMENSÕES FIXAS - não recalcular baseado no container
+    const fixedSize = 280; // Tamanho fixo do gráfico
+    const fixedMargin = 40; // Margem fixa
 
-    // Usar 75% do espaço disponível para o gráfico, deixando 25% para os labels
-    const availableSize = Math.min(containerWidth, containerHeight);
-    const chartSize = availableSize * 0.75;
-
-    // Margens proporcionais para os labels das estatísticas
-    const marginSize = availableSize * 0.125; // 12.5% do tamanho disponível para margens
-    const margin = { top: marginSize, right: marginSize, bottom: marginSize, left: marginSize };
-    const width = chartSize;
-    const height = chartSize;
+    const margin = { top: fixedMargin, right: fixedMargin, bottom: fixedMargin, left: fixedMargin };
+    const width = fixedSize;
+    const height = fixedSize;
 
     const color = d3.scaleOrdinal().range([radarData[0].color]);
 
@@ -162,12 +156,12 @@ async function renderStatRadarChart(locationId) {
         levels: 6,
         roundStrokes: true,
         color: color,
-        labelFactor: 1.25, // Proporção adequada para labels
-        wrapWidth: Math.max(60, containerWidth * 0.15), // Largura responsiva para wrap
-        dotRadius: Math.max(3, chartSize * 0.01), // Tamanho dos pontos proporcional
-        strokeWidth: Math.max(2, chartSize * 0.005), // Espessura das linhas proporcional
+        labelFactor: 1.25,
+        wrapWidth: 60, // Valor fixo
+        dotRadius: 4,  // Valor fixo
+        strokeWidth: 2, // Valor fixo
         opacityArea: 0.4,
-        tooltipOffset: Math.max(20, chartSize * 0.05) // Offset proporcional
+        tooltipOffset: 20 // Valor fixo
     };
 
     RadarChart("#radar-chart-location", radarData, radarChartOptions);
