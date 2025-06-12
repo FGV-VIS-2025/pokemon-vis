@@ -1,5 +1,5 @@
 import { createPokemonCard } from "./cardsPokedex.js";
-import { gameRegionVersions, getPokemonsByGeneration } from "./dataManager.js";
+import { gameRegionVersions, getPokemonsByGeneration, regionToGeneration } from "./dataManager.js";
 import { drawDistributionPlot } from "./distributplot.js";
 import { updateTypeChordByRegion } from "./types.js";
 
@@ -27,7 +27,14 @@ document.head.appendChild(style);
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
+// Variável global para armazenar o ID da região atual
+let currentRegionId = 3; // fallback Hoenn
+
 function createRegionSearchBar(regionName = "Região Selecionada") {
+    // Obter o número da geração correspondente
+    const generationNumber = regionToGeneration[regionName] || "";
+    const generationSuffix = generationNumber ? ` (${generationNumber}ª Geração)` : "";
+
     // Container principal da busca/info (similar ao locationScreen)
     const regionSearch = document.createElement("div");
     regionSearch.classList.add("region-search");
@@ -74,7 +81,7 @@ function createRegionSearchBar(regionName = "Região Selecionada") {
 
     // Nome da região (lado esquerdo)
     const regionNameSpan = document.createElement("span");
-    regionNameSpan.textContent = regionName;
+    regionNameSpan.textContent = regionName + generationSuffix;
 
     // Contador de pokémons (lado direito)
     const pokemonCountSpan = document.createElement("span");
@@ -114,7 +121,7 @@ function createRegionDescription() {
     const leftChordContainer = document.createElement('div');
     leftChordContainer.id = 'region-chart-container';
     leftChordContainer.style.width = '50%';
-    leftChordContainer.style.aspectRatio = '1 / 1';
+    leftChordContainer.style.height = '600px'; // Altura fixa para garantir uniformidade
     leftChordContainer.style.display = 'flex';
     leftChordContainer.style.flexDirection = 'column';
     leftChordContainer.style.justifyContent = 'flex-start';
@@ -164,7 +171,7 @@ function createRegionDescription() {
     const rightContainer = document.createElement('div');
     rightContainer.id = 'right-region-container';
     rightContainer.style.width = '50%';
-    rightContainer.style.aspectRatio = '1 / 1';
+    rightContainer.style.height = '600px'; // Altura fixa igual ao container do chord
     rightContainer.style.display = 'flex';
     rightContainer.style.flexDirection = 'column';
     rightContainer.style.justifyContent = 'flex-start';
@@ -419,54 +426,58 @@ function createAdditionalChartsArea() {
     additionalArea.style.flexDirection = "column";
     additionalArea.style.gap = "20px";
 
-    // Container para gráfico de distribuição (similar aos svg containers do pokemon screen)
-    const svgPai1 = document.createElement("svg");
-    svgPai1.classList.add("svg-pai-chart-1");
-    svgPai1.style.width = "100%";
-    svgPai1.style.height = "auto";
-    svgPai1.style.backgroundColor = "#1b1b1b";
-    svgPai1.style.borderRadius = "10px";
-    svgPai1.style.boxSizing = "border-box";
-    svgPai1.style.padding = "15px";
-    svgPai1.style.display = "flex";
-    svgPai1.style.alignItems = "center";
-    svgPai1.style.justifyContent = "center";
-    svgPai1.style.flexDirection = "column";
-    svgPai1.style.marginBottom = "20px";
-    svgPai1.style.border = "1px solid #ffffff";
+    // Container para gráfico de distribuição padronizado
+    const distributionContainer = document.createElement("div");
+    distributionContainer.classList.add("distribution-chart-container");
+    distributionContainer.style.width = "100%";
+    distributionContainer.style.height = "80vh"; // Aumentado de 70vh para 80vh
+    distributionContainer.style.display = "flex";
+    distributionContainer.style.flexDirection = "column";
+    distributionContainer.style.justifyContent = "center";
+    distributionContainer.style.alignItems = "center";
+    distributionContainer.style.backgroundColor = "#1b1b1b";
+    distributionContainer.style.borderRadius = "15px";
+    distributionContainer.style.border = "2px solid #ffffff";
+    distributionContainer.style.padding = "15px";
+    distributionContainer.style.boxSizing = "border-box";
+    distributionContainer.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.3)";
+    distributionContainer.style.marginBottom = "20px";
 
-    const svg1 = document.createElement("svg");
-    svg1.classList.add("svg-chart-1");
-    svg1.style.width = "100%";
-    svg1.style.height = "600px";
-    svg1.style.backgroundColor = "rgb(49, 49, 49)";
-    svg1.style.borderRadius = "10px";
-    svg1.style.border = "1px solid rgb(255, 255, 255)";
-    svg1.style.display = "flex";
-    svg1.style.alignItems = "center";
-    svg1.style.justifyContent = "center";
-    svg1.style.flexDirection = "row";
-    svg1.style.boxSizing = "border-box";
-    svg1.style.padding = "15px";
-    svg1.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
+    // Título do container de distribuição (padronizado)
+    const distributionTitle = document.createElement('h2');
+    distributionTitle.textContent = "Distribuição de Atributos dos Pokémons";
+    distributionTitle.style.color = 'white';
+    distributionTitle.style.marginBottom = '5px';
+    distributionTitle.style.marginTop = '0px';
+    distributionTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
+    distributionTitle.style.fontSize = '1.0em';
+    distributionTitle.style.textAlign = 'center';
+    distributionTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
+    distributionContainer.appendChild(distributionTitle);
 
     // Container interno para o gráfico de distribuição
     const barChartContainer = document.createElement('div');
     barChartContainer.id = 'bar-chart-container';
     barChartContainer.style.width = '100%';
-    barChartContainer.style.height = '100%';
+    barChartContainer.style.height = 'calc(100% - 35px)';
     barChartContainer.style.display = 'flex';
     barChartContainer.style.justifyContent = 'center';
     barChartContainer.style.alignItems = 'center';
-    svg1.appendChild(barChartContainer);
+    barChartContainer.style.minHeight = '450px';
+    barChartContainer.style.overflow = 'visible';
+    barChartContainer.style.boxSizing = 'border-box';
+    barChartContainer.style.position = 'relative';
+    distributionContainer.appendChild(barChartContainer);
 
-    svgPai1.appendChild(svg1);
-    additionalArea.appendChild(svgPai1);
+    additionalArea.appendChild(distributionContainer);
 
     return additionalArea;
 }
 
 export async function createRegionScreen(id_region = 3) {
+    // Armazenar o ID da região atual globalmente
+    currentRegionId = id_region;
+
     contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
     contentScreen.style.gap = "0";
@@ -886,22 +897,10 @@ function setupClearFilterButton() {
             }
             hideClearFilterButton();
 
-            // Recarregar todos os pokémons da região e resetar página
-            const regionNames = Object.keys(gameRegionVersions);
-            const regionSearchBar = document.querySelector('.region-search div:nth-child(2)');
-            let regionId = 3; // fallback Hoenn
-
-            if (regionSearchBar) {
-                const currentRegion = regionSearchBar.textContent.trim();
-                const regionIndex = regionNames.indexOf(currentRegion);
-                if (regionIndex >= 0) {
-                    regionId = regionIndex + 1;
-                }
-            }
-
             // Reset para a primeira página
             currentPage = 1;
-            loadRegionPokemonSprites(regionId);
+            // Usar o ID da região atual em vez de hardcode
+            loadRegionPokemonSprites(currentRegionId);
 
             // Resetar contadores
             updatePokemonCounters(null, 0);
@@ -911,22 +910,10 @@ function setupClearFilterButton() {
 
 // Expor função global para integração com o diagrama de acordes
 window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB) => {
-    // Descobre a região atual pela barra de busca
-    const regionSearchBar = document.querySelector('.region-search div:nth-child(2)');
-    let regionId = 3; // fallback Hoenn
-
-    if (regionSearchBar) {
-        const regionNames = Object.keys(gameRegionVersions);
-        const currentRegion = regionSearchBar.textContent.trim();
-        const regionIndex = regionNames.indexOf(currentRegion);
-        if (regionIndex >= 0) {
-            regionId = regionIndex + 1;
-        }
-    }
-
     // Reset para a primeira página quando aplicar filtros
     currentPage = 1;
-    loadRegionPokemonSprites(regionId, filteredPokemons);
+    // Usar o ID da região atual em vez de tentar descobrir via DOM
+    loadRegionPokemonSprites(currentRegionId, filteredPokemons);
 };
 
 // ...existing code...
