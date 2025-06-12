@@ -25,23 +25,23 @@ async function preloadCommonData() {
             commonDataCache.encounters,
             commonDataCache.locationAreas
         ] = await Promise.all([
-            loadCsv('../data/region_names.csv', d => ({
+            loadCsv('data/region_names.csv', d => ({
                 region_id: +d.region_id,
                 local_language_id: +d.local_language_id,
                 name: d.name
             })),
-            loadCsv('../data/locations.csv', d => ({
+            loadCsv('data/locations.csv', d => ({
                 id: +d.id,
                 location_id: +d.id,
                 location_ident: d.identifier,
                 region_id: +d.region_id
             })),
-            loadCsv('../data/location_names.csv', d => ({
+            loadCsv('data/location_names.csv', d => ({
                 location_id: +d.location_id,
                 local_language_id: +d.local_language_id,
                 location_name: d.name
             })),
-            loadCsv('../data/encounters.csv', d => ({
+            loadCsv('data/encounters.csv', d => ({
                 id: +d.id,
                 version_id: +d.version_id,
                 location_area_id: +d.location_area_id,
@@ -49,7 +49,7 @@ async function preloadCommonData() {
                 min_level: +d.min_level,
                 max_level: +d.max_level
             })),
-            loadCsv('../data/location_areas.csv', d => ({
+            loadCsv('data/location_areas.csv', d => ({
                 locationAreaId: +d.id,
                 locationId: +d.location_id,
                 gameIndex: +d.game_index,

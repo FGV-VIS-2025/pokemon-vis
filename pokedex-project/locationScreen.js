@@ -369,7 +369,7 @@ function createLocationInfoCards(locationId) {
     });
 
     infoCard3.innerHTML = `
-        <img src="../assets/types/normal.png" style="height: 32px; margin-bottom: 8px;" id="most-common-type-img">
+        <img src="assets/types/normal.png" style="height: 32px; margin-bottom: 8px;" id="most-common-type-img">
         <div style="font-weight: bold; margin-bottom: 3px;">Tipo Comum</div>
         <div id="most-common-type">Carregando...</div>
     `;
@@ -404,7 +404,7 @@ function createLocationInfoCards(locationId) {
     });
 
     infoCard4.innerHTML = `
-        <img src="../assets/earth-globe.png" style="height: 32px; margin-bottom: 8px;">
+        <img src="assets/earth-globe.png" style="height: 32px; margin-bottom: 8px;">
         <div style="font-weight: bold; margin-bottom: 3px;">Sub-áreas</div>
         <div id="location-areas">Carregando...</div>
     `;
