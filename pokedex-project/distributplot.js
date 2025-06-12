@@ -33,7 +33,6 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         // A estrutura dos dados de getPokemonsByGeneration usa types[0].type_name para o tipo primário
         const primaryType = pokemon.types?.[0]?.type_name?.toLowerCase();
         if (primaryType && pokemonTypeColors[primaryType]) {
-            console.log(`✅ Cor encontrada para ${pokemon.name} (${primaryType}):`, pokemonTypeColors[primaryType].primary);
             return pokemonTypeColors[primaryType].primary;
         }
         console.log(`❌ Cor não encontrada para ${pokemon.name}, tipo:`, primaryType);

@@ -1,7 +1,6 @@
 import { getLocationsByRegionName } from "./dataManager.js";
 import { locationElementMap } from "./mapManager.js";
 
-
 const regionDisplay = document.getElementsByClassName("region-screen")[0];
 const locationDisplay = document.getElementsByClassName("location-screen")[0];
 const rightButtonRegion = document.getElementsByClassName("right-button")[0];
@@ -14,6 +13,14 @@ const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
 let i = 0;
 let listOfLocations = await getLocationsByRegionName(regionDisplay.textContent.trim());
 locationDisplay.textContent = listOfLocations[0].location_name;
+
+// Função para disparar evento de mudança de localização
+function dispatchLocationChangeEvent(locationName) {
+    const event = new CustomEvent('locationChanged', {
+        detail: { locationName, source: 'location_control' }
+    });
+    document.dispatchEvent(event);
+}
 
 // Event listener para quando uma localização é selecionada no mapa
 mapRealContainer.addEventListener('locationSelected', async (event) => {
@@ -71,35 +78,73 @@ leftButtonRegion.addEventListener("click", async function () {
 });
 
 rightButton.addEventListener("click", function () {
+    // Adicionar feedback visual
+    rightButton.style.transform = "scale(0.95)";
+    setTimeout(() => {
+        rightButton.style.transform = "scale(1)";
+    }, 100);
+
     if (i < listOfLocations.length - 1) {
         i += 1;
     } else {
         i = 0;
     }
+
+    // Atualizar display da localização
     locationDisplay.textContent = listOfLocations[i].location_name;
 
+    // Atualizar elemento no mapa
     const currentLocationId = listOfLocations[i].location_id;
     const el = locationElementMap.get(currentLocationId);
     if (el) {
+        // Remover animação de todos os elementos
+        locationElementMap.forEach(element => {
+            element.style.animation = "";
+        });
+
+        // Aplicar clique e animação ao novo elemento
         el.dispatchEvent(new Event("click"));
-        // Garantir que a animação seja aplicada
         el.style.animation = "blink-border 1.5s infinite";
     }
+
+    // Disparar evento para outras partes do sistema
+    dispatchLocationChangeEvent(listOfLocations[i].location_name);
+
+    console.log(`📍 Localização alterada para: ${listOfLocations[i].location_name}`);
 });
 
 leftButton.addEventListener("click", function () {
+    // Adicionar feedback visual
+    leftButton.style.transform = "scale(0.95)";
+    setTimeout(() => {
+        leftButton.style.transform = "scale(1)";
+    }, 100);
+
     if (i > 0) {
         i -= 1;
     } else {
         i = listOfLocations.length - 1;
     }
+
+    // Atualizar display da localização
     locationDisplay.textContent = listOfLocations[i].location_name;
 
+    // Atualizar elemento no mapa
     const currentLocationId = listOfLocations[i].location_id;
     const el = locationElementMap.get(currentLocationId);
     if (el) {
+        // Remover animação de todos os elementos
+        locationElementMap.forEach(element => {
+            element.style.animation = "";
+        });
+
+        // Aplicar clique e animação ao novo elemento
         el.dispatchEvent(new Event("click"));
-        // Garantir que a animação seja aplicada
         el.style.animation = "blink-border 1.5s infinite";
     }
+
+    // Disparar evento para outras partes do sistema
+    dispatchLocationChangeEvent(listOfLocations[i].location_name);
+
+    console.log(`📍 Localização alterada para: ${listOfLocations[i].location_name}`);
 });

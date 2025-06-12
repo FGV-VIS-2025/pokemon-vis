@@ -87,6 +87,19 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
+}
+
+/* Feedback visual melhorado para botões de navegação */
+.left-button:hover,
+.right-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.left-button:active,
+.right-button:active {
+    transform: scale(0.95);
 }
 
 .left-button img,
