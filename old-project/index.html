@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Vis</title>
+    <link rel="icon" type="image/x-icon" href="../assets/ball.png">
+
+    <link rel="stylesheet" href="src/style.css">
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="src/script.js" type="module"></script>
+    <script src="src/data.js" type="module"></script>
+    <script src="src/consts.js" type="module"></script>
+    <script src="src/pokemonScreen.js" type="module"></script>	
+    <script src="src/radarChart.js" type="module"></script>	
+    <script src="src/types.js" type="module"></script>	
+    <script src="src/regionScreen.js" type="module"></script>	
+    <script src="src/locationScreen.js" type="module"></script>	
+    <script src="src/barchart.js" type="module"></script>	
+    <script src="src/statsBarChart.js" type="module"></script>
+    <script src="src/heatMapDef.js" type="module"></script>
+    <script src="src/heatMapAta.js" type="module"></script>
+    
+</head>
+<body>
+    <div id="top-nav-container">
+
+        <div id="empty-container">
+
+        </div>
+
+        <div id="logo-container">
+            <a href="../index.html"><img src="../assets/logo.png" alt="Page Logo"></a>
+        </div>
+
+        <div id="github-container">
+            <a href="https://github.com/FGV-VIS-2025/pokemon-vis" target="_blank"><img src="../assets/github_w.png" alt="Github Logo"></a>
+        </div>
+
+    </div>
+    
+    </div>
+    <div id="main-container">
+        
+        <div id="main-container-1">
+
+            <div id="map-container">
+
+                <div id="map-select-container">
+
+                    <select name="regions-select" id="regions-select">
+
+                    </select>
+                
+                </div>
+
+                <div id="map-real-container">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="main-container-2">
+            <div id="cards-container">
+
+            </div>
+        </div>
+
+    </div>
+    <div id="select-container">
+
+        <div id="region-screen" class="active">
+            REGION
+        </div>
+
+        <div id="location-screen">
+            LOCATION
+        </div>
+
+        <div id="pokemon-screen">
+            POKEMON
+        </div>
+
+    </div>
+    <div id="content-container">
+
+    </div>
+</body>
+</html>
