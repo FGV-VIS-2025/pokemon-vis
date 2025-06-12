@@ -1,4 +1,9 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { pokemonTypeColors } from "./consts.js";
+
+// Variáveis globais para gerenciar filtros
+let originalPokemonData = [];
+let currentContainerSelector = '';
 
 /**
  * Renderiza um violin plot com jitter dos 6 atributos dos Pokémon fornecidos.
@@ -6,6 +11,14 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
  * @param {Array} pokemons - Array de objetos de Pokémon (cada um deve ter os atributos base)
  */
 export function drawDistributionPlot(containerSelector, pokemons) {
+    console.log('🔍 drawDistributionPlot - Dados recebidos:', pokemons.length, 'pokémon');
+    console.log('🔍 Primeiro pokémon:', pokemons[0]);
+    console.log('🔍 Tipos do primeiro pokémon:', pokemons[0]?.types);
+
+    // Armazenar dados originais e container para filtros
+    originalPokemonData = [...pokemons];
+    currentContainerSelector = containerSelector;
+
     const stats = [
         { key: "Hp_Stat", label: "HP" },
         { key: "Attack_Stat", label: "Ataque" },
@@ -14,6 +27,18 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         { key: "Special_Defense_Stat", label: "Sp. Def" },
         { key: "Speed_Stat", label: "Velocidade" }
     ];
+
+    // Função helper para obter cor do tipo primário do Pokémon
+    function getPokemonTypeColor(pokemon) {
+        // A estrutura dos dados de getPokemonsByGeneration usa types[0].type_name para o tipo primário
+        const primaryType = pokemon.types?.[0]?.type_name?.toLowerCase();
+        if (primaryType && pokemonTypeColors[primaryType]) {
+            console.log(`✅ Cor encontrada para ${pokemon.name} (${primaryType}):`, pokemonTypeColors[primaryType].primary);
+            return pokemonTypeColors[primaryType].primary;
+        }
+        console.log(`❌ Cor não encontrada para ${pokemon.name}, tipo:`, primaryType);
+        return "#999999"; // Cor padrão para tipos desconhecidos
+    }
 
     // Limpar o container
     d3.select(containerSelector).selectAll("*").remove();
@@ -41,7 +66,8 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         return {
             stat: stat.label,
             key: stat.key,
-            values: pokemons.map(p => +p[stat.key]).filter(v => !isNaN(v))
+            values: pokemons.map(p => +p[stat.key]).filter(v => !isNaN(v)),
+            pokemons: pokemons // Manter referência aos pokémon para acessar tipos
         };
     });
 
@@ -148,9 +174,7 @@ export function drawDistributionPlot(containerSelector, pokemons) {
 
     // Paleta de cores melhorada para fundo escuro
     const violinColor = "#00d4ff"; // Cor ciano consistente com o tema
-    const pointColor = d3.scaleSequential()
-        .interpolator(d3.interpolatePlasma)
-        .domain([minValue, maxValue]);
+    // Removida a escala de cor pointColor pois agora usamos cores dos tipos
 
     // Desenhar o violin plot com estilo melhorado
     g.selectAll("myViolin")
@@ -178,41 +202,48 @@ export function drawDistributionPlot(containerSelector, pokemons) {
     // Flatten os dados para adicionar todos os pontos
     const allDataPoints = [];
     preparedData.forEach(statData => {
-        statData.values.forEach(value => {
-            allDataPoints.push({
-                stat: statData.stat,
-                value: value
-            });
+        statData.pokemons.forEach(pokemon => {
+            const value = +pokemon[statData.key];
+            if (!isNaN(value)) {
+                allDataPoints.push({
+                    stat: statData.stat,
+                    value: value,
+                    pokemon: pokemon,
+                    color: getPokemonTypeColor(pokemon)
+                });
+            }
         });
     });
 
+    // Primeiro: Adicionar barras da mediana (para ficarem atrás dos pontos)
+    violinData.forEach(d => {
+        const values = preparedData.find(p => p.stat === d.stat).values;
+        const mean = d3.mean(values);
+
+        g.append("line")
+            .attr("x1", x(d.stat) + x.bandwidth() / 2 - x.bandwidth() / 4)
+            .attr("x2", x(d.stat) + x.bandwidth() / 2 + x.bandwidth() / 4)
+            .attr("y1", y(mean))
+            .attr("y2", y(mean))
+            .attr("stroke", "#ffdd44")
+            .attr("stroke-width", 4)
+            .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))")
+            .style("opacity", 0.9);
+    });
+
+    // Segundo: Adicionar pontos individuais com jitter e cores por tipo
     g.selectAll("indPoints")
         .data(allDataPoints)
         .enter()
         .append("circle")
         .attr("cx", d => x(d.stat) + x.bandwidth() / 2 - (Math.random() - 0.5) * jitterWidth)
         .attr("cy", d => y(d.value))
-        .attr("r", 2.5)
-        .style("fill", d => pointColor(d.value))
+        .attr("r", 3)
+        .style("fill", d => d.color)
         .style("fill-opacity", 0.8)
         .style("stroke", "white")
-        .style("stroke-width", 0.5)
-        .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5))");
-
-    // Adicionar linha da mediana para cada estatística com estilo melhorado
-    violinData.forEach(d => {
-        const values = preparedData.find(p => p.stat === d.stat).values;
-        const median = d3.median(values);
-
-        g.append("line")
-            .attr("x1", x(d.stat) + x.bandwidth() / 2 - x.bandwidth() / 4)
-            .attr("x2", x(d.stat) + x.bandwidth() / 2 + x.bandwidth() / 4)
-            .attr("y1", y(median))
-            .attr("y2", y(median))
-            .attr("stroke", "#ffdd44")
-            .attr("stroke-width", 3)
-            .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7))");
-    });
+        .style("stroke-width", 1)
+        .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.6))");
 
     // Labels dos eixos com estilo consistente
     g.append("text")
@@ -237,4 +268,38 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .style("font-family", '"Pixelify Sans", sans-serif')
         .style("text-shadow", "2px 2px 4px rgba(0, 0, 0, 0.7)")
         .text("Valor do Atributo");
+}
+
+/**
+ * Atualiza o distributplot com dados filtrados
+ * @param {Array} filteredPokemons - Array de Pokémon filtrados
+ */
+export function updateDistributionPlot(filteredPokemons) {
+    if (!currentContainerSelector) {
+        console.warn('❌ Distributplot não foi inicializado ainda');
+        return;
+    }
+
+    console.log('🔄 Atualizando distributplot com', filteredPokemons.length, 'pokémon filtrados');
+
+    // Se não há filtros, usar dados originais
+    const pokemonsToUse = filteredPokemons && filteredPokemons.length > 0
+        ? filteredPokemons
+        : originalPokemonData;
+
+    // Redesenhar o gráfico com os dados filtrados
+    drawDistributionPlot(currentContainerSelector, pokemonsToUse);
+}
+
+/**
+ * Limpa os filtros e restaura o distributplot com todos os dados originais
+ */
+export function clearDistributionPlotFilter() {
+    if (!currentContainerSelector || !originalPokemonData.length) {
+        console.warn('❌ Distributplot não foi inicializado ainda');
+        return;
+    }
+
+    console.log('🧹 Limpando filtros do distributplot');
+    drawDistributionPlot(currentContainerSelector, originalPokemonData);
 }

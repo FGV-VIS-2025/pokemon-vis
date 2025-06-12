@@ -1,6 +1,6 @@
 import { createPokemonCard } from "./cardsPokedex.js";
 import { gameRegionVersions, getPokemonsByGeneration, regionToGeneration } from "./dataManager.js";
-import { drawDistributionPlot } from "./distributplot.js";
+import { clearDistributionPlotFilter, drawDistributionPlot, updateDistributionPlot } from "./distributplot.js";
 import { updateTypeChordByRegion } from "./types.js";
 
 // Adicionar CSS para a tooltip de card do Pokémon
@@ -478,6 +478,9 @@ export async function createRegionScreen(id_region = 3) {
     // Armazenar o ID da região atual globalmente
     currentRegionId = id_region;
 
+    // Limpar tooltips e listeners anteriores
+    cleanupPreviousTooltips();
+
     contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
     contentScreen.style.gap = "0";
@@ -528,6 +531,9 @@ export async function createRegionScreen(id_region = 3) {
 
             // Configurar o botão de limpar filtro
             setupClearFilterButton();
+
+            // Debug para detectar elementos fantasmas (apenas em desenvolvimento)
+            setTimeout(debugGhostElements, 1000);
         }, 200); // Aumentar delay para garantir que os containers estejam renderizados com tamanho correto
 
     } catch (error) {
@@ -686,9 +692,7 @@ function renderCurrentPage() {
             hidePokemonCardTooltip();
         });
 
-        spriteContainer.addEventListener('mousemove', (event) => {
-            moveTooltip(event);
-        });
+        // Remover o listener individual de mousemove para evitar conflitos
     });
 
     updatePageIndicator();
@@ -904,6 +908,9 @@ function setupClearFilterButton() {
 
             // Resetar contadores
             updatePokemonCounters(null, 0);
+
+            // Limpar filtros do distributplot
+            clearDistributionPlotFilter();
         });
     }
 }
@@ -914,6 +921,9 @@ window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB) => {
     currentPage = 1;
     // Usar o ID da região atual em vez de tentar descobrir via DOM
     loadRegionPokemonSprites(currentRegionId, filteredPokemons);
+
+    // Atualizar também o distributplot com os dados filtrados
+    updateDistributionPlot(filteredPokemons);
 };
 
 // ...existing code...
@@ -962,6 +972,102 @@ function createTooltipCard() {
     return tooltipCard;
 }
 
+// Variável para controlar o listener global de mousemove
+let globalMouseMoveActive = false;
+
+// Função para debugar elementos fantasmas (dev helper)
+function debugGhostElements() {
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        console.log('🔍 Debugging ghost elements...');
+
+        // Encontrar todos os elementos com listeners de evento
+        const elementsWithListeners = document.querySelectorAll('*');
+        const problematicElements = [];
+
+        elementsWithListeners.forEach(element => {
+            const style = window.getComputedStyle(element);
+
+            // Verificar elementos posicionados que podem estar causando problemas
+            if (style.position === 'absolute' || style.position === 'fixed') {
+                if (style.pointerEvents !== 'none' &&
+                    (style.opacity === '0' || style.visibility === 'hidden' ||
+                        element.offsetWidth === 0 || element.offsetHeight === 0)) {
+                    problematicElements.push({
+                        element,
+                        reason: 'Invisible but clickable positioned element',
+                        styles: {
+                            position: style.position,
+                            opacity: style.opacity,
+                            visibility: style.visibility,
+                            pointerEvents: style.pointerEvents,
+                            width: element.offsetWidth,
+                            height: element.offsetHeight
+                        }
+                    });
+                }
+            }
+        });
+
+        if (problematicElements.length > 0) {
+            console.warn('⚠️ Found potentially problematic elements:', problematicElements);
+            // Opcional: remover elementos problemáticos automaticamente
+            problematicElements.forEach(({ element }) => {
+                if (element && !element.classList.contains('pokemon-tooltip-card')) {
+                    element.style.pointerEvents = 'none';
+                    console.log('🔧 Fixed element by setting pointer-events: none', element);
+                }
+            });
+        } else {
+            console.log('✅ No ghost elements detected');
+        }
+    }
+}
+
+// Função para limpar tooltips e listeners anteriores
+function cleanupPreviousTooltips() {
+    // Remove tooltips existentes da regionScreen
+    const existingTooltips = document.querySelectorAll('.pokemon-tooltip-card');
+    existingTooltips.forEach(tooltip => tooltip.remove());
+
+    // Remove tooltips do types.js (chord diagram)
+    const existingChordTooltips = document.querySelectorAll('.tooltip, #tooltip');
+    existingChordTooltips.forEach(tooltip => tooltip.remove());
+
+    // Remove tooltips de outros componentes (scatter, heatmaps, etc.)
+    const existingOtherTooltips = document.querySelectorAll('.strongest-pokemon-tooltip, .d3-tooltip');
+    existingOtherTooltips.forEach(tooltip => tooltip.remove());
+
+    // Remove elementos D3.js órfãos que podem estar causando problemas
+    const orphanedD3Elements = document.querySelectorAll('svg:empty, g:empty');
+    orphanedD3Elements.forEach(element => {
+        if (element.parentNode && !element.hasChildNodes()) {
+            element.remove();
+        }
+    });
+
+    // Remove listener global se ativo
+    if (globalMouseMoveActive) {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        globalMouseMoveActive = false;
+    }
+
+    // Limpar qualquer estado de hover ou seleção anterior
+    const activeElements = document.querySelectorAll('.active, .fade');
+    activeElements.forEach(element => {
+        element.classList.remove('active', 'fade');
+    });
+
+    // Forçar limpeza de any overflow ou elementos posicionados de forma absoluta órfãos
+    const orphanedElements = document.querySelectorAll('[style*="position: absolute"]:not(.pokemon-tooltip-card)');
+    orphanedElements.forEach(element => {
+        // Verificar se o elemento está realmente órfão (sem parent container válido)
+        const parentContainer = element.closest('.content-screen, .region-chart-container, .location-screen, .pokemon-screen');
+        if (!parentContainer || parentContainer.innerHTML.trim() === '') {
+            element.remove();
+        }
+    });
+}
+
 // Função para mostrar o tooltip com o card do Pokémon
 function showPokemonCardTooltip(pokemon, event) {
     // Pega ou cria a tooltip
@@ -985,11 +1091,16 @@ function showPokemonCardTooltip(pokemon, event) {
     tooltipCard.appendChild(card);
 
     // Posiciona a tooltip de acordo com a posição do mouse
-    tooltipCard.style.left = `${event.clientX}px`;
-    tooltipCard.style.top = `${event.clientY}px`;
+    updateTooltipPosition(tooltipCard, event);
 
     // Ativa a tooltip
     tooltipCard.classList.add('active');
+
+    // Ativa o listener global de mousemove apenas quando necessário
+    if (!globalMouseMoveActive) {
+        document.addEventListener('mousemove', handleGlobalMouseMove);
+        globalMouseMoveActive = true;
+    }
 }
 
 // Função para esconder o tooltip com o card do Pokémon
@@ -997,35 +1108,57 @@ function hidePokemonCardTooltip() {
     const tooltipCard = document.querySelector('.pokemon-tooltip-card');
     if (tooltipCard) {
         tooltipCard.classList.remove('active');
+
+        // Remove o listener global quando não há tooltip ativa
+        if (globalMouseMoveActive) {
+            document.removeEventListener('mousemove', handleGlobalMouseMove);
+            globalMouseMoveActive = false;
+        }
     }
 }
 
-// Função para mover o tooltip com o mouse
+// Função otimizada para lidar com mousemove global
+function handleGlobalMouseMove(event) {
+    const tooltipCard = document.querySelector('.pokemon-tooltip-card.active');
+    if (tooltipCard) {
+        updateTooltipPosition(tooltipCard, event);
+    } else {
+        // Se não há tooltip ativa, remove o listener para otimizar performance
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        globalMouseMoveActive = false;
+    }
+}
+
+// Função para atualizar posição da tooltip
+function updateTooltipPosition(tooltipCard, event) {
+    // Calcula a posição para que o tooltip não saia da tela
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const tooltipWidth = tooltipCard.offsetWidth;
+    const tooltipHeight = tooltipCard.offsetHeight;
+
+    let left = event.clientX + 15;
+    let top = event.clientY + 15;
+
+    // Ajusta a posição se o tooltip estiver saindo da tela
+    if (left + tooltipWidth > windowWidth - 20) {
+        left = event.clientX - tooltipWidth - 15;
+    }
+
+    if (top + tooltipHeight > windowHeight - 20) {
+        top = event.clientY - tooltipHeight - 15;
+    }
+
+    tooltipCard.style.left = `${left}px`;
+    tooltipCard.style.top = `${top}px`;
+}
+
+// Função legada mantida para compatibilidade (agora chama a otimizada)
 function moveTooltip(event) {
     const tooltipCard = document.querySelector('.pokemon-tooltip-card.active');
     if (tooltipCard) {
-        // Calcula a posição para que o tooltip não saia da tela
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        const tooltipWidth = tooltipCard.offsetWidth;
-        const tooltipHeight = tooltipCard.offsetHeight;
-
-        let left = event.clientX + 15;
-        let top = event.clientY + 15;
-
-        // Ajusta a posição se o tooltip estiver saindo da tela
-        if (left + tooltipWidth > windowWidth - 20) {
-            left = event.clientX - tooltipWidth - 15;
-        }
-
-        if (top + tooltipHeight > windowHeight - 20) {
-            top = event.clientY - tooltipHeight - 15;
-        }
-
-        tooltipCard.style.left = `${left}px`;
-        tooltipCard.style.top = `${top}px`;
+        updateTooltipPosition(tooltipCard, event);
     }
 }
 
-// Adiciona o listener para mover o tooltip com o mouse
-document.addEventListener('mousemove', moveTooltip);
+// Sistema de tooltip otimizado - listeners controlados dinamicamente
