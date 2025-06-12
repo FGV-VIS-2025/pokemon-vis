@@ -1,4 +1,9 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { pokemonTypeColors } from "./consts.js";
+
+// Variáveis globais para gerenciar filtros
+let originalPokemonData = [];
+let currentContainerSelector = '';
 
 /**
  * Renderiza um violin plot com jitter dos 6 atributos dos Pokémon fornecidos.
@@ -6,6 +11,14 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
  * @param {Array} pokemons - Array de objetos de Pokémon (cada um deve ter os atributos base)
  */
 export function drawDistributionPlot(containerSelector, pokemons) {
+    console.log('🔍 drawDistributionPlot - Dados recebidos:', pokemons.length, 'pokémon');
+    console.log('🔍 Primeiro pokémon:', pokemons[0]);
+    console.log('🔍 Tipos do primeiro pokémon:', pokemons[0]?.types);
+
+    // Armazenar dados originais e container para filtros
+    originalPokemonData = [...pokemons];
+    currentContainerSelector = containerSelector;
+
     const stats = [
         { key: "Hp_Stat", label: "HP" },
         { key: "Attack_Stat", label: "Ataque" },
@@ -15,23 +28,46 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         { key: "Speed_Stat", label: "Velocidade" }
     ];
 
-    const width = 800;
-    const height = 400;
-    const margin = { top: 40, right: 30, bottom: 60, left: 60 };
+    // Função helper para obter cor do tipo primário do Pokémon
+    function getPokemonTypeColor(pokemon) {
+        // A estrutura dos dados de getPokemonsByGeneration usa types[0].type_name para o tipo primário
+        const primaryType = pokemon.types?.[0]?.type_name?.toLowerCase();
+        if (primaryType && pokemonTypeColors[primaryType]) {
+            console.log(`✅ Cor encontrada para ${pokemon.name} (${primaryType}):`, pokemonTypeColors[primaryType].primary);
+            return pokemonTypeColors[primaryType].primary;
+        }
+        console.log(`❌ Cor não encontrada para ${pokemon.name}, tipo:`, primaryType);
+        return "#999999"; // Cor padrão para tipos desconhecidos
+    }
 
+    // Limpar o container
     d3.select(containerSelector).selectAll("*").remove();
-    const svg = d3.select(containerSelector)
+
+    // Obter dimensões do container
+    const container = d3.select(containerSelector);
+    const containerRect = container.node().getBoundingClientRect();
+    const margin = { top: 40, right: 80, bottom: 80, left: 80 }; // Reduzida margem superior de 80 para 40
+    const width = containerRect.width - margin.left - margin.right;
+    const height = containerRect.height - margin.top - margin.bottom;
+
+    // Criar SVG com fundo transparente para integração
+    const svg = container
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .style("background", "white");
+        .attr("width", containerRect.width)
+        .attr("height", containerRect.height)
+        .style("background", "transparent");
+
+    // Grupo principal
+    const g = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Organizar dados para cada estatística
     const preparedData = stats.map(stat => {
         return {
             stat: stat.label,
             key: stat.key,
-            values: pokemons.map(p => +p[stat.key]).filter(v => !isNaN(v))
+            values: pokemons.map(p => +p[stat.key]).filter(v => !isNaN(v)),
+            pokemons: pokemons // Manter referência aos pokémon para acessar tipos
         };
     });
 
@@ -41,23 +77,75 @@ export function drawDistributionPlot(containerSelector, pokemons) {
 
     const x = d3.scaleBand()
         .domain(stats.map(s => s.label))
-        .range([margin.left, width - margin.right])
+        .range([0, width])
         .padding(0.3);
 
     const y = d3.scaleLinear()
         .domain([minValue, maxValue])
         .nice()
-        .range([height - margin.bottom, margin.top]);
+        .range([height, 0]);
 
-    // Eixo X
-    svg.append("g")
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x));
+    // Grid de fundo no estilo da página
+    const gridLines = g.append("g").attr("class", "grid-lines");
+
+    // Linhas verticais do grid
+    gridLines.selectAll(".grid-line-x")
+        .data(x.domain())
+        .enter()
+        .append("line")
+        .attr("class", "grid-line-x")
+        .attr("x1", d => x(d) + x.bandwidth() / 2)
+        .attr("x2", d => x(d) + x.bandwidth() / 2)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "#444")
+        .style("stroke-width", 0.5)
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 0.3);
+
+    // Linhas horizontais do grid
+    gridLines.selectAll(".grid-line-y")
+        .data(y.ticks(8))
+        .enter()
+        .append("line")
+        .attr("class", "grid-line-y")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", d => y(d))
+        .attr("y2", d => y(d))
+        .style("stroke", "#444")
+        .style("stroke-width", 0.5)
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 0.3);
+
+    // Eixos com estilo melhorado para fundo escuro
+    const xAxis = g.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x))
+        .style("color", "white");
+
+    xAxis.selectAll("text")
+        .style("fill", "white")
+        .style("font-family", '"Pixelify Sans", sans-serif')
+        .style("font-size", "12px");
+
+    xAxis.selectAll("path, line")
+        .style("stroke", "white")
+        .style("stroke-width", 2);
 
     // Eixo Y
-    svg.append("g")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y));
+    const yAxis = g.append("g")
+        .call(d3.axisLeft(y))
+        .style("color", "white");
+
+    yAxis.selectAll("text")
+        .style("fill", "white")
+        .style("font-family", '"Pixelify Sans", sans-serif')
+        .style("font-size", "12px");
+
+    yAxis.selectAll("path, line")
+        .style("stroke", "white")
+        .style("stroke-width", 2);
 
     // Configuração do histograma para violin plot
     const histogram = d3.bin()
@@ -84,22 +172,23 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .range([0, x.bandwidth() / 2])
         .domain([0, maxNum]);
 
-    // Cor para os pontos
-    const myColor = d3.scaleSequential()
-        .interpolator(d3.interpolateViridis)
-        .domain([minValue, maxValue]);
+    // Paleta de cores melhorada para fundo escuro
+    const violinColor = "#00d4ff"; // Cor ciano consistente com o tema
+    // Removida a escala de cor pointColor pois agora usamos cores dos tipos
 
-    // Desenhar o violin plot
-    svg.selectAll("myViolin")
+    // Desenhar o violin plot com estilo melhorado
+    g.selectAll("myViolin")
         .data(violinData)
         .enter()
         .append("g")
         .attr("transform", d => `translate(${x(d.stat) + x.bandwidth() / 2},0)`)
         .append("path")
         .datum(d => d.bins)
-        .style("stroke", "none")
-        .style("fill", "#69b3a2")
-        .style("opacity", 0.8)
+        .style("stroke", "white")
+        .style("stroke-width", 1)
+        .style("fill", violinColor)
+        .style("fill-opacity", 0.6)
+        .style("filter", "drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5))")
         .attr("d", d3.area()
             .x0(d => -xNum(d.length))
             .x1(d => xNum(d.length))
@@ -107,123 +196,110 @@ export function drawDistributionPlot(containerSelector, pokemons) {
             .curve(d3.curveCatmullRom)  // Curva suave para aparência de violino
         );
 
-    // Adicionar pontos individuais com jitter
+    // Adicionar pontos individuais com jitter e estilo melhorado
     const jitterWidth = x.bandwidth() * 0.6;
 
     // Flatten os dados para adicionar todos os pontos
     const allDataPoints = [];
     preparedData.forEach(statData => {
-        statData.values.forEach(value => {
-            allDataPoints.push({
-                stat: statData.stat,
-                value: value
-            });
+        statData.pokemons.forEach(pokemon => {
+            const value = +pokemon[statData.key];
+            if (!isNaN(value)) {
+                allDataPoints.push({
+                    stat: statData.stat,
+                    value: value,
+                    pokemon: pokemon,
+                    color: getPokemonTypeColor(pokemon)
+                });
+            }
         });
     });
 
-    svg.selectAll("indPoints")
+    // Primeiro: Adicionar barras da mediana (para ficarem atrás dos pontos)
+    violinData.forEach(d => {
+        const values = preparedData.find(p => p.stat === d.stat).values;
+        const mean = d3.mean(values);
+
+        g.append("line")
+            .attr("x1", x(d.stat) + x.bandwidth() / 2 - x.bandwidth() / 4)
+            .attr("x2", x(d.stat) + x.bandwidth() / 2 + x.bandwidth() / 4)
+            .attr("y1", y(mean))
+            .attr("y2", y(mean))
+            .attr("stroke", "#ffdd44")
+            .attr("stroke-width", 4)
+            .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))")
+            .style("opacity", 0.9);
+    });
+
+    // Segundo: Adicionar pontos individuais com jitter e cores por tipo
+    g.selectAll("indPoints")
         .data(allDataPoints)
         .enter()
         .append("circle")
         .attr("cx", d => x(d.stat) + x.bandwidth() / 2 - (Math.random() - 0.5) * jitterWidth)
         .attr("cy", d => y(d.value))
         .attr("r", 3)
-        .style("fill", d => myColor(d.value))
-        .style("opacity", 0.7)
-        .attr("stroke", "white")
-        .attr("stroke-width", 0.5);
+        .style("fill", d => d.color)
+        .style("fill-opacity", 0.8)
+        .style("stroke", "white")
+        .style("stroke-width", 1)
+        .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.6))");
 
-    // Adicionar linha da mediana para cada estatística
-    violinData.forEach(d => {
-        const values = preparedData.find(p => p.stat === d.stat).values;
-        const median = d3.median(values);
-
-        svg.append("line")
-            .attr("x1", x(d.stat) + x.bandwidth() / 2 - x.bandwidth() / 4)
-            .attr("x2", x(d.stat) + x.bandwidth() / 2 + x.bandwidth() / 4)
-            .attr("y1", y(median))
-            .attr("y2", y(median))
-            .attr("stroke", "#d7263d")
-            .attr("stroke-width", 2);
-    });
-
-    // Adicionar legenda de cores
-    const legendWidth = 150;
-    const legendHeight = 15;
-    const legendX = width - margin.right - legendWidth;
-    const legendY = margin.top;
-
-    // Gradiente para a legenda
-    const defs = svg.append("defs");
-    const linearGradient = defs.append("linearGradient")
-        .attr("id", "stat-color-gradient")
-        .attr("x1", "0%")
-        .attr("y1", "0%")
-        .attr("x2", "100%")
-        .attr("y2", "0%");
-
-    // Adicionar paradas de cor
-    linearGradient.append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", myColor(minValue));
-
-    linearGradient.append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", myColor(maxValue));
-
-    // Retângulo da legenda com o gradiente
-    svg.append("rect")
-        .attr("x", legendX)
-        .attr("y", legendY)
-        .attr("width", legendWidth)
-        .attr("height", legendHeight)
-        .style("fill", "url(#stat-color-gradient)");
-
-    // Texto para valores mínimo e máximo
-    svg.append("text")
-        .attr("x", legendX)
-        .attr("y", legendY - 5)
-        .style("text-anchor", "start")
-        .style("font-size", "10px")
-        .text("0");
-
-    svg.append("text")
-        .attr("x", legendX + legendWidth)
-        .attr("y", legendY - 5)
-        .style("text-anchor", "end")
-        .style("font-size", "10px")
-        .text("255");
-
-    // Título da legenda
-    svg.append("text")
-        .attr("x", legendX + legendWidth / 2)
-        .attr("y", legendY - 5)
-        .style("text-anchor", "middle")
-        .style("font-size", "10px")
-        .text("Valor do Atributo");
-
-    // Legenda para a linha de mediana
-    svg.append("line")
-        .attr("x1", legendX)
-        .attr("x2", legendX + 20)
-        .attr("y1", legendY + legendHeight + 15)
-        .attr("y2", legendY + legendHeight + 15)
-        .attr("stroke", "#d7263d")
-        .attr("stroke-width", 2);
-
-    svg.append("text")
-        .attr("x", legendX + 25)
-        .attr("y", legendY + legendHeight + 18)
-        .style("text-anchor", "start")
-        .style("font-size", "10px")
-        .text("Mediana do atributo");
-
-    // Título
-    svg.append("text")
+    // Labels dos eixos com estilo consistente
+    g.append("text")
         .attr("x", width / 2)
-        .attr("y", margin.top / 2)
-        .attr("text-anchor", "middle")
-        .style("font-size", "18px")
+        .attr("y", height + 50)
+        .attr("fill", "white")
+        .style("text-anchor", "middle")
+        .style("font-size", "14px")
         .style("font-weight", "bold")
-        .text("Distribuição dos Atributos Base dos Pokémon (0-255)");
+        .style("font-family", '"Pixelify Sans", sans-serif')
+        .style("text-shadow", "2px 2px 4px rgba(0, 0, 0, 0.7)")
+        .text("Atributos");
+
+    g.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -50)
+        .attr("x", -height / 2)
+        .attr("fill", "white")
+        .style("text-anchor", "middle")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .style("font-family", '"Pixelify Sans", sans-serif')
+        .style("text-shadow", "2px 2px 4px rgba(0, 0, 0, 0.7)")
+        .text("Valor do Atributo");
+}
+
+/**
+ * Atualiza o distributplot com dados filtrados
+ * @param {Array} filteredPokemons - Array de Pokémon filtrados
+ */
+export function updateDistributionPlot(filteredPokemons) {
+    if (!currentContainerSelector) {
+        console.warn('❌ Distributplot não foi inicializado ainda');
+        return;
+    }
+
+    console.log('🔄 Atualizando distributplot com', filteredPokemons.length, 'pokémon filtrados');
+
+    // Se não há filtros, usar dados originais
+    const pokemonsToUse = filteredPokemons && filteredPokemons.length > 0
+        ? filteredPokemons
+        : originalPokemonData;
+
+    // Redesenhar o gráfico com os dados filtrados
+    drawDistributionPlot(currentContainerSelector, pokemonsToUse);
+}
+
+/**
+ * Limpa os filtros e restaura o distributplot com todos os dados originais
+ */
+export function clearDistributionPlotFilter() {
+    if (!currentContainerSelector || !originalPokemonData.length) {
+        console.warn('❌ Distributplot não foi inicializado ainda');
+        return;
+    }
+
+    console.log('🧹 Limpando filtros do distributplot');
+    drawDistributionPlot(currentContainerSelector, originalPokemonData);
 }

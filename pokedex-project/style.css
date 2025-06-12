@@ -16,18 +16,18 @@
     --button-blue: #416dc0;
     --button-light-blue: #859BD3;
     --cards-green: #88b871;
-    --cable-purple: #8A2BE2; 
-    --cable-orange: #FF9100; 
-    --cable-green: #079C14; 
-    --dark-gray: #6a686e; 
+    --cable-purple: #8A2BE2;
+    --cable-orange: #FF9100;
+    --cable-green: #079C14;
+    --dark-gray: #6a686e;
     --light-blue-bg: #0c469c;
-    --medium-blue: #3f7ddb; 
+    --medium-blue: #3f7ddb;
     --dark-gray-bg: #302d2d;
     --medium-gray-text: #555555;
-    --hover-yellow: #d4bd54; 
-    --hover-red: #ac1c1c; 
+    --hover-yellow: #d4bd54;
+    --hover-red: #ac1c1c;
     --hover-blue: #35599c;
-    --hover-light-blue: #6d7eaa; 
+    --hover-light-blue: #6d7eaa;
     --hover-dark-gray: #1f1f1f;
     --hover-purple: #56029b;
 
@@ -106,7 +106,7 @@ body {
 .authors-button img,
 .scroll-button img,
 .linkedin-button img,
-.github-button img, 
+.github-button img,
 .info-button img {
     height: 40%;
 }
@@ -120,7 +120,8 @@ body {
     border-radius: var(--screen-border-radius);
 }
 
-.region-screen, .location-screen{
+.region-screen,
+.location-screen {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -229,7 +230,7 @@ body {
     border-bottom-left-radius: var(--pokedex-border-radius);
 }
 
-.main-content-left-pai{
+.main-content-left-pai {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -294,7 +295,7 @@ body {
     justify-content: center;
 }
 
-.map-left-screen{
+.map-left-screen {
     width: 100%;
     height: 100%;
     display: flex;
@@ -302,7 +303,7 @@ body {
     justify-content: center;
 }
 
-.map-left-screen img{
+.map-left-screen img {
     height: 100%;
     border-radius: var(--screen-border-radius);
 }
@@ -370,7 +371,7 @@ body {
     flex-direction: row;
 }
 
-.main-content-right-pai{
+.main-content-right-pai {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -545,7 +546,7 @@ body {
 .scroll-button {
     width: calc(50% - 10px);
     aspect-ratio: 3.5 / 1;
-    background-color:var(--button-blue);
+    background-color: var(--button-blue);
     border-radius: var(--button-border-radius);
 }
 
@@ -553,10 +554,10 @@ body {
     background-color: var(--hover-blue);
 }
 
-.info-button{
+.info-button {
     width: calc(50% - 10px);
     aspect-ratio: 3.5 / 1;
-    background-color:var(--button-yellow);
+    background-color: var(--button-yellow);
     border-radius: var(--button-border-radius);
 }
 
@@ -653,13 +654,13 @@ body {
     align-items: center;
     box-sizing: border-box;
     flex-direction: column;
-    padding: 50px;
+    padding: 25px;
     padding-bottom: 0px;
 }
 
 .content-screen {
     width: 100%;
-    height: calc(100% - 70px);
+    height: calc(100% - 40px);
     background-color: var(--screen-medium-gray);
     overflow-y: auto;
     display: flex;
@@ -678,8 +679,8 @@ body {
     align-items: center;
     gap: 10px;
 
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 
     position: relative;
 }
@@ -699,7 +700,7 @@ body {
     border-radius: 8px;
     font-size: 1rem;
     background-color: white;
-    box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
 .pokemons-search-box:focus {
@@ -708,13 +709,13 @@ body {
 
 .suggestions {
     position: absolute;
-    top: 100%; 
+    top: 100%;
     left: 0;
     right: 0;
 
     background: white;
     border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
     list-style: none;
     margin: 0;
@@ -736,7 +737,7 @@ body {
     cursor: pointer;
 }
 
-.search-gif{
+.search-gif {
     height: 50px;
     max-width: 150px;
     justify-self: right;
@@ -747,7 +748,7 @@ body {
 }
 
 .content-button {
-    height: 100px;
+    height: 70px;
     aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
@@ -755,26 +756,26 @@ body {
 }
 
 .real-content-button {
-    height: 60%;
+    height: 65%;
     aspect-ratio: 1 / 1;
     background-color: var(--button-red);
     border-radius: 50%;
-    border: 5px solid var(--screen-medium-gray);
+    border: 4px solid var(--screen-medium-gray);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.real-content-button img{
+.real-content-button img {
     height: 80%;
 }
 
-.real-content-button:hover{
+.real-content-button:hover {
     cursor: pointer;
     background-color: var(--hover-red);
 }
 
-.pokemons-select-2{
+.pokemons-select-2 {
     width: 90%;
     display: flex;
     align-items: center;
@@ -784,7 +785,7 @@ body {
     margin-bottom: 20px;
 }
 
-.pokemon-card-select{
+.pokemon-card-select {
     width: 25%;
     aspect-ratio: 1/1;
     background-color: #d8d8d8;
@@ -794,21 +795,21 @@ body {
     justify-content: center;
 }
 
-.plus-button{
+.plus-button {
     width: 30%;
     aspect-ratio: 1 / 1;
 }
 
-.plus-button img{
+.plus-button img {
     height: 100%;
     width: 100%;
 }
 
-.pokemon-card-select:hover{
+.pokemon-card-select:hover {
     cursor: pointer;
 }
 
-.pokemon-card-selected{
+.pokemon-card-selected {
     width: 25%;
     aspect-ratio: 1 / 1;
     border-radius: 20px;
@@ -817,16 +818,16 @@ body {
     justify-content: center;
 }
 
-.pokemon-card-selected img{
+.pokemon-card-selected img {
     width: 80%;
     height: auto;
 }
 
-.pokemon-card-selected:hover{
+.pokemon-card-selected:hover {
     cursor: pointer;
 }
 
-.pokemons-description-area{
+.pokemons-description-area {
     width: 90%;
     display: flex;
     align-items: center;
@@ -836,7 +837,7 @@ body {
     margin-bottom: 20px;
 }
 
-.pokemon-description{
+.pokemon-description {
     width: 25%;
     padding: 10px;
     gap: 10px;
@@ -852,9 +853,9 @@ body {
     overflow-y: auto;
 }
 
-.info-rows{
+.info-rows {
     width: 100%;
-    aspect-ratio:  2 / 1;
+    aspect-ratio: 2 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -862,7 +863,7 @@ body {
     gap: 10px;
 }
 
-.info-blocks{
+.info-blocks {
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 5px;
@@ -875,13 +876,13 @@ body {
     border: 1px solid rgb(255, 255, 255);
 }
 
-.info-blocks img{
+.info-blocks img {
     width: 30%;
     aspect-ratio: 1/1;
     margin-bottom: 5px;
 }
 
-.info-rows-2{
+.info-rows-2 {
     width: 100%;
     display: flex;
     align-items: center;
@@ -892,21 +893,23 @@ body {
     gap: 10px;
     box-sizing: border-box;
     padding: 10px;
-    font-size: .65em;;
+    font-size: .65em;
+    ;
     border: 1px solid rgb(255, 255, 255);
 }
 
-.info-blocks-2-menor{
+.info-blocks-2-menor {
     width: 45%;
     padding: 5px;
 }
 
-.info-blocks-2-maior{
+.info-blocks-2-maior {
     padding: 5px;
     width: 55%;
 }
 
-.svg-pai-chart-1, .svg-pai-chart-2{
+.svg-pai-chart-1,
+.svg-pai-chart-2 {
     width: 90%;
     height: auto;
     background-color: #1b1b1b;
@@ -920,7 +923,7 @@ body {
     margin-bottom: 20px;
 }
 
-.svg-chart-1{
+.svg-chart-1 {
     width: 100%;
     height: auto;
     background-color: rgb(49, 49, 49);
@@ -929,7 +932,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: row; 
+    flex-direction: row;
     box-sizing: border-box;
     padding: 15px;
 }
@@ -943,7 +946,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: row; 
+    flex-direction: row;
     box-sizing: border-box;
     padding: 15px;
 
@@ -1097,31 +1100,31 @@ body {
 /* INTERATIVIDADE GŔAFICO REGIÕES */
 
 .tooltip {
-  position: absolute;
-  background: #222;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
+    position: absolute;
+    background: #222;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
 .ribbon {
-  fill-opacity: 0.9;
-  cursor: pointer;
-  transition: fill-opacity 0.3s;
+    fill-opacity: 0.9;
+    cursor: pointer;
+    transition: fill-opacity 0.3s;
 }
 
 .fade {
-  opacity: 0.15 !important;
+    opacity: 0.15 !important;
 }
 
 .group path {
-  stroke: #000;
-  stroke-width: 0.5px;
-  transition: fill-opacity 0.3s;
+    stroke: #000;
+    stroke-width: 0.5px;
+    transition: fill-opacity 0.3s;
 }
 
 /* Animação de piscar para a borda da localização selecionada */
@@ -1130,10 +1133,12 @@ body {
         stroke-opacity: 1;
         stroke: #00CAFF;
     }
+
     50% {
         stroke-opacity: 0.3;
         stroke: #1E90FF;
     }
+
     100% {
         stroke-opacity: 1;
         stroke: #00CAFF;
