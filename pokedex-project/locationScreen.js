@@ -210,9 +210,9 @@ function createLocationSearchBar(locationName = "Localização Selecionada") {
     locationSearch.style.width = "60%";
     locationSearch.style.padding = "10px";
     locationSearch.style.borderRadius = "12px";
-    locationSearch.style.backgroundColor = "#f2f2f2";
-    locationSearch.style.border = "2px solid #888888";
-    locationSearch.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.1)";
+    locationSearch.style.backgroundColor = "#1b1b1b";
+    locationSearch.style.border = "4px solid #cccccc";
+    locationSearch.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.1), inset 0 0 0 2px #000000, inset 0 0 0 4px #cccccc";
     locationSearch.style.display = "flex";
     locationSearch.style.alignItems = "center";
     locationSearch.style.gap = "15px";
@@ -227,6 +227,9 @@ function createLocationSearchBar(locationName = "Localização Selecionada") {
     locationIcon.style.width = "32px";
     locationIcon.style.objectFit = "contain";
     locationIcon.style.flexShrink = "0";
+    locationIcon.style.backgroundColor = "#1b1b1b";
+    locationIcon.style.borderRadius = "6px";
+    locationIcon.style.padding = "4px";
 
     // Campo de "busca" (só visual, mostra o nome da localização)
     const locationDisplayBox = document.createElement("div");
@@ -608,7 +611,7 @@ function createChartContainer() {
     radarChart.style.alignItems = 'center';
     radarChart.style.minHeight = '450px';
     radarChart.style.maxHeight = '450px';
-    radarChart.style.padding = '30px';
+    radarChart.style.padding = '10px 30px 50px 30px';
     radarChart.style.overflow = 'visible';
     radarChart.style.boxSizing = 'border-box';
     radarChart.style.position = 'relative';
