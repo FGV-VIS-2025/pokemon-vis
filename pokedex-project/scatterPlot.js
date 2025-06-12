@@ -296,6 +296,7 @@ function drawScatterPlot(containerSelector, data) {
         .data(data)
         .enter().append("circle")
         .attr("class", "dot")
+        .attr("data-pokemon-id", d => d.id)
         .attr("cx", d => xScale(d.weight))
         .attr("cy", d => yScale(d.height))
         .attr("r", d => radiusScale(d.totalStats))

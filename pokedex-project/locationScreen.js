@@ -7,7 +7,7 @@ import { pokemonTypeColorsRGBA } from './consts.js';
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
 // Dados globais para o gráfico de radar
-let encountersData, locationsData, pokemonStatsData, statsData;
+let encountersData, locationsData, pokemonStatsData, statsData, pokemonBasicData;
 
 // Variável para armazenar o ID da localização atual
 let currentLocationId = null;
@@ -20,8 +20,9 @@ Promise.all([
     d3.csv("../data/encounters.csv", d3.autoType),
     d3.csv("../data/locations.csv", d3.autoType),
     d3.csv("../data/pokemon_stats.csv", d3.autoType),
-    d3.csv("../data/stats.csv", d3.autoType)
-]).then(([encountersRaw, locations, pokemonStats, stats]) => {
+    d3.csv("../data/stats.csv", d3.autoType),
+    d3.csv("../data/pokemon.csv", d3.autoType)
+]).then(([encountersRaw, locations, pokemonStats, stats, pokemon]) => {
     // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
     const seen = new Set();
     const filteredEncounters = [];
@@ -38,6 +39,20 @@ Promise.all([
     locationsData = locations;
     pokemonStatsData = pokemonStats;
     statsData = stats;
+
+    // Criar mapa dos dados básicos dos pokémons para acesso global
+    pokemonBasicData = new Map();
+    pokemon.forEach(p => {
+        pokemonBasicData.set(p.id, {
+            id: p.id,
+            identifier: p.identifier,
+            height: p.height,
+            weight: p.weight
+        });
+    });
+
+    // Expor globalmente para uso nos tooltips
+    window.pokemonBasicData = pokemonBasicData;
 });
 
 /**
@@ -453,6 +468,17 @@ async function updateLocationInfoCards(locationId) {
                     this.src = "../assets/power.png";
                 };
             }
+
+            // Adicionar tooltip e funcionalidade de clique ao card do pokémon mais forte
+            const strongestPokemonCard = document.querySelector('.location-info-card');
+            if (strongestPokemonCard) {
+                // Encontrar os dados do pokémon mais forte
+                const strongestPokemonData = pokemonsWithTypes.find(p => p.pokemon_id === strongestPokemonId);
+
+                if (strongestPokemonData) {
+                    setupStrongestPokemonInteraction(strongestPokemonCard, strongestPokemonData, maxStatsTotal);
+                }
+            }
         } else {
             document.getElementById('strongest-pokemon').textContent = "N/A";
             // Manter o ícone de power se não encontrar pokémon
@@ -689,4 +715,325 @@ export async function createLocationScreen(id_location = 28) {
             </div>
         `;
     }
+}
+
+// Função para configurar tooltip e interação do card do pokémon mais forte
+function setupStrongestPokemonInteraction(cardElement, pokemonData, totalStats) {
+    // Obter dados básicos do pokémon (altura e peso)
+    let pokemonBasicData = null;
+    if (pokemonData && pokemonData.pokemon_id) {
+        // Buscar dados básicos nos dados globais carregados
+        if (window.pokemonBasicData && window.pokemonBasicData.get) {
+            pokemonBasicData = window.pokemonBasicData.get(pokemonData.pokemon_id);
+        }
+    }
+
+    // Event listeners para o tooltip
+    cardElement.addEventListener("mouseenter", (event) => {
+        // Remover tooltip anterior se existir
+        d3.selectAll(".strongest-pokemon-tooltip").remove();
+
+        // Criar novo tooltip
+        const newTooltip = d3.select("body").append("div")
+            .attr("class", "strongest-pokemon-tooltip")
+            .style("position", "absolute")
+            .style("background", "rgba(20, 20, 20, 0.95)")
+            .style("color", "white")
+            .style("padding", "12px")
+            .style("border-radius", "8px")
+            .style("font-size", "13px")
+            .style("font-family", '"Pixelify Sans", sans-serif')
+            .style("pointer-events", "none")
+            .style("opacity", 0)
+            .style("z-index", "1000")
+            .style("border", "2px solid #fff")
+            .style("box-shadow", "0 4px 20px rgba(0, 0, 0, 0.8)");
+
+        newTooltip.transition()
+            .duration(200)
+            .style("opacity", 1);
+
+        const pokemonName = pokemonData.name || "Pokémon";
+        const pokemonTypes = pokemonData.types && pokemonData.types.length > 0
+            ? pokemonData.types.map(t => t.type_name.charAt(0).toUpperCase() + t.type_name.slice(1)).join(', ')
+            : 'Desconhecido';
+
+        let tooltipContent = `
+            <div style="text-align: center;">
+                <strong style="font-size: 15px; color: #ffdd44; margin-bottom: 10px; display: block;">${pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)}</strong>
+                <div style="margin-bottom: 10px;">
+                    <img src="../assets/pokemons/${pokemonData.pokemon_id}.png" 
+                         style="width: 96px; height: 96px; image-rendering: pixelated;" 
+                         onerror="this.src='../assets/ball.png'; this.style.opacity='0.7';"
+                         alt="${pokemonName}">
+                </div>
+                <div style="margin: 8px 0; font-size: 12px;">
+                    <div><strong>Tipo:</strong> ${pokemonTypes}</div>`;
+
+        // Adicionar altura e peso se disponíveis
+        if (pokemonBasicData) {
+            tooltipContent += `
+                    <div><strong>Peso:</strong> ${(pokemonBasicData.weight / 10).toFixed(2)} kg</div>
+                    <div><strong>Altura:</strong> ${(pokemonBasicData.height / 10).toFixed(2)} m</div>`;
+        }
+
+        tooltipContent += `
+                    <div><strong>Total Stats:</strong> ${totalStats}</div>
+                </div>
+                <div style="font-size: 11px; color: #ccc; margin-top: 8px;">
+                    Clique para ver estatísticas detalhadas
+                </div>
+            </div>
+        `;
+
+        newTooltip.html(tooltipContent)
+            .style("left", (event.pageX + 15) + "px")
+            .style("top", (event.pageY - 10) + "px");
+    });
+
+    cardElement.addEventListener("mousemove", (event) => {
+        const activeTooltip = d3.select(".strongest-pokemon-tooltip");
+        if (!activeTooltip.empty()) {
+            activeTooltip
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 10) + "px");
+        }
+    });
+
+    cardElement.addEventListener("mouseleave", () => {
+        d3.selectAll(".strongest-pokemon-tooltip")
+            .transition()
+            .duration(300)
+            .style("opacity", 0)
+            .remove();
+    });
+
+    // Event listener para clique - renderizar estatísticas no radar
+    cardElement.addEventListener("click", () => {
+        if (pokemonData && pokemonData.pokemon_id) {
+            renderStrongestPokemonStats(pokemonData.pokemon_id, pokemonData.name);
+
+            // Sincronizar seleção com scatter plot se existir
+            if (window.setSelectedPokemonId) {
+                window.setSelectedPokemonId(pokemonData.pokemon_id);
+            }
+
+            // Atualizar visualmente o scatter plot se existir
+            const scatterContainer = document.querySelector('#location-scatter-container');
+            if (scatterContainer) {
+                const dots = scatterContainer.querySelectorAll('.dot');
+                dots.forEach(dot => {
+                    d3.select(dot)
+                        .style("stroke-width", 2)
+                        .style("fill-opacity", 0.8);
+                });
+
+                // Destacar o pokémon selecionado no scatter plot
+                const selectedDot = scatterContainer.querySelector(`[data-pokemon-id="${pokemonData.pokemon_id}"]`);
+                if (selectedDot) {
+                    d3.select(selectedDot)
+                        .style("stroke-width", 4)
+                        .style("fill-opacity", 1);
+                }
+            }
+        }
+    });
+}
+
+// Função para renderizar estatísticas do pokémon mais forte no radar
+async function renderStrongestPokemonStats(pokemonId, pokemonName) {
+    if (!pokemonStatsData || !statsData) {
+        console.warn("Dados de estatísticas não carregados.");
+        return;
+    }
+
+    try {
+        // Mapear IDs de estatísticas para nomes
+        const mainStatIds = new Set([1, 2, 3, 4, 5, 6]);
+        const statMapping = {
+            1: 'HP',          // hp
+            2: 'Attack',      // attack  
+            3: 'Defense',     // defense
+            4: 'Sp. Attack',  // special-attack
+            5: 'Sp. Defense', // special-defense
+            6: 'Speed'        // speed
+        };
+
+        // Buscar estatísticas do pokémon
+        const pokemonStats = pokemonStatsData.filter(stat =>
+            stat.pokemon_id === pokemonId && mainStatIds.has(stat.stat_id)
+        );
+
+        // Criar array de estatísticas na ordem correta: HP, Attack, Defense, Speed, Sp. Defense, Sp. Attack
+        const statsArray = [
+            { label: 'HP', value: 0 },
+            { label: 'Attack', value: 0 },
+            { label: 'Defense', value: 0 },
+            { label: 'Speed', value: 0 },
+            { label: 'Sp. Defense', value: 0 },
+            { label: 'Sp. Attack', value: 0 }
+        ];
+
+        // Preencher os valores das estatísticas
+        pokemonStats.forEach(stat => {
+            const statLabel = statMapping[stat.stat_id];
+            const statIndex = statsArray.findIndex(s => s.label === statLabel);
+            if (statIndex >= 0) {
+                statsArray[statIndex].value = stat.base_stat;
+            }
+        });
+
+        // Buscar dados do pokémon para determinar a cor baseada no tipo
+        let radarColor = "#4A90E2"; // cor padrão
+
+        // Tentar encontrar o pokémon nos dados da localização atual para obter tipos
+        if (currentLocationId) {
+            try {
+                const locationAreaIds_ = await getLocationAreaByLocation(currentLocationId);
+                const regionName = await getRegionByLocationId(currentLocationId);
+                const pokemonsWithTypes = await getPokemonsByMultipleLocationAreas(
+                    locationAreaIds_,
+                    regionName
+                );
+
+                const pokemonFromData = pokemonsWithTypes.find(p => p.pokemon_id === pokemonId);
+                if (pokemonFromData && pokemonFromData.types && pokemonFromData.types.length > 0) {
+                    const primaryType = pokemonFromData.types[0].type_name;
+                    radarColor = pokemonTypeColorsRGBA[primaryType] ?
+                        pokemonTypeColorsRGBA[primaryType].replace('0.7)', '1)') : // remover transparência
+                        "#4A90E2";
+                }
+            } catch (error) {
+                console.warn("Erro ao buscar tipos do pokémon:", error);
+            }
+        }
+
+        // Limpar container do radar antes de renderizar
+        const container = document.querySelector("#radar-chart-location");
+        if (container) container.innerHTML = '';
+
+        const formattedPokemonName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
+
+        // Usar a função modular para renderizar com a cor do tipo
+        renderRadarChart(
+            "#radar-chart-location",
+            formattedPokemonName,
+            statsArray,
+            radarColor
+        );
+
+        // Atualizar título do container do radar
+        const radarTitle = document.querySelector('#location-radar-container h2');
+        if (radarTitle) {
+            radarTitle.textContent = `Estatísticas de ${formattedPokemonName}`;
+        }
+
+        // Mostrar botão de limpar seleção do radar se não existir
+        let clearRadarBtn = document.getElementById('clear-radar-selection-btn');
+        if (!clearRadarBtn) {
+            clearRadarBtn = createClearRadarButton();
+        }
+        clearRadarBtn.style.display = 'block';
+        clearRadarBtn.style.opacity = '1';
+
+        // Também destacar o botão do scatter plot se existir
+        const scatterContainer = document.querySelector('#location-scatter-container');
+        if (scatterContainer) {
+            const clearScatterBtn = scatterContainer.querySelector('.clear-button');
+            if (clearScatterBtn) {
+                clearScatterBtn.style.opacity = '1';
+            }
+        }
+
+    } catch (error) {
+        console.error("Erro ao renderizar estatísticas do pokémon mais forte:", error);
+    }
+}
+
+// Função para criar botão de limpar seleção do radar
+function createClearRadarButton() {
+    const radarContainer = document.querySelector('#location-radar-container');
+    if (!radarContainer) return null;
+
+    const clearButton = document.createElement('div');
+    clearButton.id = 'clear-radar-selection-btn';
+    clearButton.style.position = 'absolute';
+    clearButton.style.top = '15px';
+    clearButton.style.right = '15px';
+    clearButton.style.cursor = 'pointer';
+    clearButton.style.opacity = '0.7';
+    clearButton.style.zIndex = '1000';
+    clearButton.style.display = 'none';
+
+    const buttonElement = document.createElement('button');
+    buttonElement.style.backgroundColor = '#4a90e2';
+    buttonElement.style.color = 'white';
+    buttonElement.style.border = 'none';
+    buttonElement.style.padding = '6px 12px';
+    buttonElement.style.borderRadius = '6px';
+    buttonElement.style.fontSize = '0.8em';
+    buttonElement.style.fontFamily = '"Pixelify Sans", sans-serif';
+    buttonElement.style.cursor = 'pointer';
+    buttonElement.style.transition = 'background-color 0.2s ease';
+    buttonElement.textContent = '✕ Limpar Seleção';
+
+    buttonElement.addEventListener('mouseenter', () => {
+        buttonElement.style.backgroundColor = '#357abd';
+    });
+
+    buttonElement.addEventListener('mouseleave', () => {
+        buttonElement.style.backgroundColor = '#4a90e2';
+    });
+
+    buttonElement.addEventListener('click', async () => {
+        // Limpar seleção
+        selectedPokemonId = null;
+        if (window.setSelectedPokemonId) {
+            window.setSelectedPokemonId(null);
+        }
+
+        // Limpar seleção visual do scatter plot
+        const scatterContainer = document.querySelector('#location-scatter-container');
+        if (scatterContainer) {
+            const dots = scatterContainer.querySelectorAll('.dot');
+            dots.forEach(dot => {
+                d3.select(dot)
+                    .style("stroke-width", 2)
+                    .style("fill-opacity", 0.8);
+            });
+
+            // Atualizar botão do scatter plot
+            const clearScatterBtn = scatterContainer.querySelector('.clear-button');
+            if (clearScatterBtn) {
+                clearScatterBtn.style.opacity = '0.6';
+            }
+        }
+
+        // Voltar para estatísticas médias
+        if (currentLocationId) {
+            const radarContainer = document.querySelector("#radar-chart-location");
+            if (radarContainer) radarContainer.innerHTML = '';
+
+            try {
+                await renderStatRadarChart(currentLocationId);
+            } catch (error) {
+                console.error("Erro ao carregar estatísticas médias:", error);
+            }
+
+            // Restaurar título original
+            const radarTitle = document.querySelector('#location-radar-container h2');
+            if (radarTitle) {
+                radarTitle.textContent = "Estatísticas Médias dos Pokémons";
+            }
+
+            // Ocultar botão de limpar seleção do radar
+            clearButton.style.display = 'none';
+            clearButton.style.opacity = '0.7';
+        }
+    });
+
+    clearButton.appendChild(buttonElement);
+    radarContainer.appendChild(clearButton);
+
+    return clearButton;
 }
