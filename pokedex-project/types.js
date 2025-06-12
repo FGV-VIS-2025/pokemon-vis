@@ -63,8 +63,8 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
   const color = typeName => pokemonTypeColorsRGBA[typeName] || 'rgba(200, 200, 200, 0.7)';
 
   // Ajustar o tamanho do diagrama baseado no container disponível
-  const margin = Math.min(width, height) * 0.12; // Margem maior para garantir que labels não saiam
-  const ribbonRadius = Math.min(width, height) * 0.35; // Raio menor para dar mais espaço às labels
+  const margin = Math.min(width, height) * 0.10; // Margem reduzida para dar mais espaço ao diagrama
+  const ribbonRadius = Math.min(width, height) * 0.462; // Raio aumentado em mais ~20%
   const arcInnerRadius = ribbonRadius + 6; // Espaçamento menor
   const arcOuterRadius = arcInnerRadius + 16; // Arco menor
 

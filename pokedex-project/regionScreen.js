@@ -67,10 +67,25 @@ function createRegionSearchBar(regionName = "Região Selecionada") {
     regionDisplayBox.style.boxShadow = "inset 0 2px 6px rgba(0,0,0,0.2), 0 1px 3px rgba(255,255,255,0.1)";
     regionDisplayBox.style.display = "flex";
     regionDisplayBox.style.alignItems = "center";
+    regionDisplayBox.style.justifyContent = "space-between";
     regionDisplayBox.style.fontWeight = "bold";
     regionDisplayBox.style.color = "#ffffff";
     regionDisplayBox.style.textShadow = "1px 1px 2px rgba(0,0,0,0.8)";
-    regionDisplayBox.textContent = regionName;
+
+    // Nome da região (lado esquerdo)
+    const regionNameSpan = document.createElement("span");
+    regionNameSpan.textContent = regionName;
+
+    // Contador de pokémons (lado direito)
+    const pokemonCountSpan = document.createElement("span");
+    pokemonCountSpan.id = "region-pokemon-counter";
+    pokemonCountSpan.style.fontSize = "0.9em";
+    pokemonCountSpan.style.color = "#cccccc";
+    pokemonCountSpan.style.fontWeight = "normal";
+    pokemonCountSpan.textContent = "Carregando...";
+
+    regionDisplayBox.appendChild(regionNameSpan);
+    regionDisplayBox.appendChild(pokemonCountSpan);
 
     regionSearch.appendChild(regionIcon);
     regionSearch.appendChild(regionDisplayBox);
@@ -92,13 +107,13 @@ function createRegionDescription() {
     descriptionArea.style.alignItems = "flex-start";
     descriptionArea.style.justifyContent = "center";
     descriptionArea.style.flexDirection = "row";
-    descriptionArea.style.gap = "10px";
+    descriptionArea.style.gap = "15px";
     descriptionArea.style.marginBottom = "20px";
 
     // Container para o chord diagram
     const leftChordContainer = document.createElement('div');
     leftChordContainer.id = 'region-chart-container';
-    leftChordContainer.style.width = '49%';
+    leftChordContainer.style.width = '50%';
     leftChordContainer.style.aspectRatio = '1 / 1';
     leftChordContainer.style.display = 'flex';
     leftChordContainer.style.flexDirection = 'column';
@@ -126,7 +141,7 @@ function createRegionDescription() {
     const chordInstructions = document.createElement('p');
     chordInstructions.innerHTML = "Clique nos <strong>tipos</strong> ou <strong>conexões</strong> para filtrar";
     chordInstructions.style.color = '#cccccc';
-    chordInstructions.style.fontSize = '0.6em';
+    chordInstructions.style.fontSize = '1em';
     chordInstructions.style.textAlign = 'center';
     chordInstructions.style.marginBottom = '3px';
     chordInstructions.style.marginTop = '0px';
@@ -148,7 +163,7 @@ function createRegionDescription() {
     // Container para os sprites dos pokémons
     const rightContainer = document.createElement('div');
     rightContainer.id = 'right-region-container';
-    rightContainer.style.width = '49%';
+    rightContainer.style.width = '50%';
     rightContainer.style.aspectRatio = '1 / 1';
     rightContainer.style.display = 'flex';
     rightContainer.style.flexDirection = 'column';
@@ -165,20 +180,22 @@ function createRegionDescription() {
     const spriteHeader = document.createElement('div');
     spriteHeader.style.width = '100%';
     spriteHeader.style.display = 'flex';
-    spriteHeader.style.justifyContent = 'space-between';
+    spriteHeader.style.justifyContent = 'center';
     spriteHeader.style.alignItems = 'center';
     spriteHeader.style.marginBottom = '15px';
+    spriteHeader.style.position = 'relative';
 
     const title = document.createElement('h2');
-    title.textContent = "Pokémons da Região";
+    title.textContent = "Pokémon da Geração";
     title.style.color = 'white';
-    title.style.margin = '0';
+    title.style.marginBottom = '5px';
+    title.style.marginTop = '0px';
     title.style.fontFamily = '"Pixelify Sans", sans-serif';
     title.style.fontSize = '1.0em';
     title.style.textAlign = 'center';
     title.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
 
-    // Botão para limpar filtro
+    // Botão para limpar filtro (posicionado absolutamente para não afetar o centro do título)
     const clearFilterBtn = document.createElement('button');
     clearFilterBtn.id = 'clear-region-filter-btn';
     clearFilterBtn.innerHTML = '✕ Limpar Filtro';
@@ -192,6 +209,9 @@ function createRegionDescription() {
     clearFilterBtn.style.cursor = 'pointer';
     clearFilterBtn.style.display = 'none';
     clearFilterBtn.style.transition = 'background-color 0.2s ease';
+    clearFilterBtn.style.position = 'absolute';
+    clearFilterBtn.style.right = '0';
+    clearFilterBtn.style.top = '0';
 
     clearFilterBtn.addEventListener('mouseenter', () => {
         clearFilterBtn.style.backgroundColor = '#357abd';
@@ -204,24 +224,184 @@ function createRegionDescription() {
     spriteHeader.appendChild(clearFilterBtn);
     rightContainer.appendChild(spriteHeader);
 
-    // Container scrollável para os sprites
-    const spriteScrollContainer = document.createElement('div');
-    spriteScrollContainer.style.width = '100%';
-    spriteScrollContainer.style.height = '100%';
-    spriteScrollContainer.style.overflow = 'auto';
-    spriteScrollContainer.style.scrollbarWidth = 'thin';
+    // Container para o grid (sem scroll)
+    const spriteGridContainer = document.createElement('div');
+    spriteGridContainer.style.width = '100%';
+    spriteGridContainer.style.height = 'calc(100% - 50px)'; // Espaço para navegação na parte inferior
+    spriteGridContainer.style.overflow = 'hidden'; // Remove o scroll
+    spriteGridContainer.style.position = 'relative';
 
-    // Grid para os sprites
+    // Grid para os sprites (tamanho fixo para paginação)
     const grid = document.createElement('div');
     grid.id = 'pokemon-sprites-grid';
     grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(80px, 1fr))';
+    grid.style.gridTemplateColumns = 'repeat(6, 1fr)'; // 6 colunas fixas
+    grid.style.gridTemplateRows = 'repeat(4, 1fr)'; // 4 linhas fixas = 24 pokémon por página
     grid.style.gap = '8px';
     grid.style.width = '100%';
+    grid.style.height = '100%';
     grid.style.justifyItems = 'center';
-    grid.style.padding = '0 5px';
-    spriteScrollContainer.appendChild(grid);
-    rightContainer.appendChild(spriteScrollContainer);
+    grid.style.alignItems = 'center';
+    grid.style.padding = '5px';
+    grid.style.boxSizing = 'border-box';
+
+    spriteGridContainer.appendChild(grid);
+    rightContainer.appendChild(spriteGridContainer);
+
+    // Container para navegação por páginas (movido para baixo)
+    const navigationContainer = document.createElement('div');
+    navigationContainer.style.width = '100%';
+    navigationContainer.style.height = '40px';
+    navigationContainer.style.display = 'flex';
+    navigationContainer.style.justifyContent = 'center';
+    navigationContainer.style.alignItems = 'center';
+    navigationContainer.style.gap = '20px';
+    navigationContainer.style.marginTop = '5px';
+
+    // Botão anterior
+    const prevButton = document.createElement('button');
+    prevButton.id = 'pokemon-prev-btn';
+    prevButton.innerHTML = '◀ Anterior';
+    prevButton.style.backgroundColor = 'transparent';
+    prevButton.style.color = '#ffffff';
+    prevButton.style.border = '2px solid #ffffff';
+    prevButton.style.borderRadius = '8px';
+    prevButton.style.padding = '8px 16px';
+    prevButton.style.cursor = 'pointer';
+    prevButton.style.fontSize = '12px';
+    prevButton.style.fontFamily = '"Pixelify Sans", sans-serif';
+    prevButton.style.fontWeight = '600';
+    prevButton.style.display = 'flex';
+    prevButton.style.alignItems = 'center';
+    prevButton.style.justifyContent = 'center';
+    prevButton.style.gap = '8px';
+    prevButton.style.transition = 'all 0.3s ease';
+    prevButton.style.minWidth = '100px';
+    prevButton.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.7)';
+    prevButton.style.letterSpacing = '0.5px';
+
+    // Indicador de página
+    const pageIndicator = document.createElement('div');
+    pageIndicator.id = 'pokemon-page-indicator';
+    pageIndicator.style.color = '#ffffff';
+    pageIndicator.style.fontSize = '14px';
+    pageIndicator.style.fontFamily = '"Pixelify Sans", sans-serif';
+    pageIndicator.style.fontWeight = '700';
+    pageIndicator.style.minWidth = '80px';
+    pageIndicator.style.textAlign = 'center';
+    pageIndicator.style.backgroundColor = 'transparent';
+    pageIndicator.style.padding = '8px 16px';
+    pageIndicator.style.borderRadius = '8px';
+    pageIndicator.style.border = '2px solid rgba(255, 255, 255, 0.6)';
+    pageIndicator.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.8)';
+    pageIndicator.style.letterSpacing = '1px';
+    pageIndicator.textContent = '1 / 1';
+
+    // Botão próximo
+    const nextButton = document.createElement('button');
+    nextButton.id = 'pokemon-next-btn';
+    nextButton.innerHTML = 'Próximo ▶';
+    nextButton.style.backgroundColor = 'transparent';
+    nextButton.style.color = '#ffffff';
+    nextButton.style.border = '2px solid #ffffff';
+    nextButton.style.borderRadius = '8px';
+    nextButton.style.padding = '8px 16px';
+    nextButton.style.cursor = 'pointer';
+    nextButton.style.fontSize = '12px';
+    nextButton.style.fontFamily = '"Pixelify Sans", sans-serif';
+    nextButton.style.fontWeight = '600';
+    nextButton.style.display = 'flex';
+    nextButton.style.alignItems = 'center';
+    nextButton.style.justifyContent = 'center';
+    nextButton.style.gap = '8px';
+    nextButton.style.transition = 'all 0.3s ease';
+    nextButton.style.minWidth = '100px';
+    nextButton.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.7)';
+    nextButton.style.letterSpacing = '0.5px';
+
+    // Efeitos hover melhorados para os botões
+    prevButton.addEventListener('mouseenter', () => {
+        if (!prevButton.disabled) {
+            prevButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            prevButton.style.borderColor = '#00d4ff';
+            prevButton.style.color = '#00d4ff';
+            prevButton.style.transform = 'translateY(-2px) scale(1.05)';
+            prevButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+        }
+    });
+    prevButton.addEventListener('mouseleave', () => {
+        if (!prevButton.disabled) {
+            prevButton.style.backgroundColor = 'transparent';
+            prevButton.style.borderColor = '#ffffff';
+            prevButton.style.color = '#ffffff';
+            prevButton.style.transform = 'translateY(0) scale(1)';
+            prevButton.style.boxShadow = 'none';
+        }
+    });
+
+    // Adicionar listener de clique para prevButton
+    prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderCurrentPage();
+            updateButtonStates();
+
+            // Manter o efeito hover após o clique se o mouse ainda estiver sobre o botão
+            setTimeout(() => {
+                if (prevButton.matches(':hover') && !prevButton.disabled) {
+                    prevButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    prevButton.style.borderColor = '#00d4ff';
+                    prevButton.style.color = '#00d4ff';
+                    prevButton.style.transform = 'translateY(-2px) scale(1.05)';
+                    prevButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+                }
+            }, 100);
+        }
+    });
+
+    nextButton.addEventListener('mouseenter', () => {
+        if (!nextButton.disabled) {
+            nextButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            nextButton.style.borderColor = '#00d4ff';
+            nextButton.style.color = '#00d4ff';
+            nextButton.style.transform = 'translateY(-2px) scale(1.05)';
+            nextButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+        }
+    });
+    nextButton.addEventListener('mouseleave', () => {
+        if (!nextButton.disabled) {
+            nextButton.style.backgroundColor = 'transparent';
+            nextButton.style.borderColor = '#ffffff';
+            nextButton.style.color = '#ffffff';
+            nextButton.style.transform = 'translateY(0) scale(1)';
+            nextButton.style.boxShadow = 'none';
+        }
+    });
+
+    // Adicionar listener de clique para nextButton
+    nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderCurrentPage();
+            updateButtonStates();
+
+            // Manter o efeito hover após o clique se o mouse ainda estiver sobre o botão
+            setTimeout(() => {
+                if (nextButton.matches(':hover') && !nextButton.disabled) {
+                    nextButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    nextButton.style.borderColor = '#00d4ff';
+                    nextButton.style.color = '#00d4ff';
+                    nextButton.style.transform = 'translateY(-2px) scale(1.05)';
+                    nextButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+                }
+            }, 100);
+        }
+    });
+
+    navigationContainer.appendChild(prevButton);
+    navigationContainer.appendChild(pageIndicator);
+    navigationContainer.appendChild(nextButton);
+    rightContainer.appendChild(navigationContainer);
 
     descriptionArea.appendChild(leftChordContainer);
     descriptionArea.appendChild(rightContainer);
@@ -351,107 +531,27 @@ export async function createRegionScreen(id_region = 3) {
     }
 }
 
-// Função para carregar os sprites dos Pokémons de uma região
+// Função para carregar os sprites dos Pokémons de uma região com paginação
+let currentPage = 1;
+let totalPages = 1;
+let currentPokemonsList = [];
+const pokemonsPerPage = 24; // 6 colunas x 4 linhas
+
 async function loadRegionPokemonSprites(regionId, pokemonsList = null) {
     try {
         const regionNames = Object.keys(gameRegionVersions);
         const regionName = regionNames[regionId - 1] || "Kanto";
         // Se receber uma lista filtrada, usa ela, senão busca todos da geração
         const pokemonsFromGeneration = pokemonsList || await getPokemonsByGeneration(regionName);
-        const spritesGrid = document.getElementById('pokemon-sprites-grid');
-        if (!spritesGrid) return;
 
-        spritesGrid.innerHTML = '';
+        // Armazena a lista atual e reseta a página
+        currentPokemonsList = pokemonsFromGeneration;
+        currentPage = 1;
+        totalPages = Math.ceil(pokemonsFromGeneration.length / pokemonsPerPage);
 
-        if (pokemonsFromGeneration.length === 0) {
-            const noDataMessage = document.createElement('p');
-            noDataMessage.textContent = 'Nenhum Pokémon encontrado para os tipos selecionados.';
-            noDataMessage.style.color = 'white';
-            noDataMessage.style.gridColumn = '1 / -1';
-            noDataMessage.style.textAlign = 'center';
-            noDataMessage.style.padding = '20px';
-            noDataMessage.style.fontFamily = '"Pixelify Sans", sans-serif';
-            spritesGrid.appendChild(noDataMessage);
-            return;
-        }
-
-        pokemonsFromGeneration.forEach(pokemon => {
-            const spriteContainer = document.createElement('div');
-            spriteContainer.className = 'pokemon-sprite-container';
-            spriteContainer.style.display = 'flex';
-            spriteContainer.style.flexDirection = 'column';
-            spriteContainer.style.alignItems = 'center';
-            spriteContainer.style.justifyContent = 'center';
-            spriteContainer.style.cursor = 'pointer';
-            spriteContainer.style.padding = '5px';
-            spriteContainer.style.borderRadius = '8px';
-            spriteContainer.style.transition = 'background-color 0.2s ease, transform 0.2s ease';
-
-            // Efeito hover melhorado
-            spriteContainer.addEventListener('mouseenter', () => {
-                spriteContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                spriteContainer.style.transform = 'scale(1.05)';
-            });
-
-            spriteContainer.addEventListener('mouseleave', () => {
-                spriteContainer.style.backgroundColor = 'transparent';
-                spriteContainer.style.transform = 'scale(1)';
-            });
-
-            const img = document.createElement('img');
-            img.width = 72;
-            img.height = 72;
-            img.alt = `${pokemon.name} #${pokemon.pokemon_id}`;
-            img.style.imageRendering = 'pixelated';
-            img.dataset.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
-            img.src = '../assets/ball.png';
-            img.style.opacity = '0.7';
-            img.classList.add('pokemon-sprite-lazy');
-
-            const numberLabel = document.createElement('span');
-            numberLabel.textContent = `#${pokemon.pokemon_id}`;
-            numberLabel.style.color = '#cccccc';
-            numberLabel.style.fontSize = '10px';
-            numberLabel.style.marginTop = '3px';
-            numberLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
-            numberLabel.style.textAlign = 'center';
-
-            const nameLabel = document.createElement('span');
-            nameLabel.textContent = pokemon.name;
-            nameLabel.style.color = 'white';
-            nameLabel.style.fontSize = '10px';
-            nameLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
-            nameLabel.style.textAlign = 'center';
-            nameLabel.style.fontWeight = '600';
-            nameLabel.style.maxWidth = '80px';
-            nameLabel.style.overflow = 'hidden';
-            nameLabel.style.textOverflow = 'ellipsis';
-            nameLabel.style.whiteSpace = 'nowrap';
-
-            img.title = `${pokemon.name} #${pokemon.pokemon_id}`;
-            img.onerror = function () {
-                this.src = '../assets/ball.png';
-                this.style.opacity = '0.5';
-            };
-
-            spriteContainer.appendChild(img);
-            spriteContainer.appendChild(numberLabel);
-            spriteContainer.appendChild(nameLabel);
-            spritesGrid.appendChild(spriteContainer);
-
-            // Adicionar eventos para mostrar/esconder a tooltip do card
-            spriteContainer.addEventListener('mouseenter', (event) => {
-                showPokemonCardTooltip(pokemon, event);
-            });
-
-            spriteContainer.addEventListener('mouseleave', () => {
-                hidePokemonCardTooltip();
-            });
-
-            spriteContainer.addEventListener('mousemove', (event) => {
-                moveTooltip(event);
-            });
-        });
+        // Atualiza a interface
+        renderCurrentPage();
+        setupPaginationControls();
 
         // Atualizar contadores
         const isFiltered = pokemonsList !== null;
@@ -463,21 +563,299 @@ async function loadRegionPokemonSprites(regionId, pokemonsList = null) {
             hideClearFilterButton();
         }
 
-        initLazyLoading();
     } catch (error) {
-        console.error('Erro ao carregar sprites dos Pokémons:', error);
+        console.error('Erro ao carregar sprites dos Pokémon:', error);
         const spritesGrid = document.getElementById('pokemon-sprites-grid');
         if (spritesGrid) {
-            spritesGrid.innerHTML = `<p style="color: white; text-align: center; padding: 20px; grid-column: 1 / -1;">Erro ao carregar Pokémons: ${error.message}</p>`;
+            spritesGrid.innerHTML = `<p style="color: white; text-align: center; padding: 20px; grid-column: 1 / -1;">Erro ao carregar Pokémon: ${error.message}</p>`;
+        }
+    }
+}
+
+// Função para renderizar a página atual
+function renderCurrentPage() {
+    const spritesGrid = document.getElementById('pokemon-sprites-grid');
+    if (!spritesGrid) return;
+
+    spritesGrid.innerHTML = '';
+
+    if (currentPokemonsList.length === 0) {
+        const noDataMessage = document.createElement('p');
+        noDataMessage.textContent = 'Nenhum Pokémon encontrado para os tipos selecionados.';
+        noDataMessage.style.color = 'white';
+        noDataMessage.style.gridColumn = '1 / -1';
+        noDataMessage.style.gridRow = '1 / -1';
+        noDataMessage.style.textAlign = 'center';
+        noDataMessage.style.padding = '20px';
+        noDataMessage.style.fontFamily = '"Pixelify Sans", sans-serif';
+        noDataMessage.style.alignSelf = 'center';
+        noDataMessage.style.justifySelf = 'center';
+        spritesGrid.appendChild(noDataMessage);
+        updatePageIndicator();
+        return;
+    }
+
+    // Calcula o índice inicial e final para a página atual
+    const startIndex = (currentPage - 1) * pokemonsPerPage;
+    const endIndex = Math.min(startIndex + pokemonsPerPage, currentPokemonsList.length);
+    const pokemonsOnPage = currentPokemonsList.slice(startIndex, endIndex);
+
+    pokemonsOnPage.forEach(pokemon => {
+        const spriteContainer = document.createElement('div');
+        spriteContainer.className = 'pokemon-sprite-container';
+        spriteContainer.style.display = 'flex';
+        spriteContainer.style.flexDirection = 'column';
+        spriteContainer.style.alignItems = 'center';
+        spriteContainer.style.justifyContent = 'center';
+        spriteContainer.style.cursor = 'pointer';
+        spriteContainer.style.padding = '5px';
+        spriteContainer.style.borderRadius = '8px';
+        spriteContainer.style.transition = 'background-color 0.2s ease, transform 0.2s ease';
+        spriteContainer.style.height = '100%';
+        spriteContainer.style.width = '100%';
+
+        // Efeito hover melhorado
+        spriteContainer.addEventListener('mouseenter', () => {
+            spriteContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            spriteContainer.style.transform = 'scale(1.05)';
+        });
+
+        spriteContainer.addEventListener('mouseleave', () => {
+            spriteContainer.style.backgroundColor = 'transparent';
+            spriteContainer.style.transform = 'scale(1)';
+        });
+
+        const img = document.createElement('img');
+        img.style.width = '60px';
+        img.style.height = '60px';
+        img.alt = `${pokemon.name} #${pokemon.pokemon_id}`;
+        img.style.imageRendering = 'pixelated';
+        img.dataset.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
+        img.src = '../assets/ball.png';
+        img.style.opacity = '0.7';
+        img.classList.add('pokemon-sprite-lazy');
+
+        const numberLabel = document.createElement('span');
+        numberLabel.textContent = `#${pokemon.pokemon_id}`;
+        numberLabel.style.color = '#cccccc';
+        numberLabel.style.fontSize = '9px';
+        numberLabel.style.marginTop = '2px';
+        numberLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
+        numberLabel.style.textAlign = 'center';
+
+        const nameLabel = document.createElement('span');
+        nameLabel.textContent = pokemon.name;
+        nameLabel.style.color = 'white';
+        nameLabel.style.fontSize = '9px';
+        nameLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
+        nameLabel.style.textAlign = 'center';
+        nameLabel.style.fontWeight = '600';
+        nameLabel.style.maxWidth = '70px';
+        nameLabel.style.overflow = 'hidden';
+        nameLabel.style.textOverflow = 'ellipsis';
+        nameLabel.style.whiteSpace = 'nowrap';
+
+        img.title = `${pokemon.name} #${pokemon.pokemon_id}`;
+        img.onerror = function () {
+            this.src = '../assets/ball.png';
+            this.style.opacity = '0.5';
+        };
+
+        spriteContainer.appendChild(img);
+        spriteContainer.appendChild(numberLabel);
+        spriteContainer.appendChild(nameLabel);
+        spritesGrid.appendChild(spriteContainer);
+
+        // Adicionar eventos para mostrar/esconder a tooltip do card
+        spriteContainer.addEventListener('mouseenter', (event) => {
+            showPokemonCardTooltip(pokemon, event);
+        });
+
+        spriteContainer.addEventListener('mouseleave', () => {
+            hidePokemonCardTooltip();
+        });
+
+        spriteContainer.addEventListener('mousemove', (event) => {
+            moveTooltip(event);
+        });
+    });
+
+    updatePageIndicator();
+    initLazyLoading();
+}
+
+// Função para atualizar o indicador de página
+function updatePageIndicator() {
+    const pageIndicator = document.getElementById('pokemon-page-indicator');
+    if (pageIndicator) {
+        pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+    }
+}
+
+// Função para configurar os controles de paginação
+function setupPaginationControls() {
+    const prevButton = document.getElementById('pokemon-prev-btn');
+    const nextButton = document.getElementById('pokemon-next-btn');
+
+    if (prevButton && nextButton) {
+        // Remove listeners anteriores
+        prevButton.replaceWith(prevButton.cloneNode(true));
+        nextButton.replaceWith(nextButton.cloneNode(true));
+
+        // Pega os novos elementos
+        const newPrevButton = document.getElementById('pokemon-prev-btn');
+        const newNextButton = document.getElementById('pokemon-next-btn');
+
+        // Adiciona novos listeners
+        newPrevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentPage();
+                updateButtonStates();
+
+                // Manter o efeito hover após o clique se o mouse ainda estiver sobre o botão
+                setTimeout(() => {
+                    if (newPrevButton.matches(':hover') && !newPrevButton.disabled) {
+                        newPrevButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                        newPrevButton.style.borderColor = '#00d4ff';
+                        newPrevButton.style.color = '#00d4ff';
+                        newPrevButton.style.transform = 'translateY(-2px) scale(1.05)';
+                        newPrevButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+                    }
+                }, 100);
+            }
+        });
+
+        newNextButton.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCurrentPage();
+                updateButtonStates();
+
+                // Manter o efeito hover após o clique se o mouse ainda estiver sobre o botão
+                setTimeout(() => {
+                    if (newNextButton.matches(':hover') && !newNextButton.disabled) {
+                        newNextButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                        newNextButton.style.borderColor = '#00d4ff';
+                        newNextButton.style.color = '#00d4ff';
+                        newNextButton.style.transform = 'translateY(-2px) scale(1.05)';
+                        newNextButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+                    }
+                }, 100);
+            }
+        });
+
+        // Re-adiciona os efeitos hover melhorados
+        newPrevButton.addEventListener('mouseenter', () => {
+            if (!newPrevButton.disabled) {
+                newPrevButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                newPrevButton.style.borderColor = '#00d4ff';
+                newPrevButton.style.color = '#00d4ff';
+                newPrevButton.style.transform = 'translateY(-2px) scale(1.05)';
+                newPrevButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+            }
+        });
+        newPrevButton.addEventListener('mouseleave', () => {
+            if (!newPrevButton.disabled) {
+                newPrevButton.style.backgroundColor = 'transparent';
+                newPrevButton.style.borderColor = '#ffffff';
+                newPrevButton.style.color = '#ffffff';
+                newPrevButton.style.transform = 'translateY(0) scale(1)';
+                newPrevButton.style.boxShadow = 'none';
+            }
+        });
+
+        newNextButton.addEventListener('mouseenter', () => {
+            if (!newNextButton.disabled) {
+                newNextButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                newNextButton.style.borderColor = '#00d4ff';
+                newNextButton.style.color = '#00d4ff';
+                newNextButton.style.transform = 'translateY(-2px) scale(1.05)';
+                newNextButton.style.boxShadow = '0 6px 20px rgba(0, 212, 255, 0.3)';
+            }
+        });
+        newNextButton.addEventListener('mouseleave', () => {
+            if (!newNextButton.disabled) {
+                newNextButton.style.backgroundColor = 'transparent';
+                newNextButton.style.borderColor = '#ffffff';
+                newNextButton.style.color = '#ffffff';
+                newNextButton.style.transform = 'translateY(0) scale(1)';
+                newNextButton.style.boxShadow = 'none';
+            }
+        });
+
+        updateButtonStates();
+    }
+}
+
+// Função para atualizar o estado dos botões (habilitado/desabilitado)
+function updateButtonStates() {
+    const prevButton = document.getElementById('pokemon-prev-btn');
+    const nextButton = document.getElementById('pokemon-next-btn');
+
+    if (prevButton) {
+        const isDisabled = currentPage <= 1;
+        prevButton.disabled = isDisabled;
+
+        if (isDisabled) {
+            prevButton.style.opacity = '0.3';
+            prevButton.style.cursor = 'not-allowed';
+            prevButton.style.backgroundColor = 'transparent';
+            prevButton.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            prevButton.style.color = 'rgba(255, 255, 255, 0.4)';
+            prevButton.style.transform = 'none';
+            prevButton.style.boxShadow = 'none';
+        } else {
+            prevButton.style.opacity = '1';
+            prevButton.style.cursor = 'pointer';
+            prevButton.style.backgroundColor = 'transparent';
+            prevButton.style.borderColor = '#ffffff';
+            prevButton.style.color = '#ffffff';
+            prevButton.style.boxShadow = 'none';
+        }
+    }
+
+    if (nextButton) {
+        const isDisabled = currentPage >= totalPages;
+        nextButton.disabled = isDisabled;
+
+        if (isDisabled) {
+            nextButton.style.opacity = '0.3';
+            nextButton.style.cursor = 'not-allowed';
+            nextButton.style.backgroundColor = 'transparent';
+            nextButton.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            nextButton.style.color = 'rgba(255, 255, 255, 0.4)';
+            nextButton.style.transform = 'none';
+            nextButton.style.boxShadow = 'none';
+        } else {
+            nextButton.style.opacity = '1';
+            nextButton.style.cursor = 'pointer';
+            nextButton.style.backgroundColor = 'transparent';
+            nextButton.style.borderColor = '#ffffff';
+            nextButton.style.color = '#ffffff';
+            nextButton.style.boxShadow = 'none';
         }
     }
 }
 
 // Funções utilitárias para melhorar a interação
 function updatePokemonCounters(totalCount, filteredCount) {
-    // Função simplificada - os cards foram removidos
-    // Apenas mantém a interface para compatibilidade com o resto do código
-    console.log(`Total: ${totalCount}, Filtrados: ${filteredCount}`);
+    const counterElement = document.getElementById('region-pokemon-counter');
+    if (counterElement) {
+        if (filteredCount > 0) {
+            // Quando há filtro aplicado, mostra quantos estão filtrados
+            counterElement.textContent = `${filteredCount} Pokémon`;
+            counterElement.style.color = "#00d4ff"; // Cor ciano para indicar filtro ativo
+        } else if (totalCount > 0) {
+            // Quando não há filtro, mostra o total
+            counterElement.textContent = `${totalCount} Pokémon`;
+            counterElement.style.color = "#cccccc"; // Cor normal
+        } else {
+            // Estado de carregamento ou erro
+            counterElement.textContent = "Carregando...";
+            counterElement.style.color = "#cccccc";
+        }
+    }
 }
 
 function showClearFilterButton() {
@@ -508,7 +886,7 @@ function setupClearFilterButton() {
             }
             hideClearFilterButton();
 
-            // Recarregar todos os pokémons da região
+            // Recarregar todos os pokémons da região e resetar página
             const regionNames = Object.keys(gameRegionVersions);
             const regionSearchBar = document.querySelector('.region-search div:nth-child(2)');
             let regionId = 3; // fallback Hoenn
@@ -521,6 +899,8 @@ function setupClearFilterButton() {
                 }
             }
 
+            // Reset para a primeira página
+            currentPage = 1;
             loadRegionPokemonSprites(regionId);
 
             // Resetar contadores
@@ -544,16 +924,18 @@ window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB) => {
         }
     }
 
+    // Reset para a primeira página quando aplicar filtros
+    currentPage = 1;
     loadRegionPokemonSprites(regionId, filteredPokemons);
 };
 
 // ...existing code...
 
-// Função para inicializar o lazy loading de imagens
+// Função para inicializar o lazy loading de imagens (adaptada para paginação)
 function initLazyLoading() {
     // Opções para o Intersection Observer
     const options = {
-        root: document.getElementById('right-region-container'),
+        root: document.getElementById('pokemon-sprites-grid'),
         rootMargin: '0px',
         threshold: 0.1
     };
@@ -577,8 +959,8 @@ function initLazyLoading() {
     // Criar o observer
     const observer = new IntersectionObserver(onIntersection, options);
 
-    // Observar todas as imagens com a classe pokemon-sprite-lazy
-    document.querySelectorAll('.pokemon-sprite-lazy').forEach(img => {
+    // Observar todas as imagens com a classe pokemon-sprite-lazy da página atual
+    document.querySelectorAll('#pokemon-sprites-grid .pokemon-sprite-lazy').forEach(img => {
         observer.observe(img);
     });
 }
