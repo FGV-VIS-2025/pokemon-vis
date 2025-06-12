@@ -306,11 +306,12 @@ export function RadarChart(className, data, options) {
             .data(dataSeries)
             .enter().append("circle")
             .attr("class", "radarCircle")
-            .attr("r", cfg.dotRadius)
+            .attr("r", cfg.dotRadius * 1.5)
             .attr("cx", (d, i) => rScale(d.value) * Math.cos(angleSlice * i - Math.PI / 2))
             .attr("cy", (d, i) => rScale(d.value) * Math.sin(angleSlice * i - Math.PI / 2))
             .style("fill", cfg.color(seriesIndex))
-            .style("fill-opacity", 0.8);
+            .style("fill-opacity", 1)
+            .style("stroke", "white");
     });
 
     // Configuração do tooltip para os círculos
