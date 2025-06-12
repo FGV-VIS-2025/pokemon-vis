@@ -12,13 +12,14 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .attr("height", height)
     .style("overflow", "visible");
 
-  svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", 120)
-    .attr("text-anchor", "middle")
-    .style("font-size", "25px")
-    .style("fill", "white")
-    .text("Número de pokémons por tipo");
+  // Não adicionar título aqui, pois já está no container HTML
+  // svg.append("text")
+  //   .attr("x", width / 2)
+  //   .attr("y", 120)
+  //   .attr("text-anchor", "middle")
+  //   .style("font-size", "25px")
+  //   .style("fill", "white")
+  //   .text("Número de pokémons por tipo");
 
   const tooltip = d3.select("body")
     .append("div")
@@ -61,16 +62,18 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
 
   const color = typeName => pokemonTypeColorsRGBA[typeName] || 'rgba(200, 200, 200, 0.7)';
 
-  const ribbonRadius = Math.min(width, height) * 0.5 - 200;
-  const arcInnerRadius = ribbonRadius + 10;
-  const arcOuterRadius = arcInnerRadius + 25;
+  // Ajustar o tamanho do diagrama baseado no container disponível
+  const margin = Math.min(width, height) * 0.12; // Margem maior para garantir que labels não saiam
+  const ribbonRadius = Math.min(width, height) * 0.35; // Raio menor para dar mais espaço às labels
+  const arcInnerRadius = ribbonRadius + 6; // Espaçamento menor
+  const arcOuterRadius = arcInnerRadius + 16; // Arco menor
 
   const chord = d3.chord().padAngle(0.03).sortSubgroups(d3.descending)(matrix);
   const arc = d3.arc().innerRadius(arcInnerRadius).outerRadius(arcOuterRadius);
   const ribbon = d3.ribbon().radius(ribbonRadius);
 
   const g = svg.append("g")
-    .attr("transform", `translate(${width / 2},${height / 2 + 80})`);
+    .attr("transform", `translate(${width / 2},${height / 2})`); // Centralizar melhor no container
 
   const group = g.append("g")
     .attr("class", "groups")
@@ -126,13 +129,13 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .attr("dy", ".35em")
     .attr("transform", d => `
       rotate(${(d.angle * 180 / Math.PI - 90)})
-      translate(${arcOuterRadius + 10})
+      translate(${arcOuterRadius + Math.min(width, height) * 0.02})
       ${d.angle > Math.PI ? "rotate(180)" : ""}
     `)
     .attr("text-anchor", d => d.angle > Math.PI ? "end" : "start")
     .attr("fill", "white")
     .text(d => filteredTypeNames[d.index].charAt(0).toUpperCase() + filteredTypeNames[d.index].slice(1))
-    .style("font-size", "14px")
+    .style("font-size", `${Math.min(width, height) * 0.025}px`) // Tamanho um pouco menor
     .style("font-weight", "bold");
 
   const defs = svg.append("defs");
@@ -339,8 +342,24 @@ export async function updateTypeChordByRegion(regionId) {
     const regionPokemonIds = new Set(pokemonsFromGeneration.map(p => p.pokemon_id));
     const filteredPokemonTypes = pokemonTypesData.filter(pt => regionPokemonIds.has(pt.pokemon_id));
 
-    // Renderizar o diagrama de acordes com os dados filtrados e passar pokemonsFromGeneration e callback de filtro
-    renderTypeChord('#chord-graph-container', typesData, filteredPokemonTypes, 860, 860, pokemonsFromGeneration, (filtered, typeA, typeB) => {
+    // Calcular o tamanho do container dinamicamente
+    const container = document.getElementById('chord-graph-container');
+    let width = 320; // Tamanho padrão reduzido
+    let height = 320;
+
+    if (container) {
+      const containerRect = container.getBoundingClientRect();
+      const containerWidth = containerRect.width || container.offsetWidth;
+      const containerHeight = containerRect.height || container.offsetHeight;
+
+      // Usar o menor entre largura e altura para manter o diagrama quadrado
+      // e deixar uma margem maior de 60px de cada lado para garantir que labels não saiam
+      const availableSize = Math.min(containerWidth - 120, containerHeight - 120);
+      width = height = Math.max(250, availableSize); // Tamanho mínimo reduzido para 250px
+    }
+
+    // Renderizar o diagrama de acordes com os dados filtrados e tamanho dinâmico
+    renderTypeChord('#chord-graph-container', typesData, filteredPokemonTypes, width, height, pokemonsFromGeneration, (filtered, typeA, typeB) => {
       // Atualiza os sprites ao lado
       if (typeof window.updateRegionSpritesGrid === 'function') {
         window.updateRegionSpritesGrid(filtered, typeA, typeB);

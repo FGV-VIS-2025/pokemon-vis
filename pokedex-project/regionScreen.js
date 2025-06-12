@@ -27,90 +27,62 @@ document.head.appendChild(style);
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
-function createRegionInfoBar() {
-    const regionInfo = document.createElement("div");
-    regionInfo.classList.add("region-info-bar");
-    regionInfo.style.width = "90%";
-    regionInfo.style.padding = "15px";
-    regionInfo.style.borderRadius = "12px";
-    regionInfo.style.backgroundColor = "#f2f2f2";
-    regionInfo.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.1)";
-    regionInfo.style.display = "flex";
-    regionInfo.style.alignItems = "center";
-    regionInfo.style.gap = "15px";
-    regionInfo.style.marginTop = "20px";
-    regionInfo.style.marginBottom = "20px";
-    regionInfo.style.position = "relative";
-    regionInfo.style.justifyContent = "space-between";
-    regionInfo.style.fontFamily = '"Pixelify Sans", sans-serif';
-    regionInfo.style.fontSize = "1em";
-    regionInfo.style.fontWeight = "600";
-    regionInfo.style.color = "#333";
-
-    const leftSection = document.createElement("div");
-    leftSection.style.display = "flex";
-    leftSection.style.alignItems = "center";
-    leftSection.style.gap = "10px";
+function createRegionSearchBar(regionName = "Região Selecionada") {
+    // Container principal da busca/info (similar ao locationScreen)
+    const regionSearch = document.createElement("div");
+    regionSearch.classList.add("region-search");
+    regionSearch.style.width = "60%";
+    regionSearch.style.padding = "10px";
+    regionSearch.style.borderRadius = "12px";
+    regionSearch.style.backgroundColor = "#1b1b1b";
+    regionSearch.style.border = "4px solid #cccccc";
+    regionSearch.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.1), inset 0 0 0 2px #000000, inset 0 0 0 4px #cccccc";
+    regionSearch.style.display = "flex";
+    regionSearch.style.alignItems = "center";
+    regionSearch.style.gap = "15px";
+    regionSearch.style.marginTop = "15px";
+    regionSearch.style.marginBottom = "15px";
+    regionSearch.style.position = "relative";
+    regionSearch.style.fontFamily = '"Pixelify Sans", sans-serif';
 
     const regionIcon = document.createElement("img");
     regionIcon.src = "../assets/earth-globe.png";
-    regionIcon.style.height = "28px";
-    regionIcon.style.width = "28px";
+    regionIcon.style.height = "32px";
+    regionIcon.style.width = "32px";
     regionIcon.style.objectFit = "contain";
+    regionIcon.style.flexShrink = "0";
+    regionIcon.style.backgroundColor = "#1b1b1b";
+    regionIcon.style.borderRadius = "6px";
+    regionIcon.style.padding = "4px";
 
-    const regionText = document.createElement("span");
-    regionText.textContent = "Explore os tipos de Pokémon da região";
-    regionText.style.fontSize = "1.1em";
+    // Campo de "busca" (só visual, mostra o nome da região)
+    const regionDisplayBox = document.createElement("div");
+    regionDisplayBox.style.flex = "1";
+    regionDisplayBox.style.height = "40px";
+    regionDisplayBox.style.padding = "0 12px";
+    regionDisplayBox.style.border = "1px solid #3a3a3a";
+    regionDisplayBox.style.borderRadius = "8px";
+    regionDisplayBox.style.fontSize = "1rem";
+    regionDisplayBox.style.backgroundColor = "#1b1b1b";
+    regionDisplayBox.style.boxShadow = "inset 0 2px 6px rgba(0,0,0,0.2), 0 1px 3px rgba(255,255,255,0.1)";
+    regionDisplayBox.style.display = "flex";
+    regionDisplayBox.style.alignItems = "center";
+    regionDisplayBox.style.fontWeight = "bold";
+    regionDisplayBox.style.color = "#ffffff";
+    regionDisplayBox.style.textShadow = "1px 1px 2px rgba(0,0,0,0.8)";
+    regionDisplayBox.textContent = regionName;
 
-    leftSection.appendChild(regionIcon);
-    leftSection.appendChild(regionText);
+    regionSearch.appendChild(regionIcon);
+    regionSearch.appendChild(regionDisplayBox);
 
-    const rightSection = document.createElement("div");
-    rightSection.style.display = "flex";
-    rightSection.style.alignItems = "center";
-    rightSection.style.gap = "15px";
-
-    // Contador de pokémons total
-    const totalCounter = document.createElement("div");
-    totalCounter.id = "total-pokemon-counter";
-    totalCounter.style.display = "flex";
-    totalCounter.style.alignItems = "center";
-    totalCounter.style.gap = "5px";
-    totalCounter.style.backgroundColor = "#e8e8e8";
-    totalCounter.style.padding = "8px 12px";
-    totalCounter.style.borderRadius = "8px";
-    totalCounter.style.fontSize = "0.9em";
-    totalCounter.innerHTML = `
-        <img src="../assets/pokeball.png" style="width: 16px; height: 16px;">
-        <span>Total: <strong id="total-count">0</strong></span>
-    `;
-
-    // Contador de pokémons filtrados
-    const filteredCounter = document.createElement("div");
-    filteredCounter.id = "filtered-pokemon-counter";
-    filteredCounter.style.display = "flex";
-    filteredCounter.style.alignItems = "center";
-    filteredCounter.style.gap = "5px";
-    filteredCounter.style.backgroundColor = "#dbeafe";
-    filteredCounter.style.padding = "8px 12px";
-    filteredCounter.style.borderRadius = "8px";
-    filteredCounter.style.fontSize = "0.9em";
-    filteredCounter.style.display = "none";
-    filteredCounter.innerHTML = `
-        <img src="../assets/chart.png" style="width: 16px; height: 16px;">
-        <span>Filtrados: <strong id="filtered-count">0</strong></span>
-    `;
-
-    rightSection.appendChild(totalCounter);
-    rightSection.appendChild(filteredCounter);
-
-    regionInfo.appendChild(leftSection);
-    regionInfo.appendChild(rightSection);
-
-    return regionInfo;
+    return regionSearch;
 }
 
+// Cards removidos conforme solicitado
 
+
+
+// Função de atualização dos cards removida
 
 function createRegionDescription() {
     const descriptionArea = document.createElement("div");
@@ -120,13 +92,13 @@ function createRegionDescription() {
     descriptionArea.style.alignItems = "flex-start";
     descriptionArea.style.justifyContent = "center";
     descriptionArea.style.flexDirection = "row";
-    descriptionArea.style.gap = "15px";
+    descriptionArea.style.gap = "10px";
     descriptionArea.style.marginBottom = "20px";
 
     // Container para o chord diagram
     const leftChordContainer = document.createElement('div');
     leftChordContainer.id = 'region-chart-container';
-    leftChordContainer.style.width = '48%';
+    leftChordContainer.style.width = '49%';
     leftChordContainer.style.aspectRatio = '1 / 1';
     leftChordContainer.style.display = 'flex';
     leftChordContainer.style.flexDirection = 'column';
@@ -138,40 +110,45 @@ function createRegionDescription() {
     leftChordContainer.style.padding = '15px';
     leftChordContainer.style.boxSizing = 'border-box';
 
-    // Título e instruções para o chord diagram
-    const chordTitle = document.createElement('h3');
+    // Título e instruções para o chord diagram (ultra compactos)
+    const chordTitle = document.createElement('h2');
     chordTitle.textContent = "Relações Entre Tipos";
     chordTitle.style.color = 'white';
-    chordTitle.style.marginBottom = '10px';
+    chordTitle.style.marginBottom = '2px';
+    chordTitle.style.marginTop = '0px';
     chordTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
-    chordTitle.style.fontSize = '1.1em';
+    chordTitle.style.fontSize = '1.0em';
     chordTitle.style.textAlign = 'center';
+    chordTitle.style.lineHeight = '1.1';
+    chordTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
     leftChordContainer.appendChild(chordTitle);
 
     const chordInstructions = document.createElement('p');
-    chordInstructions.innerHTML = "Clique nos <strong>tipos</strong> ou <strong>conexões</strong> para filtrar os Pokémon";
+    chordInstructions.innerHTML = "Clique nos <strong>tipos</strong> ou <strong>conexões</strong> para filtrar";
     chordInstructions.style.color = '#cccccc';
-    chordInstructions.style.fontSize = '0.8em';
+    chordInstructions.style.fontSize = '0.6em';
     chordInstructions.style.textAlign = 'center';
-    chordInstructions.style.marginBottom = '15px';
+    chordInstructions.style.marginBottom = '3px';
+    chordInstructions.style.marginTop = '0px';
     chordInstructions.style.fontFamily = '"Pixelify Sans", sans-serif';
-    chordInstructions.style.lineHeight = '1.2';
+    chordInstructions.style.lineHeight = '1.0';
     leftChordContainer.appendChild(chordInstructions);
 
-    // Container interno para o gráfico
+    // Container interno para o gráfico (máximo espaço)
     const chordGraphContainer = document.createElement('div');
     chordGraphContainer.id = 'chord-graph-container';
     chordGraphContainer.style.width = '100%';
-    chordGraphContainer.style.height = '100%';
+    chordGraphContainer.style.height = 'calc(100% - 28px)'; // Reduzir significativamente a compensação
     chordGraphContainer.style.display = 'flex';
     chordGraphContainer.style.justifyContent = 'center';
     chordGraphContainer.style.alignItems = 'center';
+    chordGraphContainer.style.minHeight = '350px'; // Altura mínima maior para o gráfico
     leftChordContainer.appendChild(chordGraphContainer);
 
     // Container para os sprites dos pokémons
     const rightContainer = document.createElement('div');
     rightContainer.id = 'right-region-container';
-    rightContainer.style.width = '48%';
+    rightContainer.style.width = '49%';
     rightContainer.style.aspectRatio = '1 / 1';
     rightContainer.style.display = 'flex';
     rightContainer.style.flexDirection = 'column';
@@ -192,12 +169,14 @@ function createRegionDescription() {
     spriteHeader.style.alignItems = 'center';
     spriteHeader.style.marginBottom = '15px';
 
-    const title = document.createElement('h3');
+    const title = document.createElement('h2');
     title.textContent = "Pokémons da Região";
     title.style.color = 'white';
     title.style.margin = '0';
     title.style.fontFamily = '"Pixelify Sans", sans-serif';
-    title.style.fontSize = '1.1em';
+    title.style.fontSize = '1.0em';
+    title.style.textAlign = 'center';
+    title.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
 
     // Botão para limpar filtro
     const clearFilterBtn = document.createElement('button');
@@ -307,7 +286,7 @@ function createAdditionalChartsArea() {
     return additionalArea;
 }
 
-export function createRegionScreen(id_region = 3) {
+export async function createRegionScreen(id_region = 3) {
     contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
     contentScreen.style.gap = "0";
@@ -316,31 +295,60 @@ export function createRegionScreen(id_region = 3) {
     contentScreen.style.flexDirection = 'column';
     contentScreen.style.alignItems = 'center';
 
-    // Criar elementos seguindo o padrão melhorado
-    const regionInfo = createRegionInfoBar();
-    const descriptionArea = createRegionDescription();
-    const additionalArea = createAdditionalChartsArea();
+    // Mostrar loading inicial
+    const loadingDiv = document.createElement("div");
+    loadingDiv.style.color = "white";
+    loadingDiv.style.fontSize = "1.2em";
+    loadingDiv.style.fontFamily = '"Pixelify Sans", sans-serif';
+    loadingDiv.style.textAlign = "center";
+    loadingDiv.style.marginTop = "50px";
+    loadingDiv.textContent = "Carregando dados da região...";
+    contentScreen.appendChild(loadingDiv);
 
-    // Adicionar todos os elementos ao contentScreen
-    contentScreen.appendChild(regionInfo);
-    contentScreen.appendChild(descriptionArea);
-    contentScreen.appendChild(additionalArea);
+    try {
+        // Buscar nome da região
+        const regionNames = Object.keys(gameRegionVersions);
+        const regionName = regionNames[id_region - 1] || "Kanto";
 
-    // Chama os renderizadores passando os ids dos containers correspondentes
-    updateTypeChordByRegion(id_region);          // irá desenhar no #chord-graph-container
+        // Limpar loading e criar elementos
+        contentScreen.innerHTML = '';
 
-    // Carrega os pokémons da geração e desenha o boxplot
-    getPokemonsByGeneration(Object.keys(gameRegionVersions)[id_region - 1] || "Kanto").then(pokemons => {
-        drawDistributionPlot('#bar-chart-container', pokemons);
-        // Atualiza o contador total
-        updatePokemonCounters(pokemons.length, 0);
-    });
+        // Criar elementos seguindo o padrão das outras telas
+        const regionSearchBar = createRegionSearchBar(regionName);
+        const descriptionArea = createRegionDescription();
+        const additionalArea = createAdditionalChartsArea();
 
-    // Carrega os sprites dos Pokémons da região
-    loadRegionPokemonSprites(id_region);
+        // Adicionar todos os elementos ao contentScreen
+        contentScreen.appendChild(regionSearchBar);
+        contentScreen.appendChild(descriptionArea);
+        contentScreen.appendChild(additionalArea);
 
-    // Configurar o botão de limpar filtro
-    setupClearFilterButton();
+        // Chama os renderizadores passando os ids dos containers correspondentes
+        setTimeout(() => {
+            updateTypeChordByRegion(id_region);          // irá desenhar no #chord-graph-container
+
+            // Carrega os pokémons da geração e desenha o boxplot
+            getPokemonsByGeneration(regionName).then(pokemons => {
+                drawDistributionPlot('#bar-chart-container', pokemons);
+            });
+
+            // Carrega os sprites dos Pokémons da região
+            loadRegionPokemonSprites(id_region);
+
+            // Configurar o botão de limpar filtro
+            setupClearFilterButton();
+        }, 200); // Aumentar delay para garantir que os containers estejam renderizados com tamanho correto
+
+    } catch (error) {
+        console.error("Erro ao criar tela de região:", error);
+        contentScreen.innerHTML = `
+            <div style="color: white; text-align: center; margin-top: 50px; font-family: 'Pixelify Sans', sans-serif;">
+                <h2>Erro ao carregar dados</h2>
+                <p>Não foi possível carregar os dados da região.</p>
+                <p style="font-size: 0.9em; opacity: 0.7;">ID da região: ${id_region}</p>
+            </div>
+        `;
+    }
 }
 
 // Função para carregar os sprites dos Pokémons de uma região
@@ -467,22 +475,9 @@ async function loadRegionPokemonSprites(regionId, pokemonsList = null) {
 
 // Funções utilitárias para melhorar a interação
 function updatePokemonCounters(totalCount, filteredCount) {
-    const totalCountEl = document.getElementById('total-count');
-    const filteredCountEl = document.getElementById('filtered-count');
-    const filteredCounter = document.getElementById('filtered-pokemon-counter');
-
-    if (totalCount !== null && totalCountEl) {
-        totalCountEl.textContent = totalCount;
-    }
-
-    if (filteredCountEl && filteredCounter) {
-        if (filteredCount > 0) {
-            filteredCountEl.textContent = filteredCount;
-            filteredCounter.style.display = 'flex';
-        } else {
-            filteredCounter.style.display = 'none';
-        }
-    }
+    // Função simplificada - os cards foram removidos
+    // Apenas mantém a interface para compatibilidade com o resto do código
+    console.log(`Total: ${totalCount}, Filtrados: ${filteredCount}`);
 }
 
 function showClearFilterButton() {
@@ -515,24 +510,34 @@ function setupClearFilterButton() {
 
             // Recarregar todos os pokémons da região
             const regionNames = Object.keys(gameRegionVersions);
-            const currentRegion = document.querySelector('.region-screen')?.textContent?.trim() || 'Kanto';
-            const regionIndex = regionNames.indexOf(currentRegion);
-            const regionId = regionIndex >= 0 ? regionIndex + 1 : 3;
+            const regionSearchBar = document.querySelector('.region-search div:nth-child(2)');
+            let regionId = 3; // fallback Hoenn
+
+            if (regionSearchBar) {
+                const currentRegion = regionSearchBar.textContent.trim();
+                const regionIndex = regionNames.indexOf(currentRegion);
+                if (regionIndex >= 0) {
+                    regionId = regionIndex + 1;
+                }
+            }
 
             loadRegionPokemonSprites(regionId);
+
+            // Resetar contadores
+            updatePokemonCounters(null, 0);
         });
     }
 }
 
 // Expor função global para integração com o diagrama de acordes
 window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB) => {
-    // Descobre a região atual pelo título do container
-    const regionDisplay = document.querySelector('.region-screen');
+    // Descobre a região atual pela barra de busca
+    const regionSearchBar = document.querySelector('.region-search div:nth-child(2)');
     let regionId = 3; // fallback Hoenn
 
-    if (regionDisplay) {
+    if (regionSearchBar) {
         const regionNames = Object.keys(gameRegionVersions);
-        const currentRegion = regionDisplay.textContent.trim();
+        const currentRegion = regionSearchBar.textContent.trim();
         const regionIndex = regionNames.indexOf(currentRegion);
         if (regionIndex >= 0) {
             regionId = regionIndex + 1;

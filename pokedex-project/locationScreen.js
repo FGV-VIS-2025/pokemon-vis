@@ -216,8 +216,8 @@ function createLocationSearchBar(locationName = "Localização Selecionada") {
     locationSearch.style.display = "flex";
     locationSearch.style.alignItems = "center";
     locationSearch.style.gap = "15px";
-    locationSearch.style.marginTop = "20px";
-    locationSearch.style.marginBottom = "20px";
+    locationSearch.style.marginTop = "15px";
+    locationSearch.style.marginBottom = "15px";
     locationSearch.style.position = "relative";
     locationSearch.style.fontFamily = '"Pixelify Sans", sans-serif';
 
@@ -525,9 +525,9 @@ function createChartContainer() {
     chartContainer.style.alignItems = "center";
     chartContainer.style.justifyContent = "center";
     chartContainer.style.flexDirection = "row";
-    chartContainer.style.gap = "20px";
-    chartContainer.style.marginTop = "20px";
-    chartContainer.style.marginBottom = "30px";
+    chartContainer.style.gap = "15px";
+    chartContainer.style.marginTop = "15px";
+    chartContainer.style.marginBottom = "20px";
 
     // Container expandido para o scatter plot
     const leftScatterContainer = document.createElement('div');
@@ -549,10 +549,10 @@ function createChartContainer() {
     const scatterTitle = document.createElement('h2');
     scatterTitle.textContent = "Tamanho e Stats Totais dos Pokémons";
     scatterTitle.style.color = 'white';
-    scatterTitle.style.marginBottom = '10px';
+    scatterTitle.style.marginBottom = '5px';
     scatterTitle.style.marginTop = '0px';
     scatterTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
-    scatterTitle.style.fontSize = '1.1em';
+    scatterTitle.style.fontSize = '1.0em';
     scatterTitle.style.textAlign = 'center';
     scatterTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
     leftScatterContainer.appendChild(scatterTitle);
@@ -561,7 +561,7 @@ function createChartContainer() {
     const scatterChart = document.createElement('div');
     scatterChart.id = 'scatter-chart-container';
     scatterChart.style.width = '100%';
-    scatterChart.style.height = 'calc(100% - 50px)';
+    scatterChart.style.height = 'calc(100% - 35px)';
     scatterChart.style.display = 'flex';
     scatterChart.style.justifyContent = 'center';
     scatterChart.style.alignItems = 'center';
@@ -593,10 +593,10 @@ function createChartContainer() {
     const title = document.createElement('h2');
     title.textContent = "Estatísticas Médias dos Pokémons";
     title.style.color = 'white';
-    title.style.marginBottom = '10px';
+    title.style.marginBottom = '5px';
     title.style.marginTop = '0px';
     title.style.fontFamily = '"Pixelify Sans", sans-serif';
-    title.style.fontSize = '1.1em';
+    title.style.fontSize = '1.0em';
     title.style.textAlign = 'center';
     title.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
     rightContainer.appendChild(title);
@@ -605,7 +605,7 @@ function createChartContainer() {
     const radarChart = document.createElement('div');
     radarChart.id = 'radar-chart-location';
     radarChart.style.width = '100%';
-    radarChart.style.height = 'calc(100% - 50px)';
+    radarChart.style.height = 'calc(100% - 35px)';
     radarChart.style.display = 'flex';
     radarChart.style.justifyContent = 'center';
     radarChart.style.alignItems = 'center';

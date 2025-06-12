@@ -223,7 +223,9 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .attr("x", width / 2)
         .attr("y", margin.top / 2)
         .attr("text-anchor", "middle")
-        .style("font-size", "18px")
+        .style("font-size", "16px")
         .style("font-weight", "bold")
+        .style("font-family", '"Pixelify Sans", sans-serif')
+        .style("fill", "black")
         .text("Distribuição dos Atributos Base dos Pokémon (0-255)");
 }
