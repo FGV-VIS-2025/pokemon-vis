@@ -10,6 +10,14 @@ let i = 0;
 
 const listOfRegions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
 
+// Função para disparar evento de mudança de região
+function dispatchRegionChangeEvent(regionName) {
+    const event = new CustomEvent('regionChanged', {
+        detail: { regionName, source: 'region_control' }
+    });
+    document.dispatchEvent(event);
+}
+
 // Função auxiliar para selecionar a primeira localização após carregar o mapa
 async function selectFirstLocation(regionName) {
     try {
@@ -29,7 +37,7 @@ async function selectFirstLocation(regionName) {
                 if (el) {
                     // Selecionar a localização
                     el.dispatchEvent(new Event("click"));
-                    
+
                     // Garantir que a animação seja aplicada
                     el.style.animation = "blink-border 1.5s infinite";
                 }
@@ -44,23 +52,53 @@ async function selectFirstLocation(regionName) {
 selectFirstLocation("Kanto");
 
 rightButtons.addEventListener("click", function () {
+    // Adicionar feedback visual
+    rightButtons.style.transform = "scale(0.95)";
+    setTimeout(() => {
+        rightButtons.style.transform = "scale(1)";
+    }, 100);
+
     if (i < listOfRegions.length - 1) {
         i += 1;
     } else {
         i = 0;
     }
+
+    // Atualizar display da região
     regionDisplay.textContent = listOfRegions[i];
     mapImage.src = `../assets/maps/${listOfRegions[i]}.png`;
+
+    // Selecionar primeira localização da nova região
     selectFirstLocation(listOfRegions[i]);
+
+    // Disparar evento para outras partes do sistema
+    dispatchRegionChangeEvent(listOfRegions[i]);
+
+    console.log(`🎮 Região alterada para: ${listOfRegions[i]}`);
 });
 
 leftButtons.addEventListener("click", function () {
+    // Adicionar feedback visual
+    leftButtons.style.transform = "scale(0.95)";
+    setTimeout(() => {
+        leftButtons.style.transform = "scale(1)";
+    }, 100);
+
     if (i > 0) {
         i -= 1;
     } else {
         i = listOfRegions.length - 1;
     }
+
+    // Atualizar display da região
     regionDisplay.textContent = listOfRegions[i];
     mapImage.src = `../assets/maps/${listOfRegions[i]}.png`;
+
+    // Selecionar primeira localização da nova região
     selectFirstLocation(listOfRegions[i]);
+
+    // Disparar evento para outras partes do sistema
+    dispatchRegionChangeEvent(listOfRegions[i]);
+
+    console.log(`🎮 Região alterada para: ${listOfRegions[i]}`);
 });

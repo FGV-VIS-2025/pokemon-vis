@@ -1029,16 +1029,16 @@ function cleanupPreviousTooltips() {
     const existingTooltips = document.querySelectorAll('.pokemon-tooltip-card');
     existingTooltips.forEach(tooltip => tooltip.remove());
 
-    // Remove tooltips do types.js (chord diagram)
-    const existingChordTooltips = document.querySelectorAll('.tooltip, #tooltip');
+    // Remove tooltips do types.js (chord diagram) - APENAS na content-screen
+    const existingChordTooltips = document.querySelectorAll('.content-screen .tooltip, .content-screen #tooltip');
     existingChordTooltips.forEach(tooltip => tooltip.remove());
 
-    // Remove tooltips de outros componentes (scatter, heatmaps, etc.)
-    const existingOtherTooltips = document.querySelectorAll('.strongest-pokemon-tooltip, .d3-tooltip');
+    // Remove tooltips de outros componentes (scatter, heatmaps, etc.) - APENAS na content-screen
+    const existingOtherTooltips = document.querySelectorAll('.content-screen .strongest-pokemon-tooltip, .content-screen .d3-tooltip');
     existingOtherTooltips.forEach(tooltip => tooltip.remove());
 
-    // Remove elementos D3.js órfãos que podem estar causando problemas
-    const orphanedD3Elements = document.querySelectorAll('svg:empty, g:empty');
+    // Remove elementos D3.js órfãos APENAS da content-screen (não mexer no mapa!)
+    const orphanedD3Elements = document.querySelectorAll('.content-screen svg:empty, .content-screen g:empty');
     orphanedD3Elements.forEach(element => {
         if (element.parentNode && !element.hasChildNodes()) {
             element.remove();
@@ -1051,14 +1051,14 @@ function cleanupPreviousTooltips() {
         globalMouseMoveActive = false;
     }
 
-    // Limpar qualquer estado de hover ou seleção anterior
-    const activeElements = document.querySelectorAll('.active, .fade');
+    // Limpar qualquer estado de hover ou seleção anterior APENAS na content-screen
+    const activeElements = document.querySelectorAll('.content-screen .active, .content-screen .fade');
     activeElements.forEach(element => {
         element.classList.remove('active', 'fade');
     });
 
-    // Forçar limpeza de any overflow ou elementos posicionados de forma absoluta órfãos
-    const orphanedElements = document.querySelectorAll('[style*="position: absolute"]:not(.pokemon-tooltip-card)');
+    // Forçar limpeza de elementos posicionados de forma absoluta órfãos APENAS na content-screen
+    const orphanedElements = document.querySelectorAll('.content-screen [style*="position: absolute"]:not(.pokemon-tooltip-card)');
     orphanedElements.forEach(element => {
         // Verificar se o elemento está realmente órfão (sem parent container válido)
         const parentContainer = element.closest('.content-screen, .region-chart-container, .location-screen, .pokemon-screen');
