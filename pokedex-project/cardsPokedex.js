@@ -16,6 +16,20 @@ homeButtonCards.addEventListener("click", () => {
 
 let count = 1;
 
+// Função para resetar o carrossel de cartas
+export function resetPokemonCarousel() {
+    count = 1;
+    // Scroll para o início sem animação para ser mais rápido
+    setTimeout(() => {
+        cardsContainer.scrollTo({
+            left: 0,
+            top: 0,
+            behavior: "smooth"
+        });
+    }, 100);
+    console.log("🔄 Carrossel de pokémon resetado para o início");
+}
+
 let pokemonArrayGlobal;
 const leftButtonCards = document.getElementsByClassName("left-pokemon")[0];
 const rightButtonCards = document.getElementsByClassName("right-pokemon")[0];

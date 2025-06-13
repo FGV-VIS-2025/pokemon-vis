@@ -6,6 +6,9 @@ const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
 const locationElementMap = new Map();
 const pokemonCountCache = new Map();
 
+// Variável para rastrear a região atual do mapa
+let currentMapRegion = null;
+
 // Função para inicializar os dados de uma região
 async function initializeRegionData(regionName) {
     if (!pokemonCountCache.has(regionName)) {
@@ -152,6 +155,18 @@ function createTooltip() {
 
 export function buildMap(selectedRegion) {
     return new Promise(async (resolveMapBuild) => {
+        // Se a região atual for a mesma e o mapa já está carregado, evitar reconstrução
+        if (currentMapRegion === selectedRegion.name && mapRealContainer.children.length > 0) {
+            console.log(`🗺️ Mapa da região ${selectedRegion.name} já está carregado, reutilizando...`);
+            resolveMapBuild();
+            return;
+        }
+
+        console.log(`🗺️ Construindo novo mapa para a região: ${selectedRegion.name}`);
+
+        // Atualizar a região atual do mapa
+        currentMapRegion = selectedRegion.name;
+
         // Inicializar dados da região em paralelo com a construção do mapa
         const pokemonCountMapPromise = initializeRegionData(selectedRegion.name);
 

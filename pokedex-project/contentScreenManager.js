@@ -1,5 +1,6 @@
 import { getLocationIdByName, getRegionIdByName } from "./dataManager.js";
 import { createLocationScreen } from "./locationScreen.js";
+import { buildMap } from "./mapManager.js";
 import { createPokemonScreen, editPokemonsCard } from "./pokemonScreen.js";
 import { createRegionScreen } from "./regionScreen.js";
 import { screenStateManager } from "./screenStateManager.js";
@@ -10,21 +11,47 @@ const pokemonButton = document.getElementsByClassName("pokemons-button")[0];
 const regionDisplay = document.getElementsByClassName("region-screen")[0];
 const locationDisplay = document.getElementsByClassName("location-screen")[0];
 
+// Função para garantir que o mapa esteja carregado para a região atual
+async function ensureMapIsLoaded() {
+    const currentRegionName = regionDisplay.textContent.trim();
+    await buildMap({ name: currentRegionName });
+}
+
+// Inicializar o mapa quando a página carrega
+document.addEventListener('DOMContentLoaded', () => {
+    // Aguardar um momento para garantir que todos os elementos estejam carregados
+    setTimeout(async () => {
+        await ensureMapIsLoaded();
+    }, 500);
+});
+
 // Event listeners para os botões principais com integração ao estado
-regionButton.addEventListener("click", function () {
+regionButton.addEventListener("click", async function () {
     screenStateManager.setActiveScreen('region');
+
+    // Garantir que o mapa esteja carregado para a região atual
+    await ensureMapIsLoaded();
+
     loadMainContent(1);
     setTimeout(function () { document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" }) }, 150);
 });
 
-locationButton.addEventListener("click", function () {
+locationButton.addEventListener("click", async function () {
     screenStateManager.setActiveScreen('location');
+
+    // Garantir que o mapa esteja carregado para a região atual
+    await ensureMapIsLoaded();
+
     loadMainContent(2);
     setTimeout(function () { document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" }) }, 150);
 });
 
-pokemonButton.addEventListener("click", function () {
+pokemonButton.addEventListener("click", async function () {
     screenStateManager.setActiveScreen('pokemon');
+
+    // Garantir que o mapa esteja carregado para a região atual
+    await ensureMapIsLoaded();
+
     loadMainContent(3);
     setTimeout(function () { document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" }) }, 150);
 });
