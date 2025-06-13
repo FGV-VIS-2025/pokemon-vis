@@ -42,6 +42,9 @@ export function drawDistributionPlot(containerSelector, pokemons) {
     // Limpar o container
     d3.select(containerSelector).selectAll("*").remove();
 
+    // Limpar tooltips antigos
+    d3.selectAll(".pokemon-tooltip").remove();
+
     // Obter dimensões do container
     const container = d3.select(containerSelector);
     const containerRect = container.node().getBoundingClientRect();
@@ -186,8 +189,8 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .style("stroke", "white")
         .style("stroke-width", 1)
         .style("fill", violinColor)
-        .style("fill-opacity", 0.6)
-        .style("filter", "drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5))")
+        .style("fill-opacity", 0.1)
+        .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3))")
         .attr("d", d3.area()
             .x0(d => -xNum(d.length))
             .x1(d => xNum(d.length))
@@ -226,9 +229,26 @@ export function drawDistributionPlot(containerSelector, pokemons) {
             .attr("y2", y(mean))
             .attr("stroke", "#ffdd44")
             .attr("stroke-width", 4)
-            .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))")
-            .style("opacity", 0.9);
+            .style("filter", "drop-shadow(0.5px 0.5px 1px rgba(0, 0, 0, 0.4))")
+            .style("opacity", 0.25);
     });
+
+    // Criar tooltip para mostrar sprite e nome do pokémon
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "pokemon-tooltip")
+        .style("opacity", 0)
+        .style("position", "absolute")
+        .style("background", "rgba(0, 0, 0, 0.9)")
+        .style("color", "white")
+        .style("padding", "10px")
+        .style("border-radius", "8px")
+        .style("border", "2px solid #00d4ff")
+        .style("font-family", "Arial, sans-serif")
+        .style("font-size", "14px")
+        .style("text-align", "center")
+        .style("pointer-events", "none")
+        .style("z-index", "1000")
+        .style("box-shadow", "0 4px 8px rgba(0, 0, 0, 0.3)");
 
     // Segundo: Adicionar pontos individuais com jitter e cores por tipo
     g.selectAll("indPoints")
@@ -237,12 +257,52 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .append("circle")
         .attr("cx", d => x(d.stat) + x.bandwidth() / 2 - (Math.random() - 0.5) * jitterWidth)
         .attr("cy", d => y(d.value))
-        .attr("r", 3)
+        .attr("r", 4)
         .style("fill", d => d.color)
-        .style("fill-opacity", 0.8)
+        .style("fill-opacity", 0.9)
         .style("stroke", "white")
-        .style("stroke-width", 1)
-        .style("filter", "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.6))");
+        .style("stroke-width", 1.2)
+        .style("filter", "drop-shadow(0.5px 0.5px 1px rgba(0, 0, 0, 0.3))")
+        .style("cursor", "pointer")
+        .on("mouseover", function (event, d) {
+            // Destacar o ponto
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("r", 6)
+                .style("stroke-width", 2);
+
+            // Mostrar tooltip
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", 1);
+
+            tooltip.html(`
+                <img src="../assets/pokemons/${d.pokemon.pokemon_id}.png" 
+                     alt="${d.pokemon.name}" 
+                     style="width: 64px; height: 64px; image-rendering: pixelated;" 
+                     onerror="this.style.display='none'">
+                <br>
+                <strong>${d.pokemon.name}</strong>
+                <br>
+                ${d.stat}: ${d.value}
+            `)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 70) + "px");
+        })
+        .on("mouseout", function (event, d) {
+            // Voltar ao estado normal
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("r", 4)
+                .style("stroke-width", 1.2);
+
+            // Esconder tooltip
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 
     // Labels dos eixos com estilo consistente
     g.append("text")
