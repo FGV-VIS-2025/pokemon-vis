@@ -15,6 +15,9 @@ let currentLocationId = null;
 // Variável para controlar pokémon selecionado (compartilhada com scatterPlot)
 let selectedPokemonId = null;
 
+// Variável para armazenar o valor máximo das stats da localização atual
+let locationMaxStatValue = null;
+
 // Carregar dados necessários para o gráfico de radar
 Promise.all([
     d3.csv("../data/encounters.csv", d3.autoType),
@@ -83,6 +86,33 @@ export async function renderStatRadarChart(locationId) {
             console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
             return;
         }
+
+        // Calcular o valor máximo de todas as stats de todos os pokémons da localização
+        let maxStatValue = 0;
+        pokemonsWithTypes.forEach(pokemon => {
+            if (pokemon.Hp_Stat !== undefined &&
+                pokemon.Attack_Stat !== undefined &&
+                pokemon.Defense_Stat !== undefined &&
+                pokemon.Special_Attack_Stat !== undefined &&
+                pokemon.Special_Defense_Stat !== undefined &&
+                pokemon.Speed_Stat !== undefined) {
+
+                const pokemonStats = [
+                    pokemon.Hp_Stat,
+                    pokemon.Attack_Stat,
+                    pokemon.Defense_Stat,
+                    pokemon.Special_Attack_Stat,
+                    pokemon.Special_Defense_Stat,
+                    pokemon.Speed_Stat
+                ];
+
+                const pokemonMaxStat = Math.max(...pokemonStats);
+                maxStatValue = Math.max(maxStatValue, pokemonMaxStat);
+            }
+        });
+
+        // Armazenar o valor máximo globalmente para uso consistente
+        locationMaxStatValue = maxStatValue;
 
         // Calcular Estatísticas Médias dos Pokémons usando os dados dos pokémon carregados
         const statSums = {
@@ -165,12 +195,14 @@ export async function renderStatRadarChart(locationId) {
         const container = document.querySelector("#radar-chart-location");
         if (container) container.innerHTML = '';
 
-        // Usar a função modular para renderizar com a cor do tipo mais comum
+        // Usar a função modular para renderizar com a cor do tipo mais comum e valor máximo fixo
+        const options = locationMaxStatValue ? { maxValue: locationMaxStatValue } : {};
         renderRadarChart(
             "#radar-chart-location",
             "Estatísticas Médias dos Pokémons",
             statsArray,
-            radarColor
+            radarColor,
+            options // Passar o valor máximo calculado se disponível
         );
 
     } catch (error) {
@@ -183,6 +215,9 @@ export async function renderStatRadarChart(locationId) {
 // Expor variáveis globalmente para sincronização entre gráficos
 window.getSelectedPokemonId = () => selectedPokemonId;
 window.setSelectedPokemonId = (id) => { selectedPokemonId = id; };
+
+// Expor o valor máximo das stats da localização
+window.getLocationMaxStatValue = () => locationMaxStatValue;
 
 // Função para determinar a região baseada na localização
 async function getRegionByLocationId(locationId) {
@@ -917,12 +952,14 @@ async function renderStrongestPokemonStats(pokemonId, pokemonName) {
 
         const formattedPokemonName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
 
-        // Usar a função modular para renderizar com a cor do tipo
+        // Usar a função modular para renderizar com a cor do tipo e valor máximo fixo da localização
+        const options = locationMaxStatValue ? { maxValue: locationMaxStatValue } : {};
         renderRadarChart(
             "#radar-chart-location",
             formattedPokemonName,
             statsArray,
-            radarColor
+            radarColor,
+            options // Usar o mesmo valor máximo da localização se disponível
         );
 
         // Atualizar título do container do radar

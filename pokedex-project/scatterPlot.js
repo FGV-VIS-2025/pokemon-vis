@@ -507,12 +507,14 @@ async function renderPokemonStats(pokemonId) {
 
         const pokemonName = pokemon.identifier.charAt(0).toUpperCase() + pokemon.identifier.slice(1);
 
-        // Usar a função modular para renderizar com a cor do tipo
+        // Usar a função modular para renderizar com a cor do tipo e o valor máximo da localização
+        const locationMaxStatValue = window.getLocationMaxStatValue ? window.getLocationMaxStatValue() : null;
         renderRadarChart(
             "#radar-chart-location",
             pokemonName,
             statsArray,
-            radarColor
+            radarColor,
+            locationMaxStatValue ? { maxValue: locationMaxStatValue } : {} // Usar o valor máximo da localização se disponível
         );
 
         // Atualizar título do container do radar
