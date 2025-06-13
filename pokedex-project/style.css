@@ -33,7 +33,7 @@
 
 
     /* Borders & Radii */
-    --pokedex-border-radius: 20px;
+    --pokedex-border-radius: 12px;
     --button-border-radius: 5px;
     --screen-border-radius: 10px;
 }
@@ -116,12 +116,25 @@ body {
     height: 40%;
 }
 
+/* Override específico para os botões enhanced */
+.screen-select .region-button img,
+.screen-select .location-button img,
+.screen-select .pokemons-button img {
+    height: 45% !important;
+}
+
 .authors-button img,
 .scroll-button img,
 .linkedin-button img,
 .github-button img,
 .info-button img {
     height: 40%;
+}
+
+/* Override específico para os botões enhanced da segunda linha */
+.second-row-buttons .info-button img,
+.second-row-buttons .scroll-button img {
+    height: 35% !important;
 }
 
 /* --- Shared Screen Styles --- */
@@ -270,8 +283,8 @@ body {
 
 /* Screen */
 .screen-left {
-    width: 95%;
-    aspect-ratio: 5 / 3.25;
+    width: 91%;
+    aspect-ratio: 5 / 3.05;
     background-color: var(--screen-light-gray);
     margin-top: 15px;
     display: flex;
@@ -281,7 +294,7 @@ body {
 
 .top-nav-left-screen {
     width: 100%;
-    height: 7.5%;
+    height: 6%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -297,12 +310,12 @@ body {
 }
 
 .real-map-container {
-    width: 82.5%;
-    height: 85%;
+    width: 92%;
+    height: 93%;
     background-color: var(--screen-medium-gray);
     border-radius: var(--screen-border-radius);
     box-sizing: border-box;
-    padding: 15px;
+    padding: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1156,4 +1169,362 @@ body {
         stroke-opacity: 1;
         stroke: #00CAFF;
     }
+}
+
+/* --- Enhanced Screen Select Buttons --- */
+
+/* Animação sutil de piscar para os botões */
+@keyframes subtlePulse {
+    0% {
+        box-shadow: 0 0 3px rgba(255, 255, 255, 0.3),
+            0 0 6px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    50% {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5),
+            0 0 10px rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 3px rgba(255, 255, 255, 0.3),
+            0 0 6px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+/* Estilos aprimorados para os botões de seleção de tela */
+.region-button,
+.location-button,
+.pokemons-button {
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: subtlePulse 3s ease-in-out infinite;
+    flex-direction: column;
+    gap: 3px;
+    padding: 5px;
+}
+
+/* Efeito adicional de brilho interno */
+.region-button::before,
+.location-button::before,
+.pokemons-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
+    transition: left 0.6s ease;
+}
+
+/* Efeito de varredura ao hover */
+.region-button:hover::before,
+.location-button:hover::before,
+.pokemons-button:hover::before {
+    left: 100%;
+}
+
+/* Efeitos de hover melhorados */
+.region-button:hover,
+.location-button:hover,
+.pokemons-button:hover {
+    transform: scale(1.02);
+    background-color: var(--hover-light-blue);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6),
+        0 0 12px rgba(255, 255, 255, 0.4);
+    animation-duration: 2s;
+    /* Acelera a animação no hover */
+}
+
+/* Efeito de clique */
+.region-button:active,
+.location-button:active,
+.pokemons-button:active {
+    transform: scale(0.99);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+        0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Ajustes para as imagens dentro dos botões */
+.region-button img,
+.location-button img,
+.pokemons-button img {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    transition: filter 0.3s ease;
+    height: 45%;
+}
+
+.region-button:hover img,
+.location-button:hover img,
+.pokemons-button:hover img {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+/* Estilos para os labels dos botões */
+.region-button::after,
+.location-button::after,
+.pokemons-button::after {
+    content: '';
+    font-size: 9px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    font-family: Arial, sans-serif;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.region-button::after {
+    content: 'Região';
+}
+
+.location-button::after {
+    content: 'Local';
+}
+
+.pokemons-button::after {
+    content: 'Pokémon';
+}
+
+/* Variação sutil da animação para cada botão */
+.location-button {
+    animation-delay: 0.5s;
+}
+
+.pokemons-button {
+    animation-delay: 1s;
+}
+
+/* --- Enhanced Info and Scroll Buttons --- */
+
+/* Animação sutil para os botões de segunda linha */
+@keyframes gentleGlow {
+    0% {
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.2),
+            0 0 4px rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 4px rgba(255, 255, 255, 0.4),
+            0 0 8px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.2),
+            0 0 4px rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+}
+
+/* Estilos aprimorados para os botões de segunda linha */
+.info-button,
+.scroll-button {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: gentleGlow 4s ease-in-out infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 5px;
+}
+
+/* Efeito de brilho interno */
+.info-button::before,
+.scroll-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+    transition: left 0.6s ease;
+}
+
+/* Efeito de varredura ao hover */
+.info-button:hover::before,
+.scroll-button:hover::before {
+    left: 100%;
+}
+
+/* Efeitos de hover melhorados */
+.info-button:hover {
+    transform: scale(1.02);
+    background-color: var(--hover-yellow);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5),
+        0 0 10px rgba(255, 255, 255, 0.3);
+    animation-duration: 2s;
+}
+
+.scroll-button:hover {
+    transform: scale(1.02);
+    background-color: var(--hover-blue);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5),
+        0 0 10px rgba(255, 255, 255, 0.3);
+    animation-duration: 2s;
+}
+
+/* Efeito de clique */
+.info-button:active,
+.scroll-button:active {
+    transform: scale(0.99);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6),
+        0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+/* Ajustes para as imagens dentro dos botões */
+.info-button img,
+.scroll-button img {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+    transition: filter 0.3s ease;
+    height: 35%;
+}
+
+.info-button:hover img,
+.scroll-button:hover img {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+
+/* Estilos para os labels dos botões */
+.info-button::after,
+.scroll-button::after {
+    content: '';
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    font-family: Arial, sans-serif;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+.info-button::after {
+    content: 'Como Usar';
+}
+
+.scroll-button::after {
+    content: 'Gráficos';
+}
+
+/* Variação da animação para cada botão */
+.scroll-button {
+    animation-delay: 1.5s;
+}
+
+/* --- Enhanced Pokemon Navigation Buttons --- */
+
+/* Animação muito sutil para os botões de navegação */
+@keyframes softPulse {
+    0% {
+        box-shadow: 0 0 1px rgba(255, 255, 255, 0.1),
+            0 0 2px rgba(255, 255, 255, 0.05);
+    }
+
+    50% {
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.2),
+            0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    100% {
+        box-shadow: 0 0 1px rgba(255, 255, 255, 0.1),
+            0 0 2px rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Estilos sutis para os botões de navegação pokemon */
+.left-pokemon,
+.home-pokemon,
+.right-pokemon {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: softPulse 5s ease-in-out infinite;
+}
+
+/* Efeito de brilho interno muito sutil */
+.left-pokemon::before,
+.home-pokemon::before,
+.right-pokemon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+    transition: left 0.5s ease;
+}
+
+/* Efeito de varredura ao hover */
+.left-pokemon:hover::before,
+.home-pokemon:hover::before,
+.right-pokemon:hover::before {
+    left: 100%;
+}
+
+/* Efeitos de hover sutis */
+.left-pokemon:hover,
+.home-pokemon:hover,
+.right-pokemon:hover {
+    transform: scale(1.01);
+    background-color: var(--hover-light-blue);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3),
+        0 0 6px rgba(255, 255, 255, 0.15);
+    animation-duration: 3s;
+}
+
+/* Efeito de clique muito sutil */
+.left-pokemon:active,
+.home-pokemon:active,
+.right-pokemon:active {
+    transform: scale(0.995);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.4),
+        0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Ajustes para as imagens dentro dos botões de navegação */
+.left-pokemon img,
+.home-pokemon img,
+.right-pokemon img {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.2));
+    transition: filter 0.3s ease;
+}
+
+.left-pokemon:hover img,
+.home-pokemon:hover img,
+.right-pokemon:hover img {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+}
+
+/* Variação da animação para cada botão de navegação */
+.home-pokemon {
+    animation-delay: 1s;
+}
+
+.right-pokemon {
+    animation-delay: 2s;
 }
