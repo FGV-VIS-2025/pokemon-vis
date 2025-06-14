@@ -66,10 +66,10 @@ export function createHeatMapDef(selectedPokemons) {
         .attr("x", width / 2)
         .attr("y", -svgWidth / 14)  // Acima do gráfico
         .attr("text-anchor", "middle")
-        .style("font-size", `${svgWidth / 45}px`)
+        .style("font-size", `${svgWidth / 35}px`)
         .style("font-weight", "bold")
         .style("fill", "#ffffff")
-        .text("Defending Effectiveness Comparison");
+        .text("Comparação da Efetividade das Defesas");
 
     // Escala X (Pokémons)
     const x = d3.scaleBand()
@@ -82,8 +82,9 @@ export function createHeatMapDef(selectedPokemons) {
         .call(d3.axisTop(x))
         .selectAll("text")
         .style("text-anchor", "center")
-        .style("font-size", `${svgWidth / 50}px`)
-        .style("fill", "#ffffff");
+        .style("font-size", `${svgWidth / 40}px`)
+        .style("fill", "#ffffff")
+        .style("font-family", "Pixelify Sans, sans-serif");
 
     // Escala Y (Tipos)
     const y = d3.scaleBand()
@@ -176,5 +177,6 @@ export function createHeatMapDef(selectedPokemons) {
         .style("fill", "#000") // ou ajuste com base no contraste da célula
         .style("font-size", "12px")
         .style("font-weight", "bold")
+        .style("font-family", "Arial, sans-serif")
         .text(d => `${d.value}x`);
 }
