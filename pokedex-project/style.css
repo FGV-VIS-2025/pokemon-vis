@@ -1570,3 +1570,9 @@ body {
     display: none;
     z-index: 10;
 }
+
+.knn-comparasion-ind:hover,
+.knn-pokemon-ind:hover{
+    cursor: pointer;
+    background-color: rgba(43, 43, 43, 0.9);
+}

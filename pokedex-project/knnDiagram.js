@@ -61,7 +61,7 @@ export async function createKnnDiagram(selectedPokemons) {
         knnRow.style.gap = "5%";
 
         const pokemonDiv = document.createElement("div");
-        pokemonDiv.className = "knn-row";
+        pokemonDiv.className = "knn-pokemon-ind";
         pokemonDiv.style.height = "100%"
         pokemonDiv.style.aspectRatio = "1 / 1";
         pokemonDiv.style.borderRadius = "10px";
@@ -70,11 +70,10 @@ export async function createKnnDiagram(selectedPokemons) {
         pokemonDiv.style.justifyContent = "center";
         pokemonDiv.style.border = "1px solid rgb(255, 255, 255)";
 
-        console.log(pokemon);
-
         pokemonDiv.addEventListener("mouseover", (event) => {
             showTooltip(`<strong>ID: </strong>#${pokemon.pokemon_id}<br/>
                         <strong>Nome: </strong>${pokemon.name}<br/>
+                        <strong>Genus: </strong>${pokemon.genus.split(" Pokémon")[0]}<br/>
                         <strong>Altura: </strong>${pokemon.height / 10} m<br/>
                         <strong>Peso: </strong>${pokemon.weight / 10} kg<br/>
                         <strong>Hp: </strong>${pokemon.Hp_Stat}<br/>
@@ -92,6 +91,7 @@ export async function createKnnDiagram(selectedPokemons) {
 
         pokemonDiv.addEventListener("mousemove", showTooltip.bind(null, `<strong>ID: </strong>#${pokemon.pokemon_id}<br/>
                                                                         <strong>Nome: </strong>${pokemon.name}<br/>
+                                                                        <strong>Genus: </strong>${pokemon.genus.split(" Pokémon")[0]}<br/>
                                                                         <strong>Altura: </strong>${pokemon.height / 10} m<br/>
                                                                         <strong>Peso: </strong>${pokemon.weight / 10} kg<br/>
                                                                         <strong>Hp: </strong>${pokemon.Hp_Stat}<br/>
@@ -130,9 +130,8 @@ export async function createKnnDiagram(selectedPokemons) {
 
         for (let j = 0; j < 3; j++){
             const comparasionPokemon = document.createElement("div");
-            comparasionPokemon.className = `knn-comparasion-${j}`;
+            comparasionPokemon.className = `knn-comparasion-ind`;
 
-            comparasionPokemon.className = "knn-row";
             comparasionPokemon.style.height = "100%"
             comparasionPokemon.style.aspectRatio = "1 / 1";
             comparasionPokemon.style.borderRadius = "10px";
@@ -144,6 +143,7 @@ export async function createKnnDiagram(selectedPokemons) {
             comparasionPokemon.addEventListener("mouseover", (event) => {
                 showTooltip(`<strong>ID: </strong>#${knnData[j].pokemon.id}<br/>
                             <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
+                            <strong>Genus: </strong>${knnData[j].pokemon.genus.split(" Pokémon")[0]}<br/>
                             <strong>Altura: </strong>${knnData[j].pokemon.height / 10} m<br/>
                             <strong>Peso: </strong>${knnData[j].pokemon.weight / 10} kg<br/>
                             <strong>Hp: </strong>${knnData[j].pokemon.hp_stat}<br/>
@@ -155,12 +155,13 @@ export async function createKnnDiagram(selectedPokemons) {
                             <strong>Tipo 1 (2x): </strong>${knnData[j].pokemon.type_1}<br/>
                             <strong>Tipo 2 (2x): </strong>${knnData[j].pokemon.type_2 == "" ? "" : knnData[j].pokemon.type_2}<br/>
                             <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
-                            <strong>Baby: </strong>${knnData[j].pokemon.is_baby === 0 ? "Sim" : "Não"}<br/>
-                            <strong>Mítico: </strong>${knnData[j].pokemon.is_mythical === 0 ? "Sim" : "Não"}<br/>
-                            <strong>Lendário: </strong>${knnData[j].pokemon.is_legendary === 0 ? "Sim" : "Não"}<br/>`, event);});
+                            <strong>Baby: </strong>${+knnData[j].pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
+                            <strong>Mítico: </strong>${+knnData[j].pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
+                            <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);});
 
             comparasionPokemon.addEventListener("mousemove", showTooltip.bind(null, `<strong>ID: </strong>#${knnData[j].pokemon.id}<br/>
                                                     <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
+                                                    <strong>Genus: </strong>${knnData[j].pokemon.genus.split(" Pokémon")[0]}<br/>
                                                     <strong>Altura: </strong>${knnData[j].pokemon.height / 10} m<br/>
                                                     <strong>Peso: </strong>${knnData[j].pokemon.weight / 10} kg<br/>
                                                     <strong>Hp: </strong>${knnData[j].pokemon.hp_stat}<br/>
@@ -172,9 +173,9 @@ export async function createKnnDiagram(selectedPokemons) {
                                                     <strong>Tipo 1 (2x): </strong>${knnData[j].pokemon.type_1}<br/>
                                                     <strong>Tipo 2 (2x): </strong>${knnData[j].pokemon.type_2 == "" ? "" : knnData[j].pokemon.type_2}<br/>
                                                     <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
-                                                    <strong>Baby: </strong>${knnData[j].pokemon.is_baby === 0 ? "Sim" : "Não"}<br/>
-                                                    <strong>Mítico: </strong>${knnData[j].pokemon.is_mythical === 0 ? "Sim" : "Não"}<br/>
-                                                    <strong>Lendário: </strong>${knnData[j].pokemon.is_legendary === 0 ? "Sim" : "Não"}<br/>`));
+                                                    <strong>Baby: </strong>${+knnData[j].pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
+                                                    <strong>Mítico: </strong>${+knnData[j].pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
+                                                    <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`));
                                                                             
             comparasionPokemon.addEventListener("mouseleave", hideTooltip);
 
@@ -230,7 +231,7 @@ async function getKnnData(pokemon) {
     ];
 
     const categoricalFeatures = [
-        "is_baby", "is_legendary", "is_mythical", "type_1", "type_2", "shape"
+        "is_baby", "is_legendary", "is_mythical", "type_1", "type_2", "shape", "genus"
     ];
 
     function distance(p1, p2) {
@@ -242,14 +243,16 @@ async function getKnnData(pokemon) {
         });
 
         categoricalFeatures.forEach(f => {
-            if (f !== "type_1" && f !== "type_2") {
-                dist += (p1[f] !== p2[f]) ? 1 : 0;
+            if (f !== "type_1" && f !== "type_2" && f!== "genus") {
+                dist += (p1[f] !== p2[f]) ? 1.5 : 0;
             }
         });
 
-        const typeWeight = 10;
+        const typeWeight = 3;
+        const genusWeight = 1.5;
         dist += (p1["type_1"] !== p2["type_1"] ? typeWeight : 0);
         dist += (p1["type_2"] !== p2["type_2"] ? typeWeight : 0);
+        dist += (p1["genus"] !== p2["genus"] ? genusWeight : 0);
 
         return Math.sqrt(dist);
     }
