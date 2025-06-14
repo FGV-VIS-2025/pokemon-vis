@@ -77,17 +77,15 @@ export async function createKnnDiagram(selectedPokemons) {
                         <strong>Nome: </strong>${pokemon.name}<br/>
                         <strong>Altura: </strong>${pokemon.height / 10} m<br/>
                         <strong>Peso: </strong>${pokemon.weight / 10} kg<br/>
-                        <strong>Felicidade Base: </strong>${pokemon.base_happiness}<br/>
                         <strong>Hp: </strong>${pokemon.Hp_Stat}<br/>
                         <strong>Ataque: </strong>${pokemon.Attack_Stat}<br/>
                         <strong>Defesa: </strong>${pokemon.Defense_Stat}<br/>
                         <strong>Ataque Especial: </strong>${pokemon.Special_Attack_Stat}<br/>
                         <strong>Defesa Especial: </strong>${pokemon.Special_Defense_Stat}<br/>
                         <strong>Velocidade: </strong>${pokemon.Speed_Stat}<br/>
-                        <strong>Tipo 1: </strong>${tipoTraduzido[pokemon.types[0].type_name]}<br/>
-                        <strong>Tipo 2: </strong>${pokemon.types[1]?.type_name ? tipoTraduzido[pokemon.types[1].type_name] : "Não tem"}<br/>
+                        <strong>Tipo 1 (2x): </strong>${tipoTraduzido[pokemon.types[0].type_name]}<br/>
+                        <strong>Tipo 2 (2x): </strong>${pokemon.types[1]?.type_name ? tipoTraduzido[pokemon.types[1].type_name] : ""}<br/>
                         <strong>Formato: </strong>${shape_id_to_name[pokemon.shape_id]}<br/>
-                        <strong>Genus: </strong>${pokemon.genus.split(" Pokémon")[0]}<br/>
                         <strong>Baby: </strong>${pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
                         <strong>Mítico: </strong>${pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
                         <strong>Lendário: </strong>${pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);});
@@ -96,17 +94,15 @@ export async function createKnnDiagram(selectedPokemons) {
                                                                         <strong>Nome: </strong>${pokemon.name}<br/>
                                                                         <strong>Altura: </strong>${pokemon.height / 10} m<br/>
                                                                         <strong>Peso: </strong>${pokemon.weight / 10} kg<br/>
-                                                                        <strong>Felicidade Base: </strong>${pokemon.base_happiness}<br/>
                                                                         <strong>Hp: </strong>${pokemon.Hp_Stat}<br/>
                                                                         <strong>Ataque: </strong>${pokemon.Attack_Stat}<br/>
                                                                         <strong>Defesa: </strong>${pokemon.Defense_Stat}<br/>
                                                                         <strong>Ataque Especial: </strong>${pokemon.Special_Attack_Stat}<br/>
                                                                         <strong>Defesa Especial: </strong>${pokemon.Special_Defense_Stat}<br/>
                                                                         <strong>Velocidade: </strong>${pokemon.Speed_Stat}<br/>
-                                                                        <strong>Tipo 1: </strong>${tipoTraduzido[pokemon.types[0].type_name]}<br/>
-                                                                        <strong>Tipo 2: </strong>${pokemon.types[1]?.type_name ? tipoTraduzido[pokemon.types[1].type_name] : "Não tem"}<br/>
+                                                                        <strong>Tipo 1 (2x): </strong>${tipoTraduzido[pokemon.types[0].type_name]}<br/>
+                                                                        <strong>Tipo 2 (2x): </strong>${pokemon.types[1]?.type_name ? tipoTraduzido[pokemon.types[1].type_name] : ""}<br/>
                                                                         <strong>Formato: </strong>${shape_id_to_name[pokemon.shape_id]}<br/>
-                                                                        <strong>Genus: </strong>${pokemon.genus.split(" Pokémon")[0]}<br/>
                                                                         <strong>Baby: </strong>${pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
                                                                         <strong>Mítico: </strong>${pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
                                                                         <strong>Lendário: </strong>${pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`));
@@ -150,17 +146,15 @@ export async function createKnnDiagram(selectedPokemons) {
                             <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
                             <strong>Altura: </strong>${knnData[j].pokemon.height / 10} m<br/>
                             <strong>Peso: </strong>${knnData[j].pokemon.weight / 10} kg<br/>
-                            <strong>Felicidade Base: </strong>${knnData[j].pokemon.base_happiness}<br/>
                             <strong>Hp: </strong>${knnData[j].pokemon.hp_stat}<br/>
                             <strong>Ataque: </strong>${knnData[j].pokemon.attack_stat}<br/>
                             <strong>Defesa: </strong>${knnData[j].pokemon.defense_stat}<br/>
                             <strong>Ataque Especial: </strong>${knnData[j].pokemon.special_attack_stat}<br/>
                             <strong>Defesa Especial: </strong>${knnData[j].pokemon.special_defense_stat}<br/>
                             <strong>Velocidade: </strong>${knnData[j].pokemon.speed_stat}<br/>
-                            <strong>Tipo 1: </strong>${knnData[j].pokemon.type_1}<br/>
-                            <strong>Tipo 2: </strong>${knnData[j].pokemon.type_2 == "" ? "Não tem" : knnData[j].pokemon.type_2}<br/>
+                            <strong>Tipo 1 (2x): </strong>${knnData[j].pokemon.type_1}<br/>
+                            <strong>Tipo 2 (2x): </strong>${knnData[j].pokemon.type_2 == "" ? "" : knnData[j].pokemon.type_2}<br/>
                             <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
-                            <strong>Genus: </strong>${knnData[j].pokemon.genus.split(" Pokémon")[0]}<br/>
                             <strong>Baby: </strong>${knnData[j].pokemon.is_baby === 0 ? "Sim" : "Não"}<br/>
                             <strong>Mítico: </strong>${knnData[j].pokemon.is_mythical === 0 ? "Sim" : "Não"}<br/>
                             <strong>Lendário: </strong>${knnData[j].pokemon.is_legendary === 0 ? "Sim" : "Não"}<br/>`, event);});
@@ -169,17 +163,15 @@ export async function createKnnDiagram(selectedPokemons) {
                                                     <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
                                                     <strong>Altura: </strong>${knnData[j].pokemon.height / 10} m<br/>
                                                     <strong>Peso: </strong>${knnData[j].pokemon.weight / 10} kg<br/>
-                                                    <strong>Felicidade Base: </strong>${knnData[j].pokemon.base_happiness}<br/>
                                                     <strong>Hp: </strong>${knnData[j].pokemon.hp_stat}<br/>
                                                     <strong>Ataque: </strong>${knnData[j].pokemon.attack_stat}<br/>
                                                     <strong>Defesa: </strong>${knnData[j].pokemon.defense_stat}<br/>
                                                     <strong>Ataque Especial: </strong>${knnData[j].pokemon.special_attack_stat}<br/>
                                                     <strong>Defesa Especial: </strong>${knnData[j].pokemon.special_defense_stat}<br/>
                                                     <strong>Velocidade: </strong>${knnData[j].pokemon.speed_stat}<br/>
-                                                    <strong>Tipo 1: </strong>${knnData[j].pokemon.type_1}<br/>
-                                                    <strong>Tipo 2: </strong>${knnData[j].pokemon.type_2 == "" ? "Não tem" : knnData[j].pokemon.type_2}<br/>
+                                                    <strong>Tipo 1 (2x): </strong>${knnData[j].pokemon.type_1}<br/>
+                                                    <strong>Tipo 2 (2x): </strong>${knnData[j].pokemon.type_2 == "" ? "" : knnData[j].pokemon.type_2}<br/>
                                                     <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
-                                                    <strong>Genus: </strong>${knnData[j].pokemon.genus.split(" Pokémon")[0]}<br/>
                                                     <strong>Baby: </strong>${knnData[j].pokemon.is_baby === 0 ? "Sim" : "Não"}<br/>
                                                     <strong>Mítico: </strong>${knnData[j].pokemon.is_mythical === 0 ? "Sim" : "Não"}<br/>
                                                     <strong>Lendário: </strong>${knnData[j].pokemon.is_legendary === 0 ? "Sim" : "Não"}<br/>`));
@@ -232,31 +224,43 @@ async function loadCsv(path, parser) {
 
 async function getKnnData(pokemon) {
     const numericFeatures = [
-        "height_norm", "weight_norm", "base_happiness_norm",
+        "height_norm", "weight_norm",
         "hp_stat_norm", "attack_stat_norm", "defense_stat_norm",
         "special_attack_stat_norm", "special_defense_stat_norm", "speed_stat_norm"
     ];
 
     const categoricalFeatures = [
-        "is_baby", "is_legendary", "is_mythical",
-        "genus", "type_1", "type_2", "shape"
+        "is_baby", "is_legendary", "is_mythical", "type_1", "type_2", "shape"
     ];
 
     function distance(p1, p2) {
         let dist = 0;
+
         numericFeatures.forEach(f => {
             const diff = parseFloat(p1[f]) - parseFloat(p2[f]);
             dist += diff * diff;
         });
+
         categoricalFeatures.forEach(f => {
-            dist += (p1[f] !== p2[f]) ? 1 : 0;
+            if (f !== "type_1" && f !== "type_2") {
+                dist += (p1[f] !== p2[f]) ? 1 : 0;
+            }
         });
+
+        const typeWeight = 10;
+        dist += (p1["type_1"] !== p2["type_1"] ? typeWeight : 0);
+        dist += (p1["type_2"] !== p2["type_2"] ? typeWeight : 0);
+
         return Math.sqrt(dist);
     }
 
+
     function findNearest(pokemons, targetPokemon, k = 3) {
         return pokemons
-            .filter(p => p.id !== targetPokemon.id)
+            .filter(p => 
+                p.id !== targetPokemon.id && 
+                +p.evolucao == 0
+            )
             .map(p => ({ pokemon: p, dist: distance(p, targetPokemon) }))
             .sort((a, b) => a.dist - b.dist)
             .slice(0, k);

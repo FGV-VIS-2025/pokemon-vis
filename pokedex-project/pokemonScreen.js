@@ -288,16 +288,16 @@ function createSelectedPokemonDescription(selectedPokemon) {
                     </div>
                     <div class="info-rows-2">
                         <div class="info-blocks-2-menor">
-                            Name:<br>
-                            Genus:<br>
-                            Generation:<br>
-                            Habitat:<br>
-                            Capture Rate:<br>
-                            Growth Rate:<br>
-                            B. Happiness:<br>
-                            Is Baby:<br>
-                            Is Legendary:<br>
-                            Is Mythical:<br>
+                            <strong>Nome:</strong><br>
+                            <strong>Genus:</strong><br>
+                            <strong>Geração:</strong><br>
+                            <strong>Habitat:</strong><br>
+                            <strong>Taxa de Captura:</strong><br>
+                            <strong>Taxa de Cresc.:</strong><br>
+                            <strong>Felicidade:</strong><br>
+                            <strong>Bebê:</strong><br>
+                            <strong>Lendário:</strong><br>
+                            <strong>Mítico:</strong><br>
                         </div>
                         <div class="info-blocks-2-maior">
                             ${selectedPokemon.name}<br>
