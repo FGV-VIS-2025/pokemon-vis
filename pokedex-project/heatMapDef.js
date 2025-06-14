@@ -114,16 +114,9 @@ export function createHeatMapDef(selectedPokemons) {
             });
     });
 
-    const myColor = d3.scaleOrdinal()
-        .domain([0, 0.25, 0.5, 1, 2, 4])
-        .range([
-            "#ffffff",  // 0: imunidade total (branco - sem cor para neutralizar o azul)
-            "#ffe0b2",  // 0.25: resistência forte (laranja bem claro)
-            "#ffab91",  // 0.5: resistência (laranja-rosado claro)
-            "#ff8a65",  // 1: neutro (laranja avermelhado)
-            "#e57373",  // 2: fraqueza (vermelho rosado suave)
-            "#c62828"   // 4: fraqueza forte (vermelho intenso)
-        ]);
+    const myColor = d3.scaleLinear()
+        .domain([0, 1, 4]) 
+        .range(["#2196f3", "#ffffff", "#f44336"]);
 
     // --- Tooltip setup ---
     const tooltip = d3.select("body").append("div")

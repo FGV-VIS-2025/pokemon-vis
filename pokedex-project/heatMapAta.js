@@ -113,16 +113,9 @@ export function createHeatMapAta(selectedPokemons) {
             });
     });
 
-    const myColor = d3.scaleOrdinal()
-        .domain([0, 0.25, 0.5, 1, 2, 4])
-        .range([
-            "#ffffff",  // 0: imune (branco)
-            "#e8f5e9",  // 0.25: verde bem claro
-            "#c8e6c9",  // 0.5: verde claro
-            "#a5d6a7",  // 1: neutro
-            "#66bb6a",  // 2: super efetivo
-            "#2e7d32"   // 4: super efetivo duplo (verde intenso)
-        ]);
+    const myColor = d3.scaleLinear()
+        .domain([0, 1, 4]) 
+        .range(["#f44336", "#ffffff", "#2196f3"]);
 
     // --- Tooltip setup ---
     const tooltip = d3.select("body").append("div")
