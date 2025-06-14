@@ -1,4 +1,4 @@
-import { getOffensiveMultipliers } from "./consts.js";
+import { getOffensiveMultipliers, tipoTraduzido } from "./consts.js";
 
 function getDataHeatMap(selectedPokemons) {
     const data = {};
@@ -90,14 +90,27 @@ export function createHeatMapAta(selectedPokemons) {
         .domain(types)
         .padding(0.05);
 
-    // Adiciona imagens dos tipos no eixo Y
+    const tooltipTypes = d3.select(".tooltip-types-2");
+
     types.forEach(tipo => {
         svg.append("image")
             .attr("xlink:href", `../assets/icon-types/${tipo}.svg`)
             .attr("x", -width / 20)
             .attr("y", y(tipo) + y.bandwidth() / 2 - width / 50)
             .attr("width", width / 25)
-            .attr("height", width / 25);
+            .attr("height", width / 25)
+            .on("mouseover", (event) => {
+                tooltipTypes.transition().duration(200).style("opacity", 1);
+                tooltipTypes.text(tipoTraduzido[tipo]);
+            })
+            .on("mousemove", (event) => {
+                tooltipTypes
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 20) + "px");
+            })
+            .on("mouseout", () => {
+                tooltipTypes.transition().duration(200).style("opacity", 0);
+            });
     });
 
     const myColor = d3.scaleOrdinal()
@@ -138,8 +151,8 @@ export function createHeatMapAta(selectedPokemons) {
             tooltip.html(`
             <center><img src="assets/gifs/${d.pokemon.pokemon_id}.gif" class="heat-map-img"></img></center><br/>
             <strong>Pokémon:</strong> ${d.group}<br/>
-            <strong>Def. Type:</strong> ${d.variable.charAt(0).toUpperCase() + d.variable.slice(1)}<br/>
-            <strong>Effectiveness:</strong> ${d.value}x
+            <strong>Tipo Defensor:</strong> ${tipoTraduzido[d.variable]}<br/>
+            <strong>Efetividade:</strong> ${d.value}x
         `)
                 .style("left", (event.pageX + 10) + "px") // Position near mouse
                 .style("top", (event.pageY - 28) + "px"); // Position near mouse

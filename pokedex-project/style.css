@@ -1528,3 +1528,14 @@ body {
 .right-pokemon {
     animation-delay: 2s;
 }
+
+.tooltip-types, .tooltip-types-2{
+    position: absolute; 
+    opacity: 0; 
+    pointer-events: none; 
+    background: #333; 
+    color: #fff; 
+    padding: 5px 10px; 
+    border-radius: 5px; 
+    font-size: 12px;
+}
