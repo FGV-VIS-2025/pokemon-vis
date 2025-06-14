@@ -1,5 +1,6 @@
 export async function createKnnDiagram(selectedPokemons) {
     const knnDiv = document.getElementsByClassName("knn")[0];
+    const knnWidth = window.innerWidth;
     knnDiv.innerHTML = "";
 
     knnDiv.style.border = "1px solid rgb(255, 255, 255)";
@@ -16,7 +17,7 @@ export async function createKnnDiagram(selectedPokemons) {
     titleDiv.style.width = "90%"
     titleDiv.style.height = "10%"
     titleDiv.style.borderRadius = "10px";
-    titleDiv.style.fontSize = `15px`;
+    titleDiv.style.fontSize = `${knnWidth/120}px`;
     titleDiv.style.fontFamily = "Pixelify Sans, sans-serif";
 
     const titleText = document.createElement("h2");

@@ -272,6 +272,17 @@ export function RadarChart(className, data, options) {
         .style("stroke", "white")
         .style("stroke-width", "2px");
 
+    svg.append("text")
+        .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
+        .attr("y", 20) // ou ajuste como preferir
+        .attr("text-anchor", "middle")
+        .style("font-size", `${cfg.w / 18}px`)
+        .style("font-weight", "bold")
+        .style("fill", "#ffffff")
+        .style("font-family", "Pixelify Sans, sans-serif")
+        .text("Comparação dos Stats dos Pokémon");
+
+
     // Configuração dos títulos dos eixos
     axis.append("text")
         .attr("class", "legend")
