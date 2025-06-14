@@ -481,6 +481,16 @@ export async function createRegionScreen(id_region = 3) {
     // Limpar tooltips e listeners anteriores
     cleanupPreviousTooltips();
 
+    // Adicionar listener para limpar tooltips quando o mouse sai da content-screen
+    const handleContentScreenLeave = () => {
+        hidePokemonCardTooltip();
+    };
+
+    // Remover listener anterior se existir
+    contentScreen.removeEventListener('mouseleave', handleContentScreenLeave);
+    // Adicionar novo listener
+    contentScreen.addEventListener('mouseleave', handleContentScreenLeave);
+
     contentScreen.scrollTo(0, 0);
     contentScreen.innerHTML = '';
     contentScreen.style.gap = "0";
@@ -631,16 +641,22 @@ function renderCurrentPage() {
         spriteContainer.style.height = '100%';
         spriteContainer.style.width = '100%';
 
-        // Efeito hover melhorado
-        spriteContainer.addEventListener('mouseenter', () => {
+        // Função unificada para hover e tooltip
+        const handleMouseEnter = (event) => {
             spriteContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
             spriteContainer.style.transform = 'scale(1.05)';
-        });
+            showPokemonCardTooltip(pokemon, event);
+        };
 
-        spriteContainer.addEventListener('mouseleave', () => {
+        const handleMouseLeave = () => {
             spriteContainer.style.backgroundColor = 'transparent';
             spriteContainer.style.transform = 'scale(1)';
-        });
+            hidePokemonCardTooltip();
+        };
+
+        // Adicionar eventos unificados
+        spriteContainer.addEventListener('mouseenter', handleMouseEnter);
+        spriteContainer.addEventListener('mouseleave', handleMouseLeave);
 
         const img = document.createElement('img');
         img.style.width = '60px';
@@ -682,17 +698,6 @@ function renderCurrentPage() {
         spriteContainer.appendChild(numberLabel);
         spriteContainer.appendChild(nameLabel);
         spritesGrid.appendChild(spriteContainer);
-
-        // Adicionar eventos para mostrar/esconder a tooltip do card
-        spriteContainer.addEventListener('mouseenter', (event) => {
-            showPokemonCardTooltip(pokemon, event);
-        });
-
-        spriteContainer.addEventListener('mouseleave', () => {
-            hidePokemonCardTooltip();
-        });
-
-        // Remover o listener individual de mousemove para evitar conflitos
     });
 
     updatePageIndicator();
@@ -972,6 +977,20 @@ function createTooltipCard() {
     return tooltipCard;
 }
 
+// Listener global para esconder tooltip quando clicar fora
+function handleGlobalClick(event) {
+    const tooltipCard = document.querySelector('.pokemon-tooltip-card.active');
+    if (tooltipCard) {
+        const isClickOnSprite = event.target.closest('.pokemon-sprite-container');
+        if (!isClickOnSprite) {
+            hidePokemonCardTooltip();
+        }
+    }
+}
+
+// Adicionar listener global para clicks
+document.addEventListener('click', handleGlobalClick);
+
 // Variável para controlar o listener global de mousemove
 let globalMouseMoveActive = false;
 
@@ -1025,9 +1044,14 @@ function debugGhostElements() {
 
 // Função para limpar tooltips e listeners anteriores
 function cleanupPreviousTooltips() {
-    // Remove tooltips existentes da regionScreen
+    console.log('🧹 Limpando tooltips e listeners anteriores...');
+
+    // Remove todos os tooltips existentes do body (não apenas da content-screen)
     const existingTooltips = document.querySelectorAll('.pokemon-tooltip-card');
-    existingTooltips.forEach(tooltip => tooltip.remove());
+    existingTooltips.forEach(tooltip => {
+        console.log('🗑️ Removendo tooltip:', tooltip);
+        tooltip.remove();
+    });
 
     // Remove tooltips do types.js (chord diagram) - APENAS na content-screen
     const existingChordTooltips = document.querySelectorAll('.content-screen .tooltip, .content-screen #tooltip');
@@ -1045,10 +1069,11 @@ function cleanupPreviousTooltips() {
         }
     });
 
-    // Remove listener global se ativo
+    // Força a remoção do listener global se ativo
     if (globalMouseMoveActive) {
         document.removeEventListener('mousemove', handleGlobalMouseMove);
         globalMouseMoveActive = false;
+        console.log('🔄 Listener global mousemove removido');
     }
 
     // Limpar qualquer estado de hover ou seleção anterior APENAS na content-screen
@@ -1108,6 +1133,13 @@ function hidePokemonCardTooltip() {
     const tooltipCard = document.querySelector('.pokemon-tooltip-card');
     if (tooltipCard) {
         tooltipCard.classList.remove('active');
+
+        // Delay pequeno antes de remover para permitir animação
+        setTimeout(() => {
+            if (tooltipCard && !tooltipCard.classList.contains('active')) {
+                tooltipCard.remove();
+            }
+        }, 200);
 
         // Remove o listener global quando não há tooltip ativa
         if (globalMouseMoveActive) {
