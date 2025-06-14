@@ -241,3 +241,20 @@ export const tipoTraduzido = {
     steel: "Metálico",
     fairy: "Fada"
 };
+
+export const shape_id_to_name = {
+    1: "Ball",
+    2: "Squiggle",
+    3: "Fish",
+    4: "Arms",
+    5: "Blob",
+    6: "Upright",
+    7: "Legs",
+    8: "Quadruped",
+    9: "Wings",
+    10: "Tentacles",
+    11: "Heads",
+    12: "Humanoid",
+    13: "Bug-Wings",
+    14: "Armor"
+}
