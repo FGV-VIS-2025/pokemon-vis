@@ -3,6 +3,7 @@ import { getAllPokemons } from "./dataManager.js";
 import { createHeatMapAta } from "./heatMapAta.js";
 import { createHeatMapDef } from "./heatMapDef.js";
 import { createRadarChart } from "./radarChart.js";
+import { createKnnDiagram } from "./knnDiagram.js";
 
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
@@ -146,7 +147,7 @@ export async function createPokemonScreen() {
     pokemonsDescriptionArea.classList.add("pokemons-description-area");
 
     // área externa para o primeiro gráfico
-    const svgPai1 = document.createElement("svg");
+    const svgPai1 = document.createElement("div");
     svgPai1.classList.add("svg-pai-chart-1");
 
     // área para o primeiro gráfico (radar)
@@ -154,6 +155,10 @@ export async function createPokemonScreen() {
     svg1.classList.add("svg-chart-1");
     svg1.appendChild(document.createElement("rect")).classList.add("svg-chart-1-rect-1");
     svgPai1.appendChild(svg1);
+
+    const knn = document.createElement("div");
+    knn.classList.add("knn");
+    svgPai1.appendChild(knn);
 
     // área externa para o primeiro gráfico
     const svgPai2 = document.createElement("svg");
@@ -207,10 +212,13 @@ export function editPokemonsCard() {
         createRadarChart(selectedPokemons);
         createHeatMapDef(selectedPokemons);
         createHeatMapAta(selectedPokemons);
+        createKnnDiagram(selectedPokemons);
     } else {
         const radarSvg = document.getElementsByClassName("svg-chart-1")[0];
         radarSvg.innerHTML = "";
         radarSvg.style.border = 0;
+        radarSvg.style.display = "none";
+        radarSvg.style.width = "0px";
         const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
         radarPaiSvg.style.padding = 0;
         radarPaiSvg.style.marginBottom = 0;
@@ -221,6 +229,11 @@ export function editPokemonsCard() {
         heatPaiSvg.style.padding = 0;
         heatPaiSvg.style.marginBottom = 0;
         pokemonsDescription.style.marginBottom = 0;
+        const knn = document.getElementsByClassName("knn")[0];
+        knn.innerHTML = "";
+        knn.style.display = "none";
+        knn.style.border = 0;
+        knn.style.width = "0px";
     }
 }
 

@@ -128,10 +128,14 @@ export function createRadarChart(selectedPokemons) {
     const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
 
     radarSvg.style.border = "1px solid rgb(255, 255, 255)";
+    radarSvg.style.width = "50%";
+    radarSvg.style.display = "flex";
+    radarSvg.style.justifyContent = "center";
+    radarPaiSvg.style.alignItems = "center";
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    const svgWidth = radarSvg.clientWidth * 0.45;
+    const svgWidth = radarSvg.clientWidth * 0.45 * 2;
     const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgWidth - margin.top - margin.bottom;

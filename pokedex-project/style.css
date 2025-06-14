@@ -934,7 +934,21 @@ body {
     width: 55%;
 }
 
-.svg-pai-chart-1,
+.svg-pai-chart-1{
+    width: 90%;
+    height: auto;
+    background-color: #1b1b1b;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 15px;
+    gap: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
 .svg-pai-chart-2 {
     width: 90%;
     height: auto;
@@ -950,8 +964,8 @@ body {
 }
 
 .svg-chart-1 {
-    width: 100%;
-    height: auto;
+    width: 50%;
+    aspect-ratio: 1/1;
     background-color: rgb(49, 49, 49);
     border-radius: 10px;
     border: 1px solid rgb(255, 255, 255);
@@ -960,7 +974,14 @@ body {
     justify-content: center;
     flex-direction: row;
     box-sizing: border-box;
-    padding: 15px;
+}
+
+.knn{
+    width: 50%;
+    aspect-ratio: 1/1;
+    background-color: rgb(49, 49, 49);
+    border-radius: 10px;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .svg-chart-2 {
