@@ -1,4 +1,4 @@
-export function createKnnDiagram(selectedPokemons) {
+export async function createKnnDiagram(selectedPokemons) {
     const knnDiv = document.getElementsByClassName("knn")[0];
     knnDiv.innerHTML = "";
 
@@ -71,7 +71,7 @@ export function createKnnDiagram(selectedPokemons) {
         comparasionDiv.style.justifyContent = "center";
         comparasionDiv.style.flexDirection = "row";
 
-        const knnData = getKnnData(pokemon);
+        const knnData = await getKnnData(pokemon);
 
         for (let j = 0; j < 3; j++){
             const comparasionPokemon = document.createElement("div");
@@ -87,9 +87,9 @@ export function createKnnDiagram(selectedPokemons) {
             comparasionPokemon.style.border = "1px solid rgb(255, 255, 255)";
 
             const pokemonImageComparasion = document.createElement("img");
-            pokemonImageComparasion.src = `./assets/pokemons/${knnData[j]}.png`
-            pokemonImageComparasion.style.width = "95%";
-            pokemonImageComparasion.style.height = "95%";
+            pokemonImageComparasion.src = `./assets/pokemons/${knnData[j].pokemon.id}.png`
+            pokemonImageComparasion.style.width = "80%";
+            pokemonImageComparasion.style.height = "80%";
             comparasionPokemon.appendChild(pokemonImageComparasion);
 
             comparasionDiv.appendChild(comparasionPokemon);
@@ -101,6 +101,80 @@ export function createKnnDiagram(selectedPokemons) {
     }
 }
 
-function getKnnData(pokemon){
-    return [100, 200, 300];
+const csvCache = new Map();
+
+async function loadCsv(path, parser) {
+    try {
+        if (!csvCache.has(path)) {
+            // Usar Promise com timeout para evitar travamentos
+            const fetchPromise = new Promise((resolve, reject) => {
+                d3.csv(path, parser)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        console.error(`Erro ao carregar ${path}:`, error);
+                        reject(error);
+                    });
+
+                // Timeout de 5 segundos para evitar travamentos
+                setTimeout(() => reject(new Error(`Timeout ao carregar ${path}`)), 5000);
+            });
+
+            csvCache.set(path, fetchPromise);
+        }
+        return await csvCache.get(path);
+    } catch (error) {
+        console.error(`Falha ao carregar ${path}:`, error);
+        return [];
+    }
+}
+
+async function getKnnData(pokemon) {
+    const numericFeatures = [
+        "height", "weight", "base_happiness",
+        "hp_stat", "attack_stat", "defense_stat",
+        "special_attack_stat", "special_defense_stat", "speed_stat"
+    ];
+
+    const categoricalFeatures = [
+        "is_baby", "is_legendary", "is_mythical",
+        "genus", "type_1", "type_2", "shape"
+    ];
+
+    function distance(p1, p2) {
+        let dist = 0;
+        numericFeatures.forEach(f => {
+            const diff = parseFloat(p1[f]) - parseFloat(p2[f]);
+            dist += diff * diff;
+        });
+        categoricalFeatures.forEach(f => {
+            dist += (p1[f] !== p2[f]) ? 1 : 0;
+        });
+        return Math.sqrt(dist);
+    }
+
+    function findNearest(pokemons, targetPokemon, k = 3) {
+        return pokemons
+            .filter(p => p.id !== targetPokemon.id)
+            .map(p => ({ pokemon: p, dist: distance(p, targetPokemon) }))
+            .sort((a, b) => a.dist - b.dist)
+            .slice(0, k);
+    }
+
+    try {
+        const data = await loadCsv("../knn_data.csv", d => d); 
+        const target = data.find(p => +p.id === +pokemon.pokemon_id);
+
+        if (!target) {
+            console.error("Pokémon alvo não encontrado:", pokemon.pokemon_id);
+            return;
+        }
+
+        const nearest = findNearest(data, target, 3);
+
+        return nearest;
+    } catch (err) {
+        console.error("Erro em getKnnData:", err);
+    }
 }
