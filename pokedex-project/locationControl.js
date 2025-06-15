@@ -10,15 +10,12 @@ const rightButton = document.getElementsByClassName("right-button")[1];
 const leftButton = document.getElementsByClassName("left-button")[1];
 const mapRealContainer = document.getElementsByClassName("map-left-screen")[0];
 
-// Variáveis globais para controle de localização
 let i = 0;
 let listOfLocations = [];
-let locationsWithPokemon = []; // Lista filtrada apenas com localizações que têm pokémon
-let cachedRegionName = null; // Cache para evitar recálculos desnecessários
+let locationsWithPokemon = [];
+let cachedRegionName = null;
 
-// Função para filtrar localizações que têm pokémon
 async function getLocationsWithPokemon(regionName) {
-    // Verificar se já temos os dados em cache para esta região
     if (cachedRegionName === regionName && locationsWithPokemon.length > 0) {
         return locationsWithPokemon;
     }
@@ -28,70 +25,56 @@ async function getLocationsWithPokemon(regionName) {
         getAllLocationsPokemonCount(regionName)
     ]);
 
-    // Criar um mapa de contagem de pokémons por locationId
     const countMap = new Map(pokemonCounts.map(item => [item.locationId, item.count]));
 
-    // Filtrar apenas localizações que têm pokémon (count > 0)
     const filtered = allLocations.filter(location => {
         const count = countMap.get(location.location_id) || 0;
         return count > 0;
     });
 
-    // Atualizar cache
     cachedRegionName = regionName;
     locationsWithPokemon = filtered;
-
-    console.log(`🔍 Filtradas ${filtered.length} localizações com pokémon de ${allLocations.length} total na região ${regionName}`);
 
     return filtered;
 }
 
-// Inicializar lista de localizações com pokémon
 async function initializeLocationsList() {
     const regionName = regionDisplay.textContent.trim();
     const filtered = await getLocationsWithPokemon(regionName);
-    listOfLocations = filtered; // Usar apenas localizações com pokémon
+    listOfLocations = filtered;
 
     if (listOfLocations.length > 0) {
-        // Só resetar o índice se estivermos iniciando pela primeira vez ou se a lista mudou
         if (i >= listOfLocations.length) {
-            i = 0; // Reset apenas se o índice atual for inválido
+            i = 0;
         }
 
         locationDisplay.textContent = listOfLocations[i].location_name;
 
-        // Tentar selecionar a localização no mapa
         const currentLocationId = listOfLocations[i].location_id;
         const el = locationElementMap.get(currentLocationId);
         if (el) {
-            // Remover animação de todos os elementos
             locationElementMap.forEach(element => {
                 element.style.animation = "";
             });
 
-            // Aplicar clique e animação ao elemento atual
             setTimeout(() => {
                 el.dispatchEvent(new Event("click"));
                 el.style.animation = "blink-border 1.5s infinite";
             }, 100);
         }
-
-        console.log(`📍 Lista de localizações inicializada: ${listOfLocations.length} localizações com pokémon (índice atual: ${i})`);
     } else {
-        console.warn(`⚠️ Nenhuma localização com pokémon encontrada na região: ${regionName}`);
         locationDisplay.textContent = "Sem localizações";
         i = 0;
     }
 }
 
-// Função específica para resetar para a primeira localização (usado quando região muda)
 async function resetToFirstLocation() {
     const regionName = regionDisplay.textContent.trim();
     const filtered = await getLocationsWithPokemon(regionName);
     listOfLocations = filtered;
 
     if (listOfLocations.length > 0) {
-        i = 0; // Forçar reset para primeira localização
+        i = 0;
         locationDisplay.textContent = listOfLocations[0].location_name;
 
         const firstLocationId = listOfLocations[0].location_id;
@@ -109,24 +92,17 @@ async function resetToFirstLocation() {
 
         // Resetar carrossel de pokémons
         resetPokemonCarousel();
-
-        console.log(`🔄 Reset para primeira localização: ${listOfLocations[0].location_name}`);
     }
 }
 
 // Inicializar ao carregar
 initializeLocationsList();
 
-// Listener para mudanças de região (quando os botões left/right da região são usados)
 document.addEventListener('regionChanged', async (event) => {
-    console.log('🌍 Região mudou, atualizando lista de localizações...');
-
-    // Só atualizar se realmente mudou de região
     const currentRegionName = regionDisplay.textContent.trim();
     if (cachedRegionName !== currentRegionName) {
-        await resetToFirstLocation(); // Usar função específica para reset
+        await resetToFirstLocation();
 
-        // Disparar evento para outras partes do sistema se houver localizações
         if (listOfLocations.length > 0) {
             dispatchLocationChangeEvent(listOfLocations[0].location_name);
         }
@@ -165,8 +141,6 @@ mapRealContainer.addEventListener('locationSelected', async (event) => {
 
         // Resetar carrossel de pokémons
         resetPokemonCarousel();
-
-        console.log(`📍 Localização selecionada via mapa: ${listOfLocations[i].location_name} (índice: ${i})`);
     } else {
         console.warn(`Localização com ID ${locationId} não encontrada na lista de localizações com pokémon.`);
     }
@@ -203,15 +177,10 @@ leftButtonRegion.addEventListener("click", async function () {
 });
 
 rightButton.addEventListener("click", function () {
-    // Verificar se há localizações disponíveis
     if (listOfLocations.length === 0) {
-        console.warn("Nenhuma localização com pokémon disponível na região atual");
         return;
     }
 
-    console.log(`➡️ Botão direito clicado. Índice atual: ${i}, Total: ${listOfLocations.length}`);
-
-    // Adicionar feedback visual
     rightButton.style.transform = "scale(0.95)";
     setTimeout(() => {
         rightButton.style.transform = "scale(1)";
@@ -223,9 +192,6 @@ rightButton.addEventListener("click", function () {
         i = 0;
     }
 
-    console.log(`➡️ Novo índice: ${i}, Nova localização: ${listOfLocations[i].location_name}`);
-
-    // Atualizar display da localização
     locationDisplay.textContent = listOfLocations[i].location_name;
 
     // Atualizar elemento no mapa
@@ -248,19 +214,13 @@ rightButton.addEventListener("click", function () {
     // Resetar carrossel de pokémons
     resetPokemonCarousel();
 
-    console.log(`📍 Localização alterada para: ${listOfLocations[i].location_name}`);
 });
 
 leftButton.addEventListener("click", function () {
-    // Verificar se há localizações disponíveis
     if (listOfLocations.length === 0) {
-        console.warn("Nenhuma localização com pokémon disponível na região atual");
         return;
     }
 
-    console.log(`⬅️ Botão esquerdo clicado. Índice atual: ${i}, Total: ${listOfLocations.length}`);
-
-    // Adicionar feedback visual
     leftButton.style.transform = "scale(0.95)";
     setTimeout(() => {
         leftButton.style.transform = "scale(1)";
@@ -272,9 +232,6 @@ leftButton.addEventListener("click", function () {
         i = listOfLocations.length - 1;
     }
 
-    console.log(`⬅️ Novo índice: ${i}, Nova localização: ${listOfLocations[i].location_name}`);
-
-    // Atualizar display da localização
     locationDisplay.textContent = listOfLocations[i].location_name;
 
     // Atualizar elemento no mapa
@@ -291,11 +248,7 @@ leftButton.addEventListener("click", function () {
         el.style.animation = "blink-border 1.5s infinite";
     }
 
-    // Disparar evento para outras partes do sistema
     dispatchLocationChangeEvent(listOfLocations[i].location_name);
 
-    // Resetar carrossel de pokémons
     resetPokemonCarousel();
-
-    console.log(`📍 Localização alterada para: ${listOfLocations[i].location_name}`);
 });

@@ -2,7 +2,6 @@ import { pokemonTypeColorsRGBA } from './consts.js';
 import { getLocationAreaByLocation, getPokemonsByGeneration } from './dataManager.js';
 
 export function renderTypeChord(containerSelector, typesData, pokemonTypesData, width = 960, height = 960, pokemonsFromGeneration = [], onFilter = null) {
-  // Limpa SVG anterior, se existir
   d3.select(containerSelector).selectAll("svg").remove();
   d3.select("body").selectAll(".tooltip").remove();
 
@@ -11,15 +10,6 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .attr("width", width)
     .attr("height", height)
     .style("overflow", "visible");
-
-  // Não adicionar título aqui, pois já está no container HTML
-  // svg.append("text")
-  //   .attr("x", width / 2)
-  //   .attr("y", 120)
-  //   .attr("text-anchor", "middle")
-  //   .style("font-size", "25px")
-  //   .style("fill", "white")
-  //   .text("Número de pokémons por tipo");
 
   const tooltip = d3.select("body")
     .append("div")
@@ -62,18 +52,17 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
 
   const color = typeName => pokemonTypeColorsRGBA[typeName] || 'rgba(200, 200, 200, 0.7)';
 
-  // Ajustar o tamanho do diagrama baseado no container disponível
-  const margin = Math.min(width, height) * 0.10; // Margem reduzida para dar mais espaço ao diagrama
-  const ribbonRadius = Math.min(width, height) * 0.462; // Raio aumentado em mais ~20%
-  const arcInnerRadius = ribbonRadius + 6; // Espaçamento menor
-  const arcOuterRadius = arcInnerRadius + 16; // Arco menor
+  const margin = Math.min(width, height) * 0.10;
+  const ribbonRadius = Math.min(width, height) * 0.462;
+  const arcInnerRadius = ribbonRadius + 6;
+  const arcOuterRadius = arcInnerRadius + 16;
 
   const chord = d3.chord().padAngle(0.03).sortSubgroups(d3.descending)(matrix);
   const arc = d3.arc().innerRadius(arcInnerRadius).outerRadius(arcOuterRadius);
   const ribbon = d3.ribbon().radius(ribbonRadius);
 
   const g = svg.append("g")
-    .attr("transform", `translate(${width / 2},${height / 2})`); // Centralizar melhor no container
+    .attr("transform", `translate(${width / 2},${height / 2})`);
 
   const group = g.append("g")
     .attr("class", "groups")
@@ -213,10 +202,8 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
       }).classed("active", true);
     });
 
-  // Adiciona variáveis para controle de filtro
   let currentFilter = null;
 
-  // Função para filtrar e atualizar os sprites
   function filterSpritesByTypes(typeA, typeB = null) {
     if (!Array.isArray(pokemonsFromGeneration) || pokemonsFromGeneration.length === 0) return;
     let filtered = [];
@@ -237,7 +224,6 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     showClearFilterButton();
   }
 
-  // Função para restaurar todos os sprites
   function clearSpritesFilter() {
     if (onFilter) onFilter(pokemonsFromGeneration, null, null);
     currentFilter = null;

@@ -5,16 +5,14 @@ export function drawBarChart(containerSelector, data) {
   const height = 400;
   const margin = { top: 60, right: 30, bottom: 100, left: 70 };
 
-  // Limpa qualquer gráfico anterior
   d3.select(containerSelector).selectAll("*").remove();
 
   const svg = d3.select(containerSelector)
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-    .style("background-color", "white"); // Fundo branco
+    .style("background-color", "white");
 
-  // Escalas
   const x = d3.scaleBand()
     .domain(data.map(d => d.name))
     .range([margin.left, width - margin.right])

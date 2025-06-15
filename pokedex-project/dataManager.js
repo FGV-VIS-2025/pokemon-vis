@@ -138,13 +138,11 @@ export async function getLocationsByRegionName(regionName) {
 
 export async function getLocationAreaByLocation(locationId) {
     if (!locationId) {
-        console.warn("ID de localização inválido fornecido");
         return [];
     }
 
     const numericLocationId = +locationId;
     if (isNaN(numericLocationId)) {
-        console.warn(`ID de localização inválido: ${locationId}`);
         return [];
     }
 
@@ -206,9 +204,7 @@ export async function getLocationIdByName(locationName) {
 }
 
 export async function getPokemonsByMultipleLocationAreas(locationAreas, region) {
-    // Verificar se o array de áreas de localização é válido
     if (!locationAreas || locationAreas.length === 0) {
-        console.warn("Nenhuma área de localização fornecida para busca de pokémons.");
         return [];
     }
 

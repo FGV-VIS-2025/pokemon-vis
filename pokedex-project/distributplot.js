@@ -1,21 +1,10 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { pokemonTypeColors } from "./consts.js";
 
-// Variáveis globais para gerenciar filtros
 let originalPokemonData = [];
 let currentContainerSelector = '';
 
-/**
- * Renderiza um violin plot com jitter dos 6 atributos dos Pokémon fornecidos.
- * @param {string} containerSelector - Seletor do container onde o gráfico será desenhado
- * @param {Array} pokemons - Array de objetos de Pokémon (cada um deve ter os atributos base)
- */
 export function drawDistributionPlot(containerSelector, pokemons) {
-    console.log('🔍 drawDistributionPlot - Dados recebidos:', pokemons.length, 'pokémon');
-    console.log('🔍 Primeiro pokémon:', pokemons[0]);
-    console.log('🔍 Tipos do primeiro pokémon:', pokemons[0]?.types);
-
-    // Armazenar dados originais e container para filtros
     originalPokemonData = [...pokemons];
     currentContainerSelector = containerSelector;
 
@@ -28,54 +17,44 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         { key: "Speed_Stat", label: "Velocidade" }
     ];
 
-    // Função helper para obter cor do tipo primário do Pokémon
     function getPokemonTypeColor(pokemon) {
-        // A estrutura dos dados de getPokemonsByGeneration usa types[0].type_name para o tipo primário
         const primaryType = pokemon.types?.[0]?.type_name?.toLowerCase();
         if (primaryType && pokemonTypeColors[primaryType]) {
             return pokemonTypeColors[primaryType].primary;
         }
-        console.log(`❌ Cor não encontrada para ${pokemon.name}, tipo:`, primaryType);
-        return "#999999"; // Cor padrão para tipos desconhecidos
+        return "#999999";
     }
 
-    // Limpar o container
     d3.select(containerSelector).selectAll("*").remove();
 
-    // Limpar tooltips antigos
     d3.selectAll(".pokemon-tooltip").remove();
 
-    // Obter dimensões do container
     const container = d3.select(containerSelector);
     const containerRect = container.node().getBoundingClientRect();
-    const margin = { top: 40, right: 80, bottom: 80, left: 80 }; // Reduzida margem superior de 80 para 40
+    const margin = { top: 40, right: 80, bottom: 80, left: 80 };
     const width = containerRect.width - margin.left - margin.right;
     const height = containerRect.height - margin.top - margin.bottom;
 
-    // Criar SVG com fundo transparente para integração
     const svg = container
         .append("svg")
         .attr("width", containerRect.width)
         .attr("height", containerRect.height)
         .style("background", "transparent");
 
-    // Grupo principal
     const g = svg.append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Organizar dados para cada estatística
     const preparedData = stats.map(stat => {
         return {
             stat: stat.label,
             key: stat.key,
             values: pokemons.map(p => +p[stat.key]).filter(v => !isNaN(v)),
-            pokemons: pokemons // Manter referência aos pokémon para acessar tipos
+            pokemons: pokemons
         };
     });
 
-    // Definir os limites fixos para os atributos dos Pokémon (1-255)
-    const minValue = 0;  // Mínimo teórico é 1, mas usamos 0 para melhor visualização
-    const maxValue = 255; // Máximo teórico para atributos de Pokémon
+    const minValue = 0;
+    const maxValue = 255;
 
     const x = d3.scaleBand()
         .domain(stats.map(s => s.label))
@@ -87,10 +66,8 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .nice()
         .range([height, 0]);
 
-    // Grid de fundo no estilo da página
     const gridLines = g.append("g").attr("class", "grid-lines");
 
-    // Linhas verticais do grid
     gridLines.selectAll(".grid-line-x")
         .data(x.domain())
         .enter()
@@ -195,13 +172,11 @@ export function drawDistributionPlot(containerSelector, pokemons) {
             .x0(d => -xNum(d.length))
             .x1(d => xNum(d.length))
             .y(d => y(d.x0))
-            .curve(d3.curveCatmullRom)  // Curva suave para aparência de violino
+            .curve(d3.curveCatmullRom)
         );
 
-    // Adicionar pontos individuais com jitter e estilo melhorado
     const jitterWidth = x.bandwidth() * 0.6;
 
-    // Flatten os dados para adicionar todos os pontos
     const allDataPoints = [];
     preparedData.forEach(statData => {
         statData.pokemons.forEach(pokemon => {
@@ -217,7 +192,6 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         });
     });
 
-    // Primeiro: Adicionar barras da mediana (para ficarem atrás dos pontos)
     violinData.forEach(d => {
         const values = preparedData.find(p => p.stat === d.stat).values;
         const mean = d3.mean(values);
@@ -335,30 +309,20 @@ export function drawDistributionPlot(containerSelector, pokemons) {
  */
 export function updateDistributionPlot(filteredPokemons) {
     if (!currentContainerSelector) {
-        console.warn('❌ Distributplot não foi inicializado ainda');
         return;
     }
 
-    console.log('🔄 Atualizando distributplot com', filteredPokemons.length, 'pokémon filtrados');
-
-    // Se não há filtros, usar dados originais
     const pokemonsToUse = filteredPokemons && filteredPokemons.length > 0
         ? filteredPokemons
         : originalPokemonData;
 
-    // Redesenhar o gráfico com os dados filtrados
     drawDistributionPlot(currentContainerSelector, pokemonsToUse);
 }
 
-/**
- * Limpa os filtros e restaura o distributplot com todos os dados originais
- */
 export function clearDistributionPlotFilter() {
     if (!currentContainerSelector || !originalPokemonData.length) {
-        console.warn('❌ Distributplot não foi inicializado ainda');
         return;
     }
 
-    console.log('🧹 Limpando filtros do distributplot');
     drawDistributionPlot(currentContainerSelector, originalPokemonData);
 }

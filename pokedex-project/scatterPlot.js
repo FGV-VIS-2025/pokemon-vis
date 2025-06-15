@@ -45,7 +45,6 @@ Promise.all([
  */
 export async function renderLocationScatterPlot(locationId, containerSelector) {
     if (!encountersData || !locationsData || !pokemonData || !pokemonStatsData || !statsData) {
-        console.warn("Dados ainda não carregados para o scatter plot.");
         return;
     }
 
@@ -57,7 +56,6 @@ export async function renderLocationScatterPlot(locationId, containerSelector) {
         const locationAreaIdSet = new Set(locationAreaIds_.map(obj => obj.locationAreaId));
 
         if (locationAreaIdSet.size === 0) {
-            console.warn(`Nenhuma location_area encontrada para location_id ${locationId}`);
             return;
         }
 
@@ -71,7 +69,6 @@ export async function renderLocationScatterPlot(locationId, containerSelector) {
         );
 
         if (pokemonsWithTypes.length === 0) {
-            console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
             return;
         }
 

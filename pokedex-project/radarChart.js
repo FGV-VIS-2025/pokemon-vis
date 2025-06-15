@@ -1,15 +1,6 @@
 import { pokemonTypeColorsRadar } from "./consts.js";
 
-/**
- * Função modular para renderizar radar chart
- * @param {string} containerSelector - Seletor do container (ex: "#radar-chart-location")
- * @param {string} title - Título a ser exibido
- * @param {Array} stats - Array com estatísticas no formato [{label, value}, ...]
- * @param {string} color - Cor do gráfico (hex)
- * @param {Object} options - Opções adicionais (opcional)
- */
 export function renderRadarChart(containerSelector, title, stats, color = "#4A90E2", options = {}) {
-    // Configurações padrão
     const defaultOptions = {
         width: 350,
         height: 350,
@@ -24,25 +15,22 @@ export function renderRadarChart(containerSelector, title, stats, color = "#4A90
         roundStrokes: true
     };
 
-    // Mesclar opções
     const cfg = { ...defaultOptions, ...options };
 
-    // Ajustar dimensões se o container for específico
     const container = document.querySelector(containerSelector);
     if (container && containerSelector.includes('location')) {
-        // Usar dimensões fixas para evitar crescimento progressivo do gráfico
-        const fixedChartSize = 320; // Tamanho fixo para consistência
+        const fixedChartSize = 320;
 
         cfg.width = fixedChartSize;
         cfg.height = fixedChartSize;
         cfg.margin = {
-            top: 60,     // Margem fixa para dar espaço aos labels
+            top: 60,
             right: 60,
             bottom: 60,
             left: 60
         };
-        cfg.labelFactor = 1.2; // Mantido em 1.2 conforme solicitado
-        cfg.wrapWidth = 65; // Área de wrap fixa para os labels
+        cfg.labelFactor = 1.2;
+        cfg.wrapWidth = 65;
         cfg.dotRadius = 4;
         cfg.strokeWidth = 2;
     }

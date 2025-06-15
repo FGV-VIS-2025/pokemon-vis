@@ -19,7 +19,6 @@ let count = 1;
 // Função para resetar o carrossel de cartas
 export function resetPokemonCarousel() {
     count = 1;
-    // Scroll para o início sem animação para ser mais rápido
     setTimeout(() => {
         cardsContainer.scrollTo({
             left: 0,
@@ -27,7 +26,6 @@ export function resetPokemonCarousel() {
             behavior: "smooth"
         });
     }, 100);
-    console.log("🔄 Carrossel de pokémon resetado para o início");
 }
 
 let pokemonArrayGlobal;
@@ -95,11 +93,7 @@ export async function loadCards(pokemonsArray) {
  * @returns Retorna a div da carta em questão
  */
 export function createPokemonCard(pokemon) {
-    // Verificação de segurança
     if (!pokemon || !pokemon.types || !pokemon.types.length) {
-        console.warn("Dados de Pokémon inválidos", pokemon);
-
-        // Criar um card genérico para evitar erros
         const errorCard = document.createElement("div");
         errorCard.classList.add("card");
         errorCard.style.backgroundColor = "#ddd";
@@ -117,13 +111,11 @@ export function createPokemonCard(pokemon) {
     const typeKey = pokemon.types[0].type_name;
     const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
 
-    // criação da div da carta
     const card = document.createElement("div");
     card.classList.add("card");
     card.dataset.type = typeKey;
     card.style.backgroundColor = colors.primary;
 
-    // criação e configuração do cabeçalho da carta (que contém o nome do pokémon)
     const topNav = document.createElement("div");
     topNav.classList.add("top-nav-card");
 
@@ -135,7 +127,6 @@ export function createPokemonCard(pokemon) {
     topNav.appendChild(nameDisplay);
     card.appendChild(topNav);
 
-    // criação e configuração das imagens da carta (laboratório e do próprio pokémon)
     const imgWrapper = document.createElement("div");
     imgWrapper.classList.add("pokemon-img-wrapper");
     imgWrapper.style.background = "url('../assets/background.png') center/cover no-repeat";
@@ -144,7 +135,6 @@ export function createPokemonCard(pokemon) {
     img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
     img.alt = pokemon.name || "Pokémon";
     img.onerror = function () {
-        // Usar uma imagem padrão se a imagem do pokémon não for encontrada
         this.src = "../assets/pokeball.png";
         this.style.width = "50%";
         this.style.height = "auto";
@@ -174,10 +164,8 @@ export function createPokemonCard(pokemon) {
             card.style.transform = "translateY(-5px)";
             img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
 
-            // Adicionar tratamento de erro para imagem shiny também
             img.onerror = function () {
                 this.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
-                // Se a imagem normal também falhar, usar pokeball
                 this.onerror = function () {
                     this.src = "../assets/pokeball.png";
                     this.style.width = "50%";
@@ -204,38 +192,6 @@ export function createPokemonCard(pokemon) {
             };
         }
     });
-
-    // // vai lidar com o click e a eventual seleção das cartas
-    // card.addEventListener("click", () => {
-    //     // verifica se a carta tá ativa, isso é, selecionada
-    //     const isActive = card.classList.toggle("card-active");
-
-    //     if (isActive) {
-    //         // se já foram selecionadas cartas, não permite a seleção dessa carta 
-    //         if (selectedPokemons.length >= 4) {
-    //             alert("Você só pode selecionar até 4 pokémons. Deselecione algum para continuar.");
-    //             card.classList.remove("card-active");
-    //             return;
-    //         }
-
-    //         if (selectedPokemons.some(p => p.name === pokemon.name)) {
-    //             card.classList.remove("card-active");
-    //             return;
-    //         }
-
-    //         card.style.backgroundColor = colors.hover;
-    //         card.style.transform = "translateY(-5px)";
-    //         img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
-    //         selectedPokemons.push(pokemon);
-
-    //     }
-    //     else {
-    //         selectedPokemons = selectedPokemons.filter(p => p.pokemon_id !== pokemon.pokemon_id);
-    //         card.style.backgroundColor = colors.primary;
-    //         card.style.transform = "translateY(+5px)";
-    //         img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
-    //     }
-    // });
 
     return card;
 }

@@ -9,12 +9,28 @@ import { createRadarChart } from "./radarChart.js";
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 let selectedPokemons = [];
 
-// ao mudar a tela de tamanho, reconstroi tudo para parecer dinâmico
+let speciesDataPromise;
+async function getSpeciesData() {
+    if (!speciesDataPromise) {
+        speciesDataPromise = d3.csv('../data/pokemon_species.csv', d => ({
+            pokemon_id: +d.id,
+            generation_id: +d.generation_id,
+            habitat_id: +d.habitat_id,
+            gender_rate: +d.gender_rate,
+            capture_rate: +d.capture_rate,
+            base_happiness: +d.base_happiness,
+            hatch_counter: +d.hatch_counter,
+            growth_rate_id: +d.growth_rate_id,
+            is_baby: +d.is_baby,
+            is_legendary: +d.is_legendary,
+            is_mythical: +d.is_mythical
+        }));
+    }
+    return speciesDataPromise;
+}
+
 window.addEventListener("resize", editPokemonsCard);
 
-/**
- * Vai construir os elementos básicos da 'pokemon-screen'. 
- */
 export async function createPokemonScreen() {
     const todosPokemons = await getAllPokemons();
 
@@ -22,7 +38,6 @@ export async function createPokemonScreen() {
     contentScreen.style.gap = "0";
     contentScreen.style.justifyContent = '';
 
-    // cria os elementos
     const pokemonSearch = document.createElement("div");
     pokemonSearch.classList.add("pokemons-search");
 
@@ -43,9 +58,16 @@ export async function createPokemonScreen() {
         const query = pokemonSearchBox.value.toLowerCase();
         suggestionsList.innerHTML = "";
 
-        const filtered = todosPokemons.filter(p =>
-            p.name.toLowerCase().includes(query)
-        );
+        let filtered;
+        if (query.length === 0) {
+            // Se não há texto, mostra todos os pokémons (limitado a 50 para performance)
+            filtered = todosPokemons.slice(0, 50);
+        } else {
+            // Se há texto, filtra por nome
+            filtered = todosPokemons.filter(p =>
+                p.name.toLowerCase().includes(query)
+            );
+        }
 
         if (filtered.length === 0) {
             const li = document.createElement("li");
@@ -60,26 +82,60 @@ export async function createPokemonScreen() {
             return;
         }
 
+        const fragment = document.createDocumentFragment();
+
         filtered.forEach(pokemon => {
             const li = document.createElement("li");
             li.classList.add("li");
+            li.style.display = "flex";
+            li.style.alignItems = "center";
+            li.style.justifyContent = "space-between";
 
-            const img = document.createElement("img");
-            img.src = `../assets/types/${pokemon.types[0].type_name}.png`
-            img.classList.add("search-type-img");
-            li.appendChild(img);
+            // Container da esquerda (sprite + nome)
+            const leftContainer = document.createElement("div");
+            leftContainer.style.display = "flex";
+            leftContainer.style.alignItems = "center";
+            leftContainer.style.gap = "8px";
 
-            li.appendChild(document.createTextNode(pokemon.name));
-
-            const img2 = document.createElement("img");
-            img2.src = `../assets/pokemons/${pokemon.pokemon_id}.png`
-            img2.classList.add("search-gif");
-            img2.style.imageRendering = 'pixelated';
-            img2.onerror = function () {
+            // Sprite do pokémon
+            const pokemonImg = document.createElement("img");
+            pokemonImg.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
+            pokemonImg.classList.add("search-gif");
+            pokemonImg.style.imageRendering = 'pixelated';
+            pokemonImg.onerror = function () {
                 this.src = '../assets/ball.png';
                 this.style.opacity = '0.5';
             };
-            li.appendChild(img2);
+            leftContainer.appendChild(pokemonImg);
+
+            // Nome do pokémon
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = pokemon.name;
+            leftContainer.appendChild(nameSpan);
+
+            li.appendChild(leftContainer);
+
+            // Container dos tipos à direita
+            const typesContainer = document.createElement("div");
+            typesContainer.style.display = "flex";
+            typesContainer.style.gap = "2px";
+            typesContainer.style.alignItems = "center";
+
+            // Primeiro tipo
+            const typeImg1 = document.createElement("img");
+            typeImg1.src = `../assets/types/${pokemon.types[0].type_name}.png`;
+            typeImg1.classList.add("search-type-img");
+            typesContainer.appendChild(typeImg1);
+
+            // Segundo tipo se existir
+            if (pokemon.types[1]) {
+                const typeImg2 = document.createElement("img");
+                typeImg2.src = `../assets/types/${pokemon.types[1].type_name}.png`;
+                typeImg2.classList.add("search-type-img");
+                typesContainer.appendChild(typeImg2);
+            }
+
+            li.appendChild(typesContainer);
 
             li.style.backgroundColor = pokemonTypeColorsRGBA[pokemon.types[0].type_name];
 
@@ -96,10 +152,23 @@ export async function createPokemonScreen() {
                     selectedPokemons.push(pokemon);
                     editPokemonsCard();
                 }
-
             };
-            suggestionsList.appendChild(li);
+
+            fragment.appendChild(li);
         });
+
+        suggestionsList.appendChild(fragment);
+
+        // Mostrar indicador se há mais pokémons quando query está vazia
+        if (query.length === 0 && todosPokemons.length > 50) {
+            const moreIndicator = document.createElement("li");
+            moreIndicator.textContent = `... e mais ${todosPokemons.length - 50} pokémons (digite para buscar)`;
+            moreIndicator.style.fontStyle = "italic";
+            moreIndicator.style.color = "#666";
+            moreIndicator.style.textAlign = "center";
+            moreIndicator.style.padding = "10px";
+            suggestionsList.appendChild(moreIndicator);
+        }
     }
 
     function showSuggestions() {
@@ -185,7 +254,7 @@ export async function createPokemonScreen() {
 /**
  * Função que atualiza a pokemon-screen caso seja selecionado/desselecionado algum pokémon.
  */
-export function editPokemonsCard() {
+export async function editPokemonsCard() {
     // seleciona a região dos cards inferiores
     const pokemonsCardSelect = document.getElementsByClassName("pokemons-select-2")[0];
     pokemonsCardSelect.innerHTML = "";
@@ -203,7 +272,9 @@ export function editPokemonsCard() {
         if (i <= selectedPokemons.length) {
             const selectedPokemon = selectedPokemons[i - 1];
             pokemonsCardSelect.appendChild(createSelectedPokemonCard(selectedPokemon));
-            pokemonsDescription.appendChild(createSelectedPokemonDescription(selectedPokemon));
+            // Agora aguardamos o carregamento de dados adicionais
+            const desc = await createSelectedPokemonDescription(selectedPokemon);
+            pokemonsDescription.appendChild(desc);
         }
         // para os restantes, cria as versões vazias
         else {
@@ -261,60 +332,75 @@ function createEmptyDescription() {
  * @param {*} selectedPokemon - Dados do pokémon que vão ser usados para construção da descrição dele
  * @returns Retorna a div da descrição personalizada. 
  */
-function createSelectedPokemonDescription(selectedPokemon) {
-    // construção da div das descrições
+async function createSelectedPokemonDescription(selectedPokemon) {
     const desc = document.createElement("div");
     desc.classList.add("pokemon-description");
+
+    // Carregar dados de espécies da vez
+    const speciesList = await getSpeciesData();
+    const species = speciesList.find(s => s.pokemon_id === selectedPokemon.pokemon_id) || {};
+
+    const heightM = selectedPokemon.height / 10;
+    const weightKg = selectedPokemon.weight / 10;
+    const genderRate = genderRateMap[species.gender_rate] || "-";
+    const hatchCount = species.hatch_counter ?? 0;
+    const generation = generationMap[species.generation_id] || '-';
+    const habitat = habitatMap[species.habitat_id] || '-';
+    const captureRate = species.capture_rate ?? '-';
+    const growthRateName = growthRateMap[species.growth_rate_id]?.name || '-';
+    const baseHappiness = species.base_happiness ?? '-';
+    const isBaby = species.is_baby === 1 ? "Sim" : "Não";
+    const isLegendary = species.is_legendary === 1 ? "Sim" : "Não";
+    const isMythical = species.is_mythical === 1 ? "Sim" : "Não";
 
     // configuração de todo o html da div com as infos personalizadas
     desc.innerHTML = `
                     <div class="types-container">
                         <img class="type-img" src="../assets/description-types/${selectedPokemon.types[0].type_name}.png" />
-                        ${selectedPokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}                        </div>
+                        ${selectedPokemon.types[1] ? `<img class="type-img" src="../assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}
+                    </div>
                     <div class="info-rows">
                         <div class="info-blocks">
-                            <img src="../assets/block-info/governante.png" ></img>
-                            ${selectedPokemon.height / 10} m
+                            <img src="../assets/block-info/governante.png" />
+                            ${heightM} m
                         </div>
                         <div class="info-blocks">
-                            <img src="../assets/block-info/regua.png" ></img>
-                            ${selectedPokemon.weight / 10} kg
+                            <img src="../assets/block-info/regua.png" />
+                            ${weightKg} kg
                         </div>
                     </div>
                     <div class="info-rows">
                         <div class="info-blocks">
-                            <img src="../assets/block-info/genders.png" ></img>
-                            ${genderRateMap[selectedPokemon.gender_rate]}
+                            <img src="../assets/block-info/genders.png" />
+                            ${genderRate}
                         </div>
                         <div class="info-blocks">
-                            <img src="../assets/block-info/relogio.png" ></img>
-                            ${selectedPokemon.hatch_counter} ciclos
+                            <img src="../assets/block-info/relogio.png" />
+                            ${hatchCount} ciclos
                         </div>
                     </div>
                     <div class="info-rows-2">
-                        <div class="info-blocks-2-menor">
-                            <strong>Nome:</strong><br>
-                            <strong>Genus:</strong><br>
-                            <strong>Geração:</strong><br>
-                            <strong>Habitat:</strong><br>
-                            <strong>Taxa de Captura:</strong><br>
-                            <strong>Taxa de Cresc.:</strong><br>
-                            <strong>Felicidade:</strong><br>
-                            <strong>Bebê:</strong><br>
-                            <strong>Lendário:</strong><br>
-                            <strong>Mítico:</strong><br>
-                        </div>
-                        <div class="info-blocks-2-maior">
-                            ${selectedPokemon.name}<br>
-                            ${selectedPokemon.genus.split(" Pokémon")[0]}<br>
-                            ${generationMap[selectedPokemon.generation_id]}<br>
-                            ${habitatMap[selectedPokemon.habitat_id]}<br>
-                            ${selectedPokemon.capture_rate}<br>
-                            ${growthRateMap[selectedPokemon.growth_rate_id]?.name || 'Desconhecida'}<br>
-                            ${selectedPokemon.base_happiness}<br>
-                            ${selectedPokemon.is_baby == 0 ? "Não" : "Sim"}<br>
-                            ${selectedPokemon.is_legendary == 0 ? "Não" : "Sim"}<br>
-                            ${selectedPokemon.is_mythical == 0 ? "Não" : "Sim"}<br>
+                        <div class="info-table">
+                            <div class="info-row">
+                                <div class="info-label"><strong>Nome:</strong></div>
+                                <div class="info-value">${selectedPokemon.name}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label"><strong>Genus:</strong></div>
+                                <div class="info-value">${selectedPokemon.genus.split(" Pokémon")[0]}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label"><strong>Geração:</strong></div>
+                                <div class="info-value">${generation}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label"><strong>Taxa de Captura:</strong></div>
+                                <div class="info-value">${captureRate}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label"><strong>Lendário:</strong></div>
+                                <div class="info-value">${isLegendary}</div>
+                            </div>
                         </div>
                     </div>`;
 

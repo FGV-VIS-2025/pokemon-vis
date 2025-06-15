@@ -1,4 +1,4 @@
-import { shape_id_to_name, tipoTraduzido } from "./consts.js";
+import { tipoTraduzido } from "./consts.js";
 
 export async function createKnnDiagram(selectedPokemons) {
     const knnDiv = document.getElementsByClassName("knn")[0];
@@ -71,42 +71,38 @@ export async function createKnnDiagram(selectedPokemons) {
         pokemonDiv.style.border = "1px solid rgb(255, 255, 255)";
 
         pokemonDiv.addEventListener("mouseover", (event) => {
-            showTooltip(`<strong>ID: </strong>#${pokemon.pokemon_id}<br/>
-                        <strong>Nome: </strong>${pokemon.name}<br/>
-                        <strong>Genus: </strong>${pokemon.genus.split(" Pokémon")[0]}<br/>
-                        <strong>Altura: </strong>${pokemon.height / 10} m<br/>
-                        <strong>Peso: </strong>${pokemon.weight / 10} kg<br/>
-                        <strong>Hp: </strong>${pokemon.Hp_Stat}<br/>
-                        <strong>Ataque: </strong>${pokemon.Attack_Stat}<br/>
-                        <strong>Defesa: </strong>${pokemon.Defense_Stat}<br/>
-                        <strong>Ataque Especial: </strong>${pokemon.Special_Attack_Stat}<br/>
-                        <strong>Defesa Especial: </strong>${pokemon.Special_Defense_Stat}<br/>
-                        <strong>Velocidade: </strong>${pokemon.Speed_Stat}<br/>
-                        <strong>Tipo 1 (2x): </strong>${tipoTraduzido[pokemon.types[0].type_name]}<br/>
-                        <strong>Tipo 2 (2x): </strong>${pokemon.types[1]?.type_name ? tipoTraduzido[pokemon.types[1].type_name] : ""}<br/>
-                        <strong>Formato: </strong>${shape_id_to_name[pokemon.shape_id]}<br/>
-                        <strong>Baby: </strong>${pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
-                        <strong>Mítico: </strong>${pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
-                        <strong>Lendário: </strong>${pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);
+            const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Unknown";
+            const tipos = pokemon.types.map(type => tipoTraduzido[type.type_name] || type.type_name).join(", ");
+            const altura = pokemon.height / 10;
+            const peso = pokemon.weight / 10;
+            const lendario = pokemon.is_legendary === 0 ? "Não" : "Sim";
+
+            const tooltipContent = `<strong>${pokemon.name}</strong> #${pokemon.pokemon_id}<br/>
+                <strong>Genus:</strong> ${genus}<br/>
+                <strong>Tipos:</strong> ${tipos}<br/>
+                <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
+                <strong>Lendário:</strong> ${lendario}<br/>
+                <strong>HP:</strong> ${pokemon.Hp_Stat} | <strong>ATK:</strong> ${pokemon.Attack_Stat} | <strong>DEF:</strong> ${pokemon.Defense_Stat}<br/>
+                <strong>SP.ATK:</strong> ${pokemon.Special_Attack_Stat} | <strong>SP.DEF:</strong> ${pokemon.Special_Defense_Stat} | <strong>SPD:</strong> ${pokemon.Speed_Stat}`;
+            showTooltip(tooltipContent, event);
         });
 
-        pokemonDiv.addEventListener("mousemove", showTooltip.bind(null, `<strong>ID: </strong>#${pokemon.pokemon_id}<br/>
-                                                                        <strong>Nome: </strong>${pokemon.name}<br/>
-                                                                        <strong>Genus: </strong>${pokemon.genus.split(" Pokémon")[0]}<br/>
-                                                                        <strong>Altura: </strong>${pokemon.height / 10} m<br/>
-                                                                        <strong>Peso: </strong>${pokemon.weight / 10} kg<br/>
-                                                                        <strong>Hp: </strong>${pokemon.Hp_Stat}<br/>
-                                                                        <strong>Ataque: </strong>${pokemon.Attack_Stat}<br/>
-                                                                        <strong>Defesa: </strong>${pokemon.Defense_Stat}<br/>
-                                                                        <strong>Ataque Especial: </strong>${pokemon.Special_Attack_Stat}<br/>
-                                                                        <strong>Defesa Especial: </strong>${pokemon.Special_Defense_Stat}<br/>
-                                                                        <strong>Velocidade: </strong>${pokemon.Speed_Stat}<br/>
-                                                                        <strong>Tipo 1 (2x): </strong>${tipoTraduzido[pokemon.types[0].type_name]}<br/>
-                                                                        <strong>Tipo 2 (2x): </strong>${pokemon.types[1]?.type_name ? tipoTraduzido[pokemon.types[1].type_name] : ""}<br/>
-                                                                        <strong>Formato: </strong>${shape_id_to_name[pokemon.shape_id]}<br/>
-                                                                        <strong>Baby: </strong>${pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
-                                                                        <strong>Mítico: </strong>${pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
-                                                                        <strong>Lendário: </strong>${pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`));
+        pokemonDiv.addEventListener("mousemove", (event) => {
+            const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Unknown";
+            const tipos = pokemon.types.map(type => tipoTraduzido[type.type_name] || type.type_name).join(", ");
+            const altura = pokemon.height / 10;
+            const peso = pokemon.weight / 10;
+            const lendario = pokemon.is_legendary === 0 ? "Não" : "Sim";
+
+            const tooltipContent = `<strong>${pokemon.name}</strong> #${pokemon.pokemon_id}<br/>
+                <strong>Genus:</strong> ${genus}<br/>
+                <strong>Tipos:</strong> ${tipos}<br/>
+                <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
+                <strong>Lendário:</strong> ${lendario}<br/>
+                <strong>HP:</strong> ${pokemon.Hp_Stat} | <strong>ATK:</strong> ${pokemon.Attack_Stat} | <strong>DEF:</strong> ${pokemon.Defense_Stat}<br/>
+                <strong>SP.ATK:</strong> ${pokemon.Special_Attack_Stat} | <strong>SP.DEF:</strong> ${pokemon.Special_Defense_Stat} | <strong>SPD:</strong> ${pokemon.Speed_Stat}`;
+            showTooltip(tooltipContent, event);
+        });
 
         pokemonDiv.addEventListener("mouseleave", hideTooltip);
 
@@ -142,42 +138,42 @@ export async function createKnnDiagram(selectedPokemons) {
             comparasionPokemon.style.border = "1px solid rgb(255, 255, 255)";
 
             comparasionPokemon.addEventListener("mouseover", (event) => {
-                showTooltip(`<strong>ID: </strong>#${knnData[j].pokemon.id}<br/>
-                            <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
-                            <strong>Genus: </strong>${knnData[j].pokemon.genus.split(" Pokémon")[0]}<br/>
-                            <strong>Altura: </strong>${knnData[j].pokemon.height / 10} m<br/>
-                            <strong>Peso: </strong>${knnData[j].pokemon.weight / 10} kg<br/>
-                            <strong>Hp: </strong>${knnData[j].pokemon.hp_stat}<br/>
-                            <strong>Ataque: </strong>${knnData[j].pokemon.attack_stat}<br/>
-                            <strong>Defesa: </strong>${knnData[j].pokemon.defense_stat}<br/>
-                            <strong>Ataque Especial: </strong>${knnData[j].pokemon.special_attack_stat}<br/>
-                            <strong>Defesa Especial: </strong>${knnData[j].pokemon.special_defense_stat}<br/>
-                            <strong>Velocidade: </strong>${knnData[j].pokemon.speed_stat}<br/>
-                            <strong>Tipo 1 (2x): </strong>${knnData[j].pokemon.type_1}<br/>
-                            <strong>Tipo 2 (2x): </strong>${knnData[j].pokemon.type_2 == "" ? "" : knnData[j].pokemon.type_2}<br/>
-                            <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
-                            <strong>Baby: </strong>${+knnData[j].pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
-                            <strong>Mítico: </strong>${+knnData[j].pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
-                            <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);
+                const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Unknown";
+                const tipo1 = knnData[j].pokemon.type_1;
+                const tipo2 = knnData[j].pokemon.type_2;
+                const tipos = [tipo1, tipo2].filter(t => t && t !== "").join(", ");
+                const altura = knnData[j].pokemon.height / 10;
+                const peso = knnData[j].pokemon.weight / 10;
+                const lendario = +knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim";
+
+                const tooltipContent = `<strong>${knnData[j].pokemon.name}</strong> #${knnData[j].pokemon.id}<br/>
+                    <strong>Genus:</strong> ${genus}<br/>
+                    <strong>Tipos:</strong> ${tipos}<br/>
+                    <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
+                    <strong>Lendário:</strong> ${lendario}<br/>
+                    <strong>HP:</strong> ${knnData[j].pokemon.hp_stat} | <strong>ATK:</strong> ${knnData[j].pokemon.attack_stat} | <strong>DEF:</strong> ${knnData[j].pokemon.defense_stat}<br/>
+                    <strong>SP.ATK:</strong> ${knnData[j].pokemon.special_attack_stat} | <strong>SP.DEF:</strong> ${knnData[j].pokemon.special_defense_stat} | <strong>SPD:</strong> ${knnData[j].pokemon.speed_stat}`;
+                showTooltip(tooltipContent, event);
             });
 
-            comparasionPokemon.addEventListener("mousemove", showTooltip.bind(null, `<strong>ID: </strong>#${knnData[j].pokemon.id}<br/>
-                                                    <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
-                                                    <strong>Genus: </strong>${knnData[j].pokemon.genus.split(" Pokémon")[0]}<br/>
-                                                    <strong>Altura: </strong>${knnData[j].pokemon.height / 10} m<br/>
-                                                    <strong>Peso: </strong>${knnData[j].pokemon.weight / 10} kg<br/>
-                                                    <strong>Hp: </strong>${knnData[j].pokemon.hp_stat}<br/>
-                                                    <strong>Ataque: </strong>${knnData[j].pokemon.attack_stat}<br/>
-                                                    <strong>Defesa: </strong>${knnData[j].pokemon.defense_stat}<br/>
-                                                    <strong>Ataque Especial: </strong>${knnData[j].pokemon.special_attack_stat}<br/>
-                                                    <strong>Defesa Especial: </strong>${knnData[j].pokemon.special_defense_stat}<br/>
-                                                    <strong>Velocidade: </strong>${knnData[j].pokemon.speed_stat}<br/>
-                                                    <strong>Tipo 1 (2x): </strong>${knnData[j].pokemon.type_1}<br/>
-                                                    <strong>Tipo 2 (2x): </strong>${knnData[j].pokemon.type_2 == "" ? "" : knnData[j].pokemon.type_2}<br/>
-                                                    <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
-                                                    <strong>Baby: </strong>${+knnData[j].pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
-                                                    <strong>Mítico: </strong>${+knnData[j].pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
-                                                    <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`));
+            comparasionPokemon.addEventListener("mousemove", (event) => {
+                const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Unknown";
+                const tipo1 = knnData[j].pokemon.type_1;
+                const tipo2 = knnData[j].pokemon.type_2;
+                const tipos = [tipo1, tipo2].filter(t => t && t !== "").join(", ");
+                const altura = knnData[j].pokemon.height / 10;
+                const peso = knnData[j].pokemon.weight / 10;
+                const lendario = +knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim";
+
+                const tooltipContent = `<strong>${knnData[j].pokemon.name}</strong> #${knnData[j].pokemon.id}<br/>
+                    <strong>Genus:</strong> ${genus}<br/>
+                    <strong>Tipos:</strong> ${tipos}<br/>
+                    <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
+                    <strong>Lendário:</strong> ${lendario}<br/>
+                    <strong>HP:</strong> ${knnData[j].pokemon.hp_stat} | <strong>ATK:</strong> ${knnData[j].pokemon.attack_stat} | <strong>DEF:</strong> ${knnData[j].pokemon.defense_stat}<br/>
+                    <strong>SP.ATK:</strong> ${knnData[j].pokemon.special_attack_stat} | <strong>SP.DEF:</strong> ${knnData[j].pokemon.special_defense_stat} | <strong>SPD:</strong> ${knnData[j].pokemon.speed_stat}`;
+                showTooltip(tooltipContent, event);
+            });
 
             comparasionPokemon.addEventListener("mouseleave", hideTooltip);
 

@@ -73,7 +73,6 @@ export async function renderStatRadarChart(locationId) {
         const locationAreaIds_ = await getLocationAreaByLocation(locationId);
 
         if (locationAreaIds_.length === 0) {
-            console.warn(`Nenhuma location_area encontrada para location_id ${locationId}`);
             return;
         }
 
@@ -87,7 +86,6 @@ export async function renderStatRadarChart(locationId) {
         );
 
         if (pokemonsWithTypes.length === 0) {
-            console.warn(`Nenhum Pokémon encontrado para location_id ${locationId}`);
             return;
         }
 

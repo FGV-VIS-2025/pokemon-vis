@@ -3,7 +3,6 @@ import { gameRegionVersions, getPokemonsByGeneration, regionToGeneration } from 
 import { clearDistributionPlotFilter, drawDistributionPlot, updateDistributionPlot } from "./distributplot.js";
 import { updateTypeChordByRegion } from "./types.js";
 
-// Adicionar CSS para a tooltip de card do Pokémon
 const style = document.createElement('style');
 style.textContent = `
     .pokemon-tooltip-card {
@@ -27,15 +26,12 @@ document.head.appendChild(style);
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
 
-// Variável global para armazenar o ID da região atual
-let currentRegionId = 3; // fallback Hoenn
+let currentRegionId = 3;
 
 function createRegionSearchBar(regionName = "Região Selecionada") {
-    // Obter o número da geração correspondente
     const generationNumber = regionToGeneration[regionName] || "";
     const generationSuffix = generationNumber ? ` (${generationNumber}ª Geração)` : "";
 
-    // Container principal da busca/info (similar ao locationScreen)
     const regionSearch = document.createElement("div");
     regionSearch.classList.add("region-search");
     regionSearch.style.width = "60%";
@@ -99,12 +95,6 @@ function createRegionSearchBar(regionName = "Região Selecionada") {
 
     return regionSearch;
 }
-
-// Cards removidos conforme solicitado
-
-
-
-// Função de atualização dos cards removida
 
 function createRegionDescription() {
     const descriptionArea = document.createElement("div");
@@ -235,7 +225,7 @@ function createRegionDescription() {
     const spriteGridContainer = document.createElement('div');
     spriteGridContainer.style.width = '100%';
     spriteGridContainer.style.height = 'calc(100% - 50px)'; // Espaço para navegação na parte inferior
-    spriteGridContainer.style.overflow = 'hidden'; // Remove o scroll
+    spriteGridContainer.style.overflow = 'hidden';
     spriteGridContainer.style.position = 'relative';
 
     // Grid para os sprites (tamanho fixo para paginação)
@@ -994,19 +984,14 @@ document.addEventListener('click', handleGlobalClick);
 // Variável para controlar o listener global de mousemove
 let globalMouseMoveActive = false;
 
-// Função para debugar elementos fantasmas (dev helper)
 function debugGhostElements() {
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-        console.log('🔍 Debugging ghost elements...');
-
-        // Encontrar todos os elementos com listeners de evento
         const elementsWithListeners = document.querySelectorAll('*');
         const problematicElements = [];
 
         elementsWithListeners.forEach(element => {
             const style = window.getComputedStyle(element);
 
-            // Verificar elementos posicionados que podem estar causando problemas
             if (style.position === 'absolute' || style.position === 'fixed') {
                 if (style.pointerEvents !== 'none' &&
                     (style.opacity === '0' || style.visibility === 'hidden' ||
@@ -1029,27 +1014,18 @@ function debugGhostElements() {
 
         if (problematicElements.length > 0) {
             console.warn('⚠️ Found potentially problematic elements:', problematicElements);
-            // Opcional: remover elementos problemáticos automaticamente
             problematicElements.forEach(({ element }) => {
                 if (element && !element.classList.contains('pokemon-tooltip-card')) {
                     element.style.pointerEvents = 'none';
-                    console.log('🔧 Fixed element by setting pointer-events: none', element);
                 }
             });
-        } else {
-            console.log('✅ No ghost elements detected');
         }
     }
 }
 
-// Função para limpar tooltips e listeners anteriores
 function cleanupPreviousTooltips() {
-    console.log('🧹 Limpando tooltips e listeners anteriores...');
-
-    // Remove todos os tooltips existentes do body (não apenas da content-screen)
     const existingTooltips = document.querySelectorAll('.pokemon-tooltip-card');
     existingTooltips.forEach(tooltip => {
-        console.log('🗑️ Removendo tooltip:', tooltip);
         tooltip.remove();
     });
 
@@ -1069,11 +1045,9 @@ function cleanupPreviousTooltips() {
         }
     });
 
-    // Força a remoção do listener global se ativo
     if (globalMouseMoveActive) {
         document.removeEventListener('mousemove', handleGlobalMouseMove);
         globalMouseMoveActive = false;
-        console.log('🔄 Listener global mousemove removido');
     }
 
     // Limpar qualquer estado de hover ou seleção anterior APENAS na content-screen

@@ -52,7 +52,6 @@ async function selectFirstLocation(regionName) {
 selectFirstLocation("Kanto");
 
 rightButtons.addEventListener("click", function () {
-    // Adicionar feedback visual
     rightButtons.style.transform = "scale(0.95)";
     setTimeout(() => {
         rightButtons.style.transform = "scale(1)";
@@ -64,21 +63,15 @@ rightButtons.addEventListener("click", function () {
         i = 0;
     }
 
-    // Atualizar display da região
     regionDisplay.textContent = listOfRegions[i];
     mapImage.src = `../assets/maps/${listOfRegions[i]}.png`;
 
-    // Selecionar primeira localização da nova região
     selectFirstLocation(listOfRegions[i]);
 
-    // Disparar evento para outras partes do sistema
     dispatchRegionChangeEvent(listOfRegions[i]);
-
-    console.log(`🎮 Região alterada para: ${listOfRegions[i]}`);
 });
 
 leftButtons.addEventListener("click", function () {
-    // Adicionar feedback visual
     leftButtons.style.transform = "scale(0.95)";
     setTimeout(() => {
         leftButtons.style.transform = "scale(1)";
@@ -90,15 +83,10 @@ leftButtons.addEventListener("click", function () {
         i = listOfRegions.length - 1;
     }
 
-    // Atualizar display da região
     regionDisplay.textContent = listOfRegions[i];
     mapImage.src = `../assets/maps/${listOfRegions[i]}.png`;
 
-    // Selecionar primeira localização da nova região
     selectFirstLocation(listOfRegions[i]);
 
-    // Disparar evento para outras partes do sistema
     dispatchRegionChangeEvent(listOfRegions[i]);
-
-    console.log(`🎮 Região alterada para: ${listOfRegions[i]}`);
 });

@@ -920,21 +920,42 @@ body {
     box-sizing: border-box;
     padding: 10px;
     font-size: .65em;
-    ;
     border: 1px solid rgb(255, 255, 255);
 }
 
-.info-blocks-2-menor {
+.info-table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    min-height: fit-content;
+}
+
+.info-label {
     width: 45%;
-    padding: 5px;
+    padding: 2px 5px;
+    display: flex;
+    align-items: flex-start;
+    word-wrap: break-word;
+    line-height: 1.2;
 }
 
-.info-blocks-2-maior {
-    padding: 5px;
+.info-value {
     width: 55%;
+    padding: 2px 5px;
+    display: flex;
+    align-items: flex-start;
+    word-wrap: break-word;
+    line-height: 1.2;
 }
 
-.svg-pai-chart-1{
+.svg-pai-chart-1 {
     width: 90%;
     height: auto;
     border-radius: 10px;
@@ -970,7 +991,7 @@ body {
     box-sizing: border-box;
 }
 
-.knn{
+.knn {
     width: 50%;
     aspect-ratio: 1/1;
     background-color: #1b1b1b;
@@ -1544,22 +1565,23 @@ body {
     animation-delay: 2s;
 }
 
-.tooltip-types, .tooltip-types-2{
-    position: absolute; 
-    opacity: 0; 
-    pointer-events: none; 
-    background: #333; 
-    color: #fff; 
-    padding: 5px 10px; 
-    border-radius: 5px; 
+.tooltip-types,
+.tooltip-types-2 {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
     font-size: 12px;
 }
 
-.svg-pai-chart-2{
+.svg-pai-chart-2 {
     font-family: "Pixelify Sans", sans-serif;
 }
 
-.tooltip-knn{
+.tooltip-knn {
     position: absolute;
     background-color: rgba(44, 44, 44, 0.9);
     color: white;
@@ -1572,7 +1594,7 @@ body {
 }
 
 .knn-comparasion-ind:hover,
-.knn-pokemon-ind:hover{
+.knn-pokemon-ind:hover {
     cursor: pointer;
     background-color: rgba(43, 43, 43, 0.9);
 }

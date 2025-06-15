@@ -14,7 +14,6 @@ class ScreenStateManager {
         this.isUpdating = false;
         this.updateQueue = [];
 
-        // Elementos do DOM
         this.regionDisplay = document.getElementsByClassName("region-screen")[0];
         this.locationDisplay = document.getElementsByClassName("location-screen")[0];
         this.contentContainer = document.getElementsByClassName("content-container")[0];
@@ -23,26 +22,21 @@ class ScreenStateManager {
     }
 
     init() {
-        console.log("🎯 ScreenStateManager inicializado");
         this.setupEventListeners();
         this.setupObservers();
     }
 
     setupEventListeners() {
-        // Listener para mudanças de região via botões left/right
         document.addEventListener('regionChanged', async (event) => {
             const { regionName, source } = event.detail;
-            console.log(`🌍 Evento regionChanged recebido: ${regionName} (fonte: ${source})`);
 
             if (this.currentScreen === 'region') {
                 await this.updateRegionScreen(regionName);
             }
         });
 
-        // Listener para mudanças de localização via botões left/right
         document.addEventListener('locationChanged', async (event) => {
             const { locationName, source } = event.detail;
-            console.log(`📍 Evento locationChanged recebido: ${locationName} (fonte: ${source})`);
 
             if (this.currentScreen === 'location') {
                 await this.updateLocationScreen(locationName);
@@ -53,7 +47,6 @@ class ScreenStateManager {
         document.addEventListener('screenActivated', (event) => {
             const { screenType } = event.detail;
             this.currentScreen = screenType;
-            console.log(`🎮 Screen ativado: ${screenType}`);
         });
     }
 
@@ -114,7 +107,6 @@ class ScreenStateManager {
         try {
             const regionId = await getRegionIdByName(regionName);
             await createRegionScreen(regionId);
-            console.log(`✅ Region screen atualizado: ${regionName} (ID: ${regionId})`);
         } catch (error) {
             console.error(`❌ Erro ao atualizar region screen:`, error);
         } finally {
@@ -133,7 +125,6 @@ class ScreenStateManager {
         try {
             const locationId = await getLocationIdByName(locationName);
             await createLocationScreen(locationId);
-            console.log(`✅ Location screen atualizado: ${locationName} (ID: ${locationId})`);
         } catch (error) {
             console.error(`❌ Erro ao atualizar location screen:`, error);
         } finally {
@@ -154,7 +145,6 @@ class ScreenStateManager {
             setTimeout(() => {
                 editPokemonsCard();
             }, 10);
-            console.log(`✅ Pokemon screen atualizado`);
         } catch (error) {
             console.error(`❌ Erro ao atualizar pokemon screen:`, error);
         } finally {
@@ -210,7 +200,6 @@ class ScreenStateManager {
     }
 }
 
-// Criar instância global
 const screenStateManager = new ScreenStateManager();
 
 // Exportar para uso em outros módulos
