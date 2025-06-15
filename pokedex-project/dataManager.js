@@ -6,7 +6,6 @@ const locationIdCacheByName = new Map();
 const pokemonsByAreaCache = new Map();
 let allPokemonsPromise;
 
-// Cache para dados comumente usados
 const commonDataCache = {
     regions: null,
     locations: null,
@@ -15,7 +14,6 @@ const commonDataCache = {
     locationAreas: null
 };
 
-// Função para pré-carregar dados comuns
 async function preloadCommonData() {
     if (!commonDataCache.regions) {
         [
@@ -63,7 +61,6 @@ async function preloadCommonData() {
 async function loadCsv(path, parser) {
     try {
         if (!csvCache.has(path)) {
-            // Usar Promise com timeout para evitar travamentos
             const fetchPromise = new Promise((resolve, reject) => {
                 d3.csv(path, parser)
                     .then(data => {
@@ -74,7 +71,6 @@ async function loadCsv(path, parser) {
                         reject(error);
                     });
 
-                // Timeout de 5 segundos para evitar travamentos
                 setTimeout(() => reject(new Error(`Timeout ao carregar ${path}`)), 5000);
             });
 
@@ -93,10 +89,9 @@ export const gameRegionVersions = {
     "Hoenn": [7, 8, 9],
     "Sinnoh": [12, 13, 14],
     "Unova": [17, 18, 21, 22],
-    "Kalos": [23, 24, 25, 26], // X, Y, Omega Ruby, Alpha Sapphire
+    "Kalos": [23, 24, 25, 26],
 }
 
-// Mapeamento de regiões para gerações
 export const regionToGeneration = {
     "Kanto": 1,   // Red, Blue, Yellow
     "Johto": 2,   // Gold, Silver, Crystal

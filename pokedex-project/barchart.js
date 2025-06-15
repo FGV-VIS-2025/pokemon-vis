@@ -109,18 +109,14 @@ Promise.all([
 });
 export async function renderBarChartByRegion(regionId) {
   try {
-    // Converter ID de região para nome
     const regionNames = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos"];
-    const regionName = regionNames[regionId - 1] || "Kanto"; // Assumindo que os IDs começam em 1
+    const regionName = regionNames[regionId - 1] || "Kanto";
 
-    // Obter todos os Pokémon da geração correspondente à região
     const pokemonsFromGeneration = await getPokemonsByGeneration(regionName);
 
-    // Se não houver Pokémon, exibir mensagem no gráfico
     if (!pokemonsFromGeneration || pokemonsFromGeneration.length === 0) {
       console.warn(`Nenhum Pokémon encontrado para a geração da região ${regionName}`);
 
-      // Limpar o container e mostrar mensagem de erro
       const container = d3.select('#bar-chart-container');
       container.selectAll("*").remove();
 

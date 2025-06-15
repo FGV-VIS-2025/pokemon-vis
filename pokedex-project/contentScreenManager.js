@@ -11,17 +11,38 @@ const pokemonButton = document.getElementsByClassName("pokemons-button")[0];
 const regionDisplay = document.getElementsByClassName("region-screen")[0];
 const locationDisplay = document.getElementsByClassName("location-screen")[0];
 
+async function loadMainContent(key) {
+    try {
+        if (key == 1) {
+            createRegionScreen(await getRegionIdByName(regionDisplay.textContent.trim()));
+        } else if (key == 2) {
+            createLocationScreen(await getLocationIdByName(locationDisplay.textContent.trim()));
+        } else if (key == 3) {
+            await createPokemonScreen();
+            setTimeout(() => {
+                editPokemonsCard();
+            }, 10);
+        }
+    } catch (error) {
+        console.error("Erro ao carregar conteúdo:", error);
+    }
+}
+
 // Função para garantir que o mapa esteja carregado para a região atual
 async function ensureMapIsLoaded() {
     const currentRegionName = regionDisplay.textContent.trim();
     await buildMap({ name: currentRegionName });
 }
 
-// Inicializar o mapa quando a página carrega
+// Inicializar o mapa e carregar a region screen por padrão quando a página carrega
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar um momento para garantir que todos os elementos estejam carregados
     setTimeout(async () => {
         await ensureMapIsLoaded();
+        
+        screenStateManager.setActiveScreen('region');
+        
+        await loadMainContent(1);
     }, 500);
 });
 
@@ -55,24 +76,6 @@ pokemonButton.addEventListener("click", async function () {
     loadMainContent(3);
     setTimeout(function () { document.getElementsByClassName("content-container")[0].scrollIntoView({ behavior: "smooth" }) }, 150);
 });
-
-// Função principal para carregar conteúdo
-async function loadMainContent(key) {
-    try {
-        if (key == 1) {
-            createRegionScreen(await getRegionIdByName(regionDisplay.textContent.trim()));
-        } else if (key == 2) {
-            createLocationScreen(await getLocationIdByName(locationDisplay.textContent.trim()));
-        } else if (key == 3) {
-            await createPokemonScreen();
-            setTimeout(() => {
-                editPokemonsCard();
-            }, 10);
-        }
-    } catch (error) {
-        console.error("Erro ao carregar conteúdo:", error);
-    }
-}
 
 // Expor funções para debugging
 window.forceUpdateActiveScreen = () => screenStateManager.forceUpdate();

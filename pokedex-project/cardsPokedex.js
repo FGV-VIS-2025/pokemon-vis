@@ -1,8 +1,5 @@
 import { pokemonTypeColors } from "./consts.js";
 
-// Os cards agora são carregados apenas pelo event listener locationSelected em mapManager.js
-
-// FUNCIONAMENTO DO CARROSSEL DE CARTAS
 const homeButtonCards = document.getElementsByClassName("home-pokemon")[0];
 
 homeButtonCards.addEventListener("click", () => {
@@ -16,7 +13,6 @@ homeButtonCards.addEventListener("click", () => {
 
 let count = 1;
 
-// Função para resetar o carrossel de cartas
 export function resetPokemonCarousel() {
     count = 1;
     setTimeout(() => {
@@ -51,23 +47,17 @@ rightButtonCards.addEventListener("click", () => {
     }
 });
 
-
-// FUNCIONAMENTO GERAL DAS CARTAS
-
 const cardsContainer = document.getElementsByClassName("cards-display")[0];
 
 /**
- * Vai construir as cartas dos pokémons na parte superior da página.
- * 
- * @param {*} pokemonsArray - Recebe um array com dados dos pokémons 
+ * Constrói as cartas dos pokémons na parte superior da página.
+ * @param {Array} pokemonsArray - Array com dados dos pokémons 
  */
 export async function loadCards(pokemonsArray) {
     pokemonArrayGlobal = pokemonsArray || [];
     cardsContainer.innerHTML = "";
 
-    // Verificar se há pokémons para exibir
     if (!pokemonsArray || pokemonsArray.length === 0) {
-        // Criar mensagem de "nenhum pokémon encontrado"
         const emptyMessage = document.createElement("div");
         emptyMessage.classList.add("empty-cards-message");
         emptyMessage.textContent = "Nenhum Pokémon encontrado nesta localização.";
@@ -79,7 +69,6 @@ export async function loadCards(pokemonsArray) {
         return;
     }
 
-    // Criar cards para cada pokémon encontrado
     for (const pokemon of pokemonsArray) {
         const card = createPokemonCard(pokemon);
         cardsContainer.appendChild(card);
@@ -87,10 +76,9 @@ export async function loadCards(pokemonsArray) {
 }
 
 /**
- * Função que cria, individualmente, as cartas superiores.
- * 
- * @param {*} pokemon - Dados do pokémon em questão que vai ser construída a carta (superior) personalizada
- * @returns Retorna a div da carta em questão
+ * Cria uma carta individual do pokémon.
+ * @param {Object} pokemon - Dados do pokémon
+ * @returns {HTMLElement} Elemento da carta
  */
 export function createPokemonCard(pokemon) {
     if (!pokemon || !pokemon.types || !pokemon.types.length) {
@@ -107,7 +95,6 @@ export function createPokemonCard(pokemon) {
         return errorCard;
     }
 
-    // seleção da cor base da cata
     const typeKey = pokemon.types[0].type_name;
     const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
 
@@ -145,7 +132,6 @@ export function createPokemonCard(pokemon) {
     imgWrapper.appendChild(img);
     card.appendChild(imgWrapper);
 
-    // criação do conteúdo inferior da carta (tipo e infos de níveis)
     const content = document.createElement("div");
     content.classList.add("card-content");
     content.innerHTML = `
@@ -156,7 +142,6 @@ export function createPokemonCard(pokemon) {
     `;
     card.appendChild(content);
 
-    // configurações de hover, adicionando sombra, translação, troca da cor e troca da versão da imagem (shiny)
     card.addEventListener("mouseenter", () => {
         if (!card.classList.contains("card-active")) {
             card.style.backgroundColor = colors.hover;
@@ -183,7 +168,6 @@ export function createPokemonCard(pokemon) {
             card.style.transform = "translateY(+5px)";
             img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
 
-            // Restaurar tratamento de erro original para imagem normal
             img.onerror = function () {
                 this.src = "../assets/pokeball.png";
                 this.style.width = "50%";

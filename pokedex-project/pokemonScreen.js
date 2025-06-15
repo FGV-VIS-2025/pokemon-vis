@@ -53,17 +53,14 @@ export async function createPokemonScreen() {
     suggestionsList.classList.add("suggestions");
     suggestionsList.style.display = "none";
 
-    // Funções dentro do escopo para acessar variáveis locais
     function filterSuggestions() {
         const query = pokemonSearchBox.value.toLowerCase();
         suggestionsList.innerHTML = "";
 
         let filtered;
         if (query.length === 0) {
-            // Se não há texto, mostra todos os pokémons (limitado a 50 para performance)
             filtered = todosPokemons.slice(0, 50);
         } else {
-            // Se há texto, filtra por nome
             filtered = todosPokemons.filter(p =>
                 p.name.toLowerCase().includes(query)
             );
@@ -91,13 +88,11 @@ export async function createPokemonScreen() {
             li.style.alignItems = "center";
             li.style.justifyContent = "space-between";
 
-            // Container da esquerda (sprite + nome)
             const leftContainer = document.createElement("div");
             leftContainer.style.display = "flex";
             leftContainer.style.alignItems = "center";
             leftContainer.style.gap = "8px";
 
-            // Sprite do pokémon
             const pokemonImg = document.createElement("img");
             pokemonImg.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
             pokemonImg.classList.add("search-gif");
@@ -353,7 +348,6 @@ async function createSelectedPokemonDescription(selectedPokemon) {
     const isLegendary = species.is_legendary === 1 ? "Sim" : "Não";
     const isMythical = species.is_mythical === 1 ? "Sim" : "Não";
 
-    // configuração de todo o html da div com as infos personalizadas
     desc.innerHTML = `
                     <div class="types-container">
                         <img class="type-img" src="../assets/description-types/${selectedPokemon.types[0].type_name}.png" />
@@ -408,28 +402,22 @@ async function createSelectedPokemonDescription(selectedPokemon) {
 }
 
 /**
- * Função que cria as cartas (inferiores) vazias, ou seja, as cartas com o plus sign. 
- * 
- * @returns Retorna a div da carta vazia.
+ * Cria cartas vazias com o botão plus para seleção de pokémon.
+ * @returns {HTMLElement} Elemento da carta vazia
  */
-// TODO Ao cliar em uma carta vazia, vai ser possível entrar no modo de busca e selecionar um pokémon novo
 function createEmptyPokemonCard() {
-    // criação da div geral
     const card = document.createElement("div");
     card.classList.add("pokemon-card-select");
 
-    // criação da div da imagem
     const plusButton = document.createElement("div");
     plusButton.classList.add("plus-button");
 
-    // imagem do plus sign usada
     const img = document.createElement("img");
     img.src = "../assets/plus_button.png";
 
     plusButton.appendChild(img);
     card.appendChild(plusButton);
 
-    // adição de um evento e em caso de hover, adicona uma translação e uma sombra
     [card, plusButton].forEach(elem => {
         elem.addEventListener("mouseenter", () => {
             card.style.boxShadow = "0 8px 16px rgb(255, 255, 255)";
@@ -441,7 +429,6 @@ function createEmptyPokemonCard() {
         });
     });
 
-    // clique que leva para a barra de pesquisa
     card.addEventListener("click", () => {
         const target = document.getElementsByClassName("pokemons-search-box")[0];
         if (target) {
@@ -456,17 +443,14 @@ function createEmptyPokemonCard() {
 }
 
 /**
- * Função vai construir a carta (inferior) com base em um pokémon selecionado. 
- * 
- * @param {*} pokemon - Dados do pokémon em questão que vai ser construída a carta. 
- * @returns Retorna a div em questão.
+ * Constrói a carta inferior com base em um pokémon selecionado.
+ * @param {Object} pokemon - Dados do pokémon
+ * @returns {HTMLElement} Elemento da carta
  */
 function createSelectedPokemonCard(pokemon) {
-    // seleção da cor da carta
     const typeKey = pokemon.types[0].type_name;
     const colors = pokemonTypeColors[typeKey] || pokemonTypeColors.normal;
 
-    // criação da div da carta
     const card = document.createElement("div");
     card.classList.add("pokemon-card-selected");
     card.style.backgroundColor = colors.primary;

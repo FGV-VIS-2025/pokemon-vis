@@ -9,5 +9,3 @@ window.onbeforeunload = function () {
         behavior: "smooth"
     });
 };
-
-// A inicialização do mapa e seleção da localização agora é feita no regionControl.js

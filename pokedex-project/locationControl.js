@@ -117,29 +117,24 @@ function dispatchLocationChangeEvent(locationName) {
     document.dispatchEvent(event);
 }
 
-// Event listener para quando uma localização é selecionada no mapa
 mapRealContainer.addEventListener('locationSelected', async (event) => {
     const { locationId, title } = event.detail;
 
-    // Apenas sincronizar o índice sem reinicializar a lista
     const foundIndex = listOfLocations.findIndex(loc => loc.location_id === locationId);
 
     if (foundIndex !== -1) {
-        i = foundIndex; // Sincronizar índice com a localização selecionada
+        i = foundIndex;
         locationDisplay.textContent = listOfLocations[i].location_name;
 
-        // Remove animação de todos os elementos anteriores
         locationElementMap.forEach(el => {
             el.style.animation = "";
         });
 
-        // Aplica animação ao elemento selecionado
         const el = locationElementMap.get(locationId);
         if (el) {
             el.style.animation = "blink-border 1.5s infinite";
         }
 
-        // Resetar carrossel de pokémons
         resetPokemonCarousel();
     } else {
         console.warn(`Localização com ID ${locationId} não encontrada na lista de localizações com pokémon.`);
@@ -147,7 +142,6 @@ mapRealContainer.addEventListener('locationSelected', async (event) => {
 });
 
 rightButtonRegion.addEventListener("click", async function () {
-    // Salvar região anterior para verificar se mudou
     const previousRegion = cachedRegionName;
 
     // Aguardar um momento para a região ser atualizada

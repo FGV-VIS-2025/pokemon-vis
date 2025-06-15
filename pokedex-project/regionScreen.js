@@ -1013,7 +1013,6 @@ function debugGhostElements() {
         });
 
         if (problematicElements.length > 0) {
-            console.warn('⚠️ Found potentially problematic elements:', problematicElements);
             problematicElements.forEach(({ element }) => {
                 if (element && !element.classList.contains('pokemon-tooltip-card')) {
                     element.style.pointerEvents = 'none';
