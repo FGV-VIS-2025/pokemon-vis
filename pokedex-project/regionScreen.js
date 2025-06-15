@@ -49,7 +49,7 @@ function createRegionSearchBar(regionName = "Região Selecionada") {
     regionSearch.style.fontFamily = '"Pixelify Sans", sans-serif';
 
     const regionIcon = document.createElement("img");
-    regionIcon.src = "../assets/earth-globe.png";
+    regionIcon.src = "./assets/earth-globe.png";
     regionIcon.style.height = "32px";
     regionIcon.style.width = "32px";
     regionIcon.style.objectFit = "contain";
@@ -653,8 +653,8 @@ function renderCurrentPage() {
         img.style.height = '60px';
         img.alt = `${pokemon.name} #${pokemon.pokemon_id}`;
         img.style.imageRendering = 'pixelated';
-        img.dataset.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
-        img.src = '../assets/ball.png';
+        img.dataset.src = `./assets/pokemons/${pokemon.pokemon_id}.png`;
+        img.src = './assets/ball.png';
         img.style.opacity = '0.7';
         img.classList.add('pokemon-sprite-lazy');
 
@@ -680,7 +680,7 @@ function renderCurrentPage() {
 
         img.title = `${pokemon.name} #${pokemon.pokemon_id}`;
         img.onerror = function () {
-            this.src = '../assets/ball.png';
+            this.src = './assets/ball.png';
             this.style.opacity = '0.5';
         };
 

@@ -12,7 +12,7 @@ let selectedPokemons = [];
 let speciesDataPromise;
 async function getSpeciesData() {
     if (!speciesDataPromise) {
-        speciesDataPromise = d3.csv('../data/pokemon_species.csv', d => ({
+        speciesDataPromise = d3.csv('./data/pokemon_species.csv', d => ({
             pokemon_id: +d.id,
             generation_id: +d.generation_id,
             habitat_id: +d.habitat_id,
@@ -46,7 +46,7 @@ export async function createPokemonScreen() {
     pokemonSearchBox.classList.add("pokemons-search-box");
 
     const pokemonSearchBoxImage = document.createElement("img");
-    pokemonSearchBoxImage.src = "../assets/search.png";
+    pokemonSearchBoxImage.src = "./assets/search.png";
     pokemonSearchBoxImage.classList.add("pokemons-search-img");
 
     const suggestionsList = document.createElement("ul");
@@ -94,11 +94,11 @@ export async function createPokemonScreen() {
             leftContainer.style.gap = "8px";
 
             const pokemonImg = document.createElement("img");
-            pokemonImg.src = `../assets/pokemons/${pokemon.pokemon_id}.png`;
+            pokemonImg.src = `./assets/pokemons/${pokemon.pokemon_id}.png`;
             pokemonImg.classList.add("search-gif");
             pokemonImg.style.imageRendering = 'pixelated';
             pokemonImg.onerror = function () {
-                this.src = '../assets/ball.png';
+                this.src = './assets/ball.png';
                 this.style.opacity = '0.5';
             };
             leftContainer.appendChild(pokemonImg);
@@ -118,14 +118,14 @@ export async function createPokemonScreen() {
 
             // Primeiro tipo
             const typeImg1 = document.createElement("img");
-            typeImg1.src = `../assets/types/${pokemon.types[0].type_name}.png`;
+            typeImg1.src = `./assets/types/${pokemon.types[0].type_name}.png`;
             typeImg1.classList.add("search-type-img");
             typesContainer.appendChild(typeImg1);
 
             // Segundo tipo se existir
             if (pokemon.types[1]) {
                 const typeImg2 = document.createElement("img");
-                typeImg2.src = `../assets/types/${pokemon.types[1].type_name}.png`;
+                typeImg2.src = `./assets/types/${pokemon.types[1].type_name}.png`;
                 typeImg2.classList.add("search-type-img");
                 typesContainer.appendChild(typeImg2);
             }
@@ -350,26 +350,26 @@ async function createSelectedPokemonDescription(selectedPokemon) {
 
     desc.innerHTML = `
                     <div class="types-container">
-                        <img class="type-img" src="../assets/description-types/${selectedPokemon.types[0].type_name}.png" />
-                        ${selectedPokemon.types[1] ? `<img class="type-img" src="../assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}
+                        <img class="type-img" src="./assets/description-types/${selectedPokemon.types[0].type_name}.png" />
+                        ${selectedPokemon.types[1] ? `<img class="type-img" src="./assets/description-types/${selectedPokemon.types[1].type_name}.png" />` : ''}
                     </div>
                     <div class="info-rows">
                         <div class="info-blocks">
-                            <img src="../assets/block-info/governante.png" />
+                            <img src="./assets/block-info/governante.png" />
                             ${heightM} m
                         </div>
                         <div class="info-blocks">
-                            <img src="../assets/block-info/regua.png" />
+                            <img src="./assets/block-info/regua.png" />
                             ${weightKg} kg
                         </div>
                     </div>
                     <div class="info-rows">
                         <div class="info-blocks">
-                            <img src="../assets/block-info/genders.png" />
+                            <img src="./assets/block-info/genders.png" />
                             ${genderRate}
                         </div>
                         <div class="info-blocks">
-                            <img src="../assets/block-info/relogio.png" />
+                            <img src="./assets/block-info/relogio.png" />
                             ${hatchCount} ciclos
                         </div>
                     </div>
@@ -413,7 +413,7 @@ function createEmptyPokemonCard() {
     plusButton.classList.add("plus-button");
 
     const img = document.createElement("img");
-    img.src = "../assets/plus_button.png";
+    img.src = "./assets/plus_button.png";
 
     plusButton.appendChild(img);
     card.appendChild(plusButton);
@@ -457,7 +457,7 @@ function createSelectedPokemonCard(pokemon) {
 
     // seleção da imagem de cada pokémon
     const img = document.createElement("img");
-    img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+    img.src = `./assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
 
     card.appendChild(img);
 

@@ -23,23 +23,23 @@ async function preloadCommonData() {
             commonDataCache.encounters,
             commonDataCache.locationAreas
         ] = await Promise.all([
-            loadCsv('../data/region_names.csv', d => ({
+            loadCsv('./data/region_names.csv', d => ({
                 region_id: +d.region_id,
                 local_language_id: +d.local_language_id,
                 name: d.name
             })),
-            loadCsv('../data/locations.csv', d => ({
+            loadCsv('./data/locations.csv', d => ({
                 id: +d.id,
                 location_id: +d.id,
                 location_ident: d.identifier,
                 region_id: +d.region_id
             })),
-            loadCsv('../data/location_names.csv', d => ({
+            loadCsv('./data/location_names.csv', d => ({
                 location_id: +d.location_id,
                 local_language_id: +d.local_language_id,
                 location_name: d.name
             })),
-            loadCsv('../data/encounters.csv', d => ({
+            loadCsv('./data/encounters.csv', d => ({
                 id: +d.id,
                 version_id: +d.version_id,
                 location_area_id: +d.location_area_id,
@@ -47,7 +47,7 @@ async function preloadCommonData() {
                 min_level: +d.min_level,
                 max_level: +d.max_level
             })),
-            loadCsv('../data/location_areas.csv', d => ({
+            loadCsv('./data/location_areas.csv', d => ({
                 locationAreaId: +d.id,
                 locationId: +d.location_id,
                 gameIndex: +d.game_index,
@@ -233,7 +233,7 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
 
     // Carregamento único dos CSVs
     const [encounter, pokemonsArray, typesArray, pokemonsTypeArray, pokemonsSpeciesArray, pokemonsArray2, finalStats] = await Promise.all([
-        loadCsv('../data/encounters.csv', d => ({
+        loadCsv('./data/encounters.csv', d => ({
             id: +d.id,
             version_id: +d.version_id,
             location_area_id: +d.location_area_id,
@@ -241,22 +241,22 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
             min_level: +d.min_level,
             max_level: +d.max_level
         })),
-        loadCsv('../data/pokemon_species_names.csv', d => ({
+        loadCsv('./data/pokemon_species_names.csv', d => ({
             pokemon_id: +d.pokemon_species_id,
             language_id: +d.local_language_id,
             name: d.name,
             genus: d.genus
         })),
-        loadCsv('../data/types.csv', d => ({
+        loadCsv('./data/types.csv', d => ({
             type_id: +d.id,
             name: d.identifier
         })),
-        loadCsv('../data/pokemon_types.csv', d => ({
+        loadCsv('./data/pokemon_types.csv', d => ({
             pokemon_id: +d.pokemon_id,
             type_id: +d.type_id,
             slot: +d.slot
         })),
-        loadCsv('../data/pokemon_species.csv', d => ({
+        loadCsv('./data/pokemon_species.csv', d => ({
             pokemon_id: +d.id,
             identifier: d.identifier,
             evolution_chain_id: +d.evolution_chain_id,
@@ -266,13 +266,13 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
             is_legendary: +d.is_legendary,
             is_mythical: +d.is_mythical
         })),
-        loadCsv('../data/pokemon.csv', d => ({
+        loadCsv('./data/pokemon.csv', d => ({
             pokemon_id: +d.id,
             height: +d.height,
             weight: +d.weight,
             base_experience: +d.base_experience
         })),
-        loadCsv('../data/pokemon_stats_clean.csv', d => ({
+        loadCsv('./data/pokemon_stats_clean.csv', d => ({
             Pokemon_Id: +d.Pokemon_Id,
             Hp_Stat: +d.Hp_Stat,
             Attack_Stat: +d.Attack_Stat,
@@ -378,13 +378,13 @@ export async function getAllLocationsPokemonCount(regionName) {
     // Carregar dados de encontros e versões
     const validVersionIds = gameRegionVersions[regionName];
     const [encounters, locationAreas] = await Promise.all([
-        loadCsv('../data/encounters.csv', d => ({
+        loadCsv('./data/encounters.csv', d => ({
             id: +d.id,
             version_id: +d.version_id,
             location_area_id: +d.location_area_id,
             pokemon_id: +d.pokemon_id
         })),
-        loadCsv('../data/location_areas.csv', d => ({
+        loadCsv('./data/location_areas.csv', d => ({
             locationAreaId: +d.id,
             locationId: +d.location_id
         }))
@@ -423,12 +423,12 @@ export async function getAllPokemons() {
     if (allPokemonsPromise) return allPokemonsPromise;
     allPokemonsPromise = (async () => {
         const [pokemonsArray, typesArray, pokemonsTypeArray, speciesArray, pokemonsCsv, stats] = await Promise.all([
-            loadCsv('../data/pokemon_species_names.csv', d => ({ pokemon_id: +d.pokemon_species_id, language_id: +d.local_language_id, name: d.name, genus: d.genus })),
-            loadCsv('../data/types.csv', d => ({ type_id: +d.id, name: d.identifier, generation_id: +d.generation_id, damage_class_id: +d.damage_class_id })),
-            loadCsv('../data/pokemon_types.csv', d => ({ pokemon_id: +d.pokemon_id, type_id: +d.type_id, slot: +d.slot })),
-            loadCsv('../data/pokemon_species.csv', d => ({ pokemon_id: +d.id, identifier: d.identifier, generation_id: +d.generation_id, evolves_from_species_id: +d.evolves_from_species_id, evolution_chain_id: +d.evolution_chain_id, color_id: +d.color_id, shape_id: +d.shape_id, habitat_id: +d.habitat_id, gender_rate: +d.gender_rate, capture_rate: +d.capture_rate, base_happiness: +d.base_happiness, is_baby: +d.is_baby, hatch_counter: +d.hatch_counter, has_gender_differences: +d.has_gender_differences, growth_rate_id: +d.growth_rate_id, forms_switchable: +d.forms_switchable, is_legendary: +d.is_legendary, is_mythical: +d.is_mythical, order: +d.order, conquest_order: +d.conquest_order })),
-            loadCsv('../data/pokemon.csv', d => ({ pokemon_id: +d.id, identifier: d.identifier, height: +d.height, weight: +d.weight, base_experience: +d.base_experience, order: +d.order, is_default: +d.is_default })),
-            loadCsv('../data/pokemon_stats_clean.csv', d => ({ Pokemon_Id: +d.Pokemon_Id, Hp_Stat: +d.Hp_Stat, Hp_Effort: +d.Hp_Effort, Attack_Stat: +d.Attack_Stat, Attack_Effort: +d.Attack_Effort, Defense_Stat: +d.Defense_Stat, Defense_Effort: +d.Defense_Effort, Special_Attack_Stat: +d.Special_Attack_Stat, Special_Attack_Effort: +d.Special_Attack_Effort, Special_Defense_Stat: +d.Special_Defense_Stat, Special_Defense_Effort: +d.Special_Defense_Effort, Speed_Stat: +d.Speed_Stat, Speed_Effort: +d.Speed_Effort }))
+            loadCsv('./data/pokemon_species_names.csv', d => ({ pokemon_id: +d.pokemon_species_id, language_id: +d.local_language_id, name: d.name, genus: d.genus })),
+            loadCsv('./data/types.csv', d => ({ type_id: +d.id, name: d.identifier, generation_id: +d.generation_id, damage_class_id: +d.damage_class_id })),
+            loadCsv('./data/pokemon_types.csv', d => ({ pokemon_id: +d.pokemon_id, type_id: +d.type_id, slot: +d.slot })),
+            loadCsv('./data/pokemon_species.csv', d => ({ pokemon_id: +d.id, identifier: d.identifier, generation_id: +d.generation_id, evolves_from_species_id: +d.evolves_from_species_id, evolution_chain_id: +d.evolution_chain_id, color_id: +d.color_id, shape_id: +d.shape_id, habitat_id: +d.habitat_id, gender_rate: +d.gender_rate, capture_rate: +d.capture_rate, base_happiness: +d.base_happiness, is_baby: +d.is_baby, hatch_counter: +d.hatch_counter, has_gender_differences: +d.has_gender_differences, growth_rate_id: +d.growth_rate_id, forms_switchable: +d.forms_switchable, is_legendary: +d.is_legendary, is_mythical: +d.is_mythical, order: +d.order, conquest_order: +d.conquest_order })),
+            loadCsv('./data/pokemon.csv', d => ({ pokemon_id: +d.id, identifier: d.identifier, height: +d.height, weight: +d.weight, base_experience: +d.base_experience, order: +d.order, is_default: +d.is_default })),
+            loadCsv('./data/pokemon_stats_clean.csv', d => ({ Pokemon_Id: +d.Pokemon_Id, Hp_Stat: +d.Hp_Stat, Hp_Effort: +d.Hp_Effort, Attack_Stat: +d.Attack_Stat, Attack_Effort: +d.Attack_Effort, Defense_Stat: +d.Defense_Stat, Defense_Effort: +d.Defense_Effort, Special_Attack_Stat: +d.Special_Attack_Stat, Special_Attack_Effort: +d.Special_Attack_Effort, Special_Defense_Stat: +d.Special_Defense_Stat, Special_Defense_Effort: +d.Special_Defense_Effort, Speed_Stat: +d.Speed_Stat, Speed_Effort: +d.Speed_Effort }))
         ]);
 
         // Filtrar pokémons por idioma (inglês)
@@ -547,7 +547,7 @@ export async function getPokemonsByGeneration(regionName) {
 
     try {
         // Carrega o arquivo pokemon_species.csv para filtrar por geração
-        const pokemonSpecies = await loadCsv('../data/pokemon_species.csv', d => {
+        const pokemonSpecies = await loadCsv('./data/pokemon_species.csv', d => {
             // Garantir que generation_id seja um número válido
             const generationId = parseInt(d.generation_id);
             return {
@@ -595,22 +595,22 @@ export async function getPokemonsByGeneration(regionName) {
 
         // Carrega dados adicionais para os Pokémon
         const [pokemonNames, pokemonTypes, types, pokemonStats] = await Promise.all([
-            loadCsv('../data/pokemon_species_names.csv', d => ({
+            loadCsv('./data/pokemon_species_names.csv', d => ({
                 pokemon_id: +d.pokemon_species_id,
                 language_id: +d.local_language_id,
                 name: d.name,
                 genus: d.genus
             })),
-            loadCsv('../data/pokemon_types.csv', d => ({
+            loadCsv('./data/pokemon_types.csv', d => ({
                 pokemon_id: +d.pokemon_id,
                 type_id: +d.type_id,
                 slot: +d.slot
             })),
-            loadCsv('../data/types.csv', d => ({
+            loadCsv('./data/types.csv', d => ({
                 type_id: +d.id,
                 name: d.identifier
             })),
-            loadCsv('../data/pokemon_stats_clean.csv', d => ({
+            loadCsv('./data/pokemon_stats_clean.csv', d => ({
                 Pokemon_Id: +d.Pokemon_Id,
                 Hp_Stat: +d.Hp_Stat,
                 Attack_Stat: +d.Attack_Stat,

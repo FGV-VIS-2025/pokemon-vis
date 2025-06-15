@@ -300,7 +300,7 @@ async function getKnnData(pokemon) {
     }
 
     try {
-        const data = await loadCsv("../knn_data.csv", d => d);
+        const data = await loadCsv("./knn_data.csv", d => d);
         // Filtrar apenas pokémons até ID 721 (Kalos)
         const filteredData = data.filter(p => +p.id <= 721);
         const target = filteredData.find(p => +p.id === +pokemon.pokemon_id);

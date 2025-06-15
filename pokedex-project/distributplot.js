@@ -252,7 +252,7 @@ export function drawDistributionPlot(containerSelector, pokemons) {
                 .style("opacity", 1);
 
             tooltip.html(`
-                <img src="../assets/pokemons/${d.pokemon.pokemon_id}.png" 
+                <img src="./assets/pokemons/${d.pokemon.pokemon_id}.png" 
                      alt="${d.pokemon.name}" 
                      style="width: 64px; height: 64px; image-rendering: pixelated;" 
                      onerror="this.style.display='none'">

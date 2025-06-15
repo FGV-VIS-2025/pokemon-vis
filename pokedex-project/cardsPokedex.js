@@ -116,13 +116,13 @@ export function createPokemonCard(pokemon) {
 
     const imgWrapper = document.createElement("div");
     imgWrapper.classList.add("pokemon-img-wrapper");
-    imgWrapper.style.background = "url('../assets/background.png') center/cover no-repeat";
+    imgWrapper.style.background = "url('./assets/background.png') center/cover no-repeat";
 
     const img = document.createElement("img");
-    img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+    img.src = `./assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
     img.alt = pokemon.name || "Pokémon";
     img.onerror = function () {
-        this.src = "../assets/pokeball.png";
+        this.src = "./assets/pokeball.png";
         this.style.width = "50%";
         this.style.height = "auto";
         this.style.opacity = "0.7";
@@ -136,8 +136,8 @@ export function createPokemonCard(pokemon) {
     content.classList.add("card-content");
     content.innerHTML = `
         <div class="types-container">
-        <img class="type-img" src="../assets/types/${pokemon.types[0].type_name}.png" />
-        ${pokemon.types[1]?.type_name ? `<img class="type-img" src="../assets/types/${pokemon.types[1].type_name}.png" />` : ''}
+        <img class="type-img" src="./assets/types/${pokemon.types[0].type_name}.png" />
+        ${pokemon.types[1]?.type_name ? `<img class="type-img" src="./assets/types/${pokemon.types[1].type_name}.png" />` : ''}
         </div>
     `;
     card.appendChild(content);
@@ -147,12 +147,12 @@ export function createPokemonCard(pokemon) {
             card.style.backgroundColor = colors.hover;
             card.style.boxShadow = "0 8px 16px rgba(0,0,0,0.4)";
             card.style.transform = "translateY(-5px)";
-            img.src = `../assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
+            img.src = `./assets/pokemons/official-artwork/shiny/${pokemon.pokemon_id}.png`;
 
             img.onerror = function () {
-                this.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+                this.src = `./assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
                 this.onerror = function () {
-                    this.src = "../assets/pokeball.png";
+                    this.src = "./assets/pokeball.png";
                     this.style.width = "50%";
                     this.style.height = "auto";
                     this.style.opacity = "0.7";
@@ -166,10 +166,10 @@ export function createPokemonCard(pokemon) {
             card.style.backgroundColor = colors.primary;
             card.style.boxShadow = "none";
             card.style.transform = "translateY(+5px)";
-            img.src = `../assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
+            img.src = `./assets/pokemons/official-artwork/${pokemon.pokemon_id}.png`;
 
             img.onerror = function () {
-                this.src = "../assets/pokeball.png";
+                this.src = "./assets/pokeball.png";
                 this.style.width = "50%";
                 this.style.height = "auto";
                 this.style.opacity = "0.7";

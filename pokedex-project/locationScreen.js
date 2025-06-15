@@ -20,11 +20,11 @@ let locationMaxStatValue = null;
 
 // Carregar dados necessários para o gráfico de radar
 Promise.all([
-    d3.csv("../data/encounters.csv", d3.autoType),
-    d3.csv("../data/locations.csv", d3.autoType),
-    d3.csv("../data/pokemon_stats.csv", d3.autoType),
-    d3.csv("../data/stats.csv", d3.autoType),
-    d3.csv("../data/pokemon.csv", d3.autoType)
+    d3.csv("./data/encounters.csv", d3.autoType),
+    d3.csv("./data/locations.csv", d3.autoType),
+    d3.csv("./data/pokemon_stats.csv", d3.autoType),
+    d3.csv("./data/stats.csv", d3.autoType),
+    d3.csv("./data/pokemon.csv", d3.autoType)
 ]).then(([encountersRaw, locations, pokemonStats, stats, pokemon]) => {
     // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
     const seen = new Set();
@@ -259,7 +259,7 @@ function createLocationSearchBar(locationName = "Localização Selecionada") {
     locationSearch.style.fontFamily = '"Pixelify Sans", sans-serif';
 
     const locationIcon = document.createElement("img");
-    locationIcon.src = "../assets/compass.png";
+    locationIcon.src = "./assets/compass.png";
     locationIcon.style.height = "32px";
     locationIcon.style.width = "32px";
     locationIcon.style.objectFit = "contain";
@@ -334,7 +334,7 @@ function createLocationInfoCards(locationId) {
     });
 
     infoCard1.innerHTML = `
-        <img id="strongest-pokemon-img" src="../assets/power.png" style="height: 56px; margin-bottom: 2px;">
+        <img id="strongest-pokemon-img" src="./assets/power.png" style="height: 56px; margin-bottom: 2px;">
         <div style="font-weight: bold; margin-bottom: 2px;">Maior Status Base</div>
         <div id="strongest-pokemon">Carregando...</div>
     `;
@@ -370,7 +370,7 @@ function createLocationInfoCards(locationId) {
     });
 
     infoCard2.innerHTML = `
-        <img src="../assets/pokeball.png" style="height: 32px; margin-bottom: 8px;">
+        <img src="./assets/pokeball.png" style="height: 32px; margin-bottom: 8px;">
         <div style="font-weight: bold; margin-bottom: 3px;">Pokémon</div>
         <div id="pokemon-count">Carregando...</div>
     `;
@@ -501,11 +501,11 @@ async function updateLocationInfoCards(locationId) {
             // Atualizar a imagem do pokémon mais forte
             const strongestPokemonImg = document.getElementById('strongest-pokemon-img');
             if (strongestPokemonImg) {
-                strongestPokemonImg.src = `../assets/pokemons/${strongestPokemonId}.png`;
+                strongestPokemonImg.src = `./assets/pokemons/${strongestPokemonId}.png`;
                 strongestPokemonImg.style.objectFit = "contain";
                 strongestPokemonImg.onerror = function () {
                     // Fallback para o ícone de power se a imagem não for encontrada
-                    this.src = "../assets/power.png";
+                    this.src = "./assets/power.png";
                 };
             }
 
@@ -524,7 +524,7 @@ async function updateLocationInfoCards(locationId) {
             // Manter o ícone de power se não encontrar pokémon
             const strongestPokemonImg = document.getElementById('strongest-pokemon-img');
             if (strongestPokemonImg) {
-                strongestPokemonImg.src = "../assets/power.png";
+                strongestPokemonImg.src = "./assets/power.png";
             }
         }
 
@@ -542,7 +542,7 @@ async function updateLocationInfoCards(locationId) {
 
         if (mostCommonType) {
             document.getElementById('most-common-type').textContent = mostCommonType.charAt(0).toUpperCase() + mostCommonType.slice(1);
-            document.getElementById('most-common-type-img').src = `../assets/types/${mostCommonType}.png`;
+            document.getElementById('most-common-type-img').src = `./assets/types/${mostCommonType}.png`;
         }
 
         // Calcular número de áreas da localização
@@ -802,9 +802,9 @@ function setupStrongestPokemonInteraction(cardElement, pokemonData, totalStats) 
             <div style="text-align: center;">
                 <strong style="font-size: 15px; color: #ffdd44; margin-bottom: 10px; display: block;">${pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)}</strong>
                 <div style="margin-bottom: 10px;">
-                    <img src="../assets/pokemons/${pokemonData.pokemon_id}.png" 
+                    <img src="./assets/pokemons/${pokemonData.pokemon_id}.png" 
                          style="width: 96px; height: 96px; image-rendering: pixelated;" 
-                         onerror="this.src='../assets/ball.png'; this.style.opacity='0.7';"
+                         onerror="this.src='./assets/ball.png'; this.style.opacity='0.7';"
                          alt="${pokemonName}">
                 </div>
                 <div style="margin: 8px 0; font-size: 12px;">

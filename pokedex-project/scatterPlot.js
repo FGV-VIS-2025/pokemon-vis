@@ -12,11 +12,11 @@ let currentLocationId = null;
 
 // Carregar dados necessários para o scatter plot
 Promise.all([
-    d3.csv("../data/encounters.csv", d3.autoType),
-    d3.csv("../data/locations.csv", d3.autoType),
-    d3.csv("../data/pokemon.csv", d3.autoType),
-    d3.csv("../data/pokemon_stats.csv", d3.autoType),
-    d3.csv("../data/stats.csv", d3.autoType)
+    d3.csv("./data/encounters.csv", d3.autoType),
+    d3.csv("./data/locations.csv", d3.autoType),
+    d3.csv("./data/pokemon.csv", d3.autoType),
+    d3.csv("./data/pokemon_stats.csv", d3.autoType),
+    d3.csv("./data/stats.csv", d3.autoType)
 ]).then(([encountersRaw, locations, pokemon, pokemonStats, stats]) => {
     // Filtra encounters para manter apenas pares únicos (location_area_id, pokemon_id)
     const seen = new Set();
@@ -322,9 +322,9 @@ function drawScatterPlot(containerSelector, data) {
                 <div style="text-align: center;">
                     <strong style="font-size: 15px; color: #ffdd44; margin-bottom: 10px; display: block;">${d.name.charAt(0).toUpperCase() + d.name.slice(1)}</strong>
                     <div style="margin-bottom: 10px;">
-                        <img src="../assets/pokemons/${d.id}.png" 
+                        <img src="./assets/pokemons/${d.id}.png" 
                              style="width: 96px; height: 96px; image-rendering: pixelated;" 
-                             onerror="this.src='../assets/ball.png'; this.style.opacity='0.7';"
+                             onerror="this.src='./assets/ball.png'; this.style.opacity='0.7';"
                              alt="${d.name}">
                     </div>
                     <div style="margin: 8px 0; font-size: 12px;">

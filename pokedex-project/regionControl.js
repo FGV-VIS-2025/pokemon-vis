@@ -64,7 +64,7 @@ rightButtons.addEventListener("click", function () {
     }
 
     regionDisplay.textContent = listOfRegions[i];
-    mapImage.src = `../assets/maps/${listOfRegions[i]}.png`;
+    mapImage.src = `./assets/maps/${listOfRegions[i]}.png`;
 
     selectFirstLocation(listOfRegions[i]);
 
@@ -84,7 +84,7 @@ leftButtons.addEventListener("click", function () {
     }
 
     regionDisplay.textContent = listOfRegions[i];
-    mapImage.src = `../assets/maps/${listOfRegions[i]}.png`;
+    mapImage.src = `./assets/maps/${listOfRegions[i]}.png`;
 
     selectFirstLocation(listOfRegions[i]);
 
