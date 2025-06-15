@@ -1,4 +1,4 @@
-import { getOffensiveMultipliers } from "./consts.js";
+import { getOffensiveMultipliers, tipoTraduzido } from "./consts.js";
 
 function getDataHeatMap(selectedPokemons) {
     const data = {};
@@ -65,10 +65,10 @@ export function createHeatMapAta(selectedPokemons) {
         .attr("x", width / 2)
         .attr("y", -svgWidth / 14)  // Acima do gráfico
         .attr("text-anchor", "middle")
-        .style("font-size", `${svgWidth / 45}px`)
+        .style("font-size", `${svgWidth / 35}px`)
         .style("font-weight", "bold")
         .style("fill", "#ffffff")
-        .text("Attacking Effectiveness Comparison");
+        .text("Comparação da Efetividade dos Ataques");
 
     // Escala X (Pokémons)
     const x = d3.scaleBand()
@@ -81,8 +81,9 @@ export function createHeatMapAta(selectedPokemons) {
         .call(d3.axisTop(x))
         .selectAll("text")
         .style("text-anchor", "center")
-        .style("font-size", `${svgWidth / 50}px`)
-        .style("fill", "#ffffff");
+        .style("font-size", `${svgWidth / 40}px`)
+        .style("fill", "#ffffff")
+        .style("font-family", "Pixelify Sans, sans-serif");
 
     // Escala Y (Tipos)
     const y = d3.scaleBand()
@@ -90,26 +91,32 @@ export function createHeatMapAta(selectedPokemons) {
         .domain(types)
         .padding(0.05);
 
-    // Adiciona imagens dos tipos no eixo Y
+    const tooltipTypes = d3.select(".tooltip-types-2");
+
     types.forEach(tipo => {
         svg.append("image")
             .attr("xlink:href", `../assets/icon-types/${tipo}.svg`)
             .attr("x", -width / 20)
             .attr("y", y(tipo) + y.bandwidth() / 2 - width / 50)
             .attr("width", width / 25)
-            .attr("height", width / 25);
+            .attr("height", width / 25)
+            .on("mouseover", (event) => {
+                tooltipTypes.transition().duration(200).style("opacity", 1);
+                tooltipTypes.text(tipoTraduzido[tipo]);
+            })
+            .on("mousemove", (event) => {
+                tooltipTypes
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 20) + "px");
+            })
+            .on("mouseout", () => {
+                tooltipTypes.transition().duration(200).style("opacity", 0);
+            });
     });
 
-    const myColor = d3.scaleOrdinal()
-        .domain([0, 0.25, 0.5, 1, 2, 4])
-        .range([
-            "#ffffff",  // 0: imune (branco)
-            "#e8f5e9",  // 0.25: verde bem claro
-            "#c8e6c9",  // 0.5: verde claro
-            "#a5d6a7",  // 1: neutro
-            "#66bb6a",  // 2: super efetivo
-            "#2e7d32"   // 4: super efetivo duplo (verde intenso)
-        ]);
+    const myColor = d3.scaleLinear()
+        .domain([0, 1, 4]) 
+        .range(["#f44336", "#ffffff", "#2196f3"]);
 
     // --- Tooltip setup ---
     const tooltip = d3.select("body").append("div")
@@ -138,8 +145,8 @@ export function createHeatMapAta(selectedPokemons) {
             tooltip.html(`
             <center><img src="assets/gifs/${d.pokemon.pokemon_id}.gif" class="heat-map-img"></img></center><br/>
             <strong>Pokémon:</strong> ${d.group}<br/>
-            <strong>Def. Type:</strong> ${d.variable.charAt(0).toUpperCase() + d.variable.slice(1)}<br/>
-            <strong>Effectiveness:</strong> ${d.value}x
+            <strong>Tipo Defensor:</strong> ${tipoTraduzido[d.variable]}<br/>
+            <strong>Efetividade:</strong> ${d.value}x
         `)
                 .style("left", (event.pageX + 10) + "px") // Position near mouse
                 .style("top", (event.pageY - 28) + "px"); // Position near mouse
@@ -169,5 +176,6 @@ export function createHeatMapAta(selectedPokemons) {
         .style("fill", "#000") // ou ajuste com base no contraste da célula
         .style("font-size", "12px")
         .style("font-weight", "bold")
+        .style("font-family", "Arial, sans-serif")
         .text(d => `${d.value}x`);
 }

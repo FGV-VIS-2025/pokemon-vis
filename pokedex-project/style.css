@@ -934,14 +934,22 @@ body {
     width: 55%;
 }
 
-.svg-pai-chart-1,
+.svg-pai-chart-1{
+    width: 90%;
+    height: auto;
+    border-radius: 10px;
+    gap: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
 .svg-pai-chart-2 {
     width: 90%;
     height: auto;
-    background-color: #1b1b1b;
     border-radius: 10px;
-    box-sizing: border-box;
-    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -950,9 +958,9 @@ body {
 }
 
 .svg-chart-1 {
-    width: 100%;
-    height: auto;
-    background-color: rgb(49, 49, 49);
+    width: 50%;
+    aspect-ratio: 1/1;
+    background-color: #1b1b1b;
     border-radius: 10px;
     border: 1px solid rgb(255, 255, 255);
     display: flex;
@@ -960,13 +968,20 @@ body {
     justify-content: center;
     flex-direction: row;
     box-sizing: border-box;
-    padding: 15px;
+}
+
+.knn{
+    width: 50%;
+    aspect-ratio: 1/1;
+    background-color: #1b1b1b;
+    border-radius: 10px;
+    border: 1px solid rgb(255, 255, 255);
 }
 
 .svg-chart-2 {
     width: 100%;
     height: auto;
-    background-color: rgb(49, 49, 49);
+    background-color: #1b1b1b;
     border-radius: 10px;
     border: 1px solid rgb(255, 255, 255);
     display: flex;
@@ -1527,4 +1542,37 @@ body {
 
 .right-pokemon {
     animation-delay: 2s;
+}
+
+.tooltip-types, .tooltip-types-2{
+    position: absolute; 
+    opacity: 0; 
+    pointer-events: none; 
+    background: #333; 
+    color: #fff; 
+    padding: 5px 10px; 
+    border-radius: 5px; 
+    font-size: 12px;
+}
+
+.svg-pai-chart-2{
+    font-family: "Pixelify Sans", sans-serif;
+}
+
+.tooltip-knn{
+    position: absolute;
+    background-color: rgba(44, 44, 44, 0.9);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: sans-serif;
+    font-size: 12px;
+    display: none;
+    z-index: 10;
+}
+
+.knn-comparasion-ind:hover,
+.knn-pokemon-ind:hover{
+    cursor: pointer;
+    background-color: rgba(43, 43, 43, 0.9);
 }

@@ -128,10 +128,14 @@ export function createRadarChart(selectedPokemons) {
     const radarPaiSvg = document.getElementsByClassName("svg-pai-chart-1")[0];
 
     radarSvg.style.border = "1px solid rgb(255, 255, 255)";
+    radarSvg.style.width = "50%";
+    radarSvg.style.display = "flex";
+    radarSvg.style.justifyContent = "center";
+    radarPaiSvg.style.alignItems = "center";
     radarPaiSvg.style.padding = "15px";
     radarPaiSvg.style.marginBottom = "20px";
 
-    const svgWidth = radarSvg.clientWidth * 0.45;
+    const svgWidth = radarSvg.clientWidth * 0.45 * 2;
     const margin = { top: svgWidth / 5, right: svgWidth / 5, bottom: svgWidth / 5, left: svgWidth / 5 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgWidth - margin.top - margin.bottom;
@@ -267,6 +271,17 @@ export function RadarChart(className, data, options) {
         .attr("y2", (d, i) => rScale(maxValue * 1.1) * Math.sin(angleSlice * i - Math.PI / 2))
         .style("stroke", "white")
         .style("stroke-width", "2px");
+
+    svg.append("text")
+        .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
+        .attr("y", 20) // ou ajuste como preferir
+        .attr("text-anchor", "middle")
+        .style("font-size", `${cfg.w / 18}px`)
+        .style("font-weight", "bold")
+        .style("fill", "#ffffff")
+        .style("font-family", "Pixelify Sans, sans-serif")
+        .text("Comparação dos Stats dos Pokémon");
+
 
     // Configuração dos títulos dos eixos
     axis.append("text")
