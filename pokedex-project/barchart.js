@@ -94,17 +94,20 @@ Promise.all([
   const encounters = [];
 
   for (const row of encountersRaw) {
-    const key = `${row.location_area_id}-${row.pokemon_id}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      encounters.push(row);
+    // Filtrar apenas pokémons até ID 721 (Kalos)
+    if (row.pokemon_id <= 721) {
+      const key = `${row.location_area_id}-${row.pokemon_id}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        encounters.push(row);
+      }
     }
   }
 
   // Armazena os dados filtrados
   encountersData = encounters;
   locationsData = locations;
-  pokemonData = pokemons;
+  pokemonData = pokemons.filter(p => p.id <= 721);
 });
 export async function renderBarChartByRegion(regionId) {
   try {

@@ -2,8 +2,8 @@ import { genderRateMap, generationMap, growthRateMap, habitatMap, pokemonTypeCol
 import { getAllPokemons } from "./dataManager.js";
 import { createHeatMapAta } from "./heatMapAta.js";
 import { createHeatMapDef } from "./heatMapDef.js";
-import { createRadarChart } from "./radarChart.js";
 import { createKnnDiagram } from "./knnDiagram.js";
+import { createRadarChart } from "./radarChart.js";
 
 
 const contentScreen = document.getElementsByClassName("content-screen")[0];
@@ -72,8 +72,13 @@ export async function createPokemonScreen() {
             li.appendChild(document.createTextNode(pokemon.name));
 
             const img2 = document.createElement("img");
-            img2.src = `../assets/gifs/${pokemon.pokemon_id}.gif`
+            img2.src = `../assets/pokemons/${pokemon.pokemon_id}.png`
             img2.classList.add("search-gif");
+            img2.style.imageRendering = 'pixelated';
+            img2.onerror = function () {
+                this.src = '../assets/ball.png';
+                this.style.opacity = '0.5';
+            };
             li.appendChild(img2);
 
             li.style.backgroundColor = pokemonTypeColorsRGBA[pokemon.types[0].type_name];

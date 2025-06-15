@@ -1,4 +1,4 @@
-import { tipoTraduzido, shape_id_to_name } from "./consts.js"
+import { shape_id_to_name, tipoTraduzido } from "./consts.js";
 
 export async function createKnnDiagram(selectedPokemons) {
     const knnDiv = document.getElementsByClassName("knn")[0];
@@ -32,7 +32,7 @@ export async function createKnnDiagram(selectedPokemons) {
     titleDiv.style.width = "90%"
     titleDiv.style.height = "10%"
     titleDiv.style.borderRadius = "10px";
-    titleDiv.style.fontSize = `${knnWidth/120}px`;
+    titleDiv.style.fontSize = `${knnWidth / 120}px`;
     titleDiv.style.fontFamily = "Pixelify Sans, sans-serif";
 
     const titleText = document.createElement("h2");
@@ -40,11 +40,11 @@ export async function createKnnDiagram(selectedPokemons) {
     titleText.innerText = "Pokémons Mais Semelhantes (k-Nearest Neighbors)";
     titleText.style.textAlign = "center";
     titleText.style.color = "rgb(255, 255, 255)";
-    
+
     titleDiv.appendChild(titleText);
     knnDiv.appendChild(titleDiv);
 
-    for (let i = 0; i < selectedPokemons.length; i++){
+    for (let i = 0; i < selectedPokemons.length; i++) {
         const pokemon = selectedPokemons[i];
 
         const knnRow = document.createElement("div");
@@ -87,7 +87,8 @@ export async function createKnnDiagram(selectedPokemons) {
                         <strong>Formato: </strong>${shape_id_to_name[pokemon.shape_id]}<br/>
                         <strong>Baby: </strong>${pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
                         <strong>Mítico: </strong>${pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
-                        <strong>Lendário: </strong>${pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);});
+                        <strong>Lendário: </strong>${pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);
+        });
 
         pokemonDiv.addEventListener("mousemove", showTooltip.bind(null, `<strong>ID: </strong>#${pokemon.pokemon_id}<br/>
                                                                         <strong>Nome: </strong>${pokemon.name}<br/>
@@ -128,7 +129,7 @@ export async function createKnnDiagram(selectedPokemons) {
 
         const knnData = await getKnnData(pokemon);
 
-        for (let j = 0; j < 3; j++){
+        for (let j = 0; j < 3; j++) {
             const comparasionPokemon = document.createElement("div");
             comparasionPokemon.className = `knn-comparasion-ind`;
 
@@ -157,7 +158,8 @@ export async function createKnnDiagram(selectedPokemons) {
                             <strong>Formato: </strong>${knnData[j].pokemon.shape}<br/>
                             <strong>Baby: </strong>${+knnData[j].pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
                             <strong>Mítico: </strong>${+knnData[j].pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
-                            <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);});
+                            <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`, event);
+            });
 
             comparasionPokemon.addEventListener("mousemove", showTooltip.bind(null, `<strong>ID: </strong>#${knnData[j].pokemon.id}<br/>
                                                     <strong>Nome: </strong>${knnData[j].pokemon.name}<br/>
@@ -176,7 +178,7 @@ export async function createKnnDiagram(selectedPokemons) {
                                                     <strong>Baby: </strong>${+knnData[j].pokemon.is_baby === 0 ? "Não" : "Sim"}<br/>
                                                     <strong>Mítico: </strong>${+knnData[j].pokemon.is_mythical === 0 ? "Não" : "Sim"}<br/>
                                                     <strong>Lendário: </strong>${+knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim"}<br/>`));
-                                                                            
+
             comparasionPokemon.addEventListener("mouseleave", hideTooltip);
 
             const pokemonImageComparasion = document.createElement("img");
@@ -199,21 +201,7 @@ const csvCache = new Map();
 async function loadCsv(path, parser) {
     try {
         if (!csvCache.has(path)) {
-            // Usar Promise com timeout para evitar travamentos
-            const fetchPromise = new Promise((resolve, reject) => {
-                d3.csv(path, parser)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        console.error(`Erro ao carregar ${path}:`, error);
-                        reject(error);
-                    });
-
-                // Timeout de 5 segundos para evitar travamentos
-                setTimeout(() => reject(new Error(`Timeout ao carregar ${path}`)), 5000);
-            });
-
+            const fetchPromise = d3.csv(path, parser);
             csvCache.set(path, fetchPromise);
         }
         return await csvCache.get(path);
@@ -243,7 +231,7 @@ async function getKnnData(pokemon) {
         });
 
         categoricalFeatures.forEach(f => {
-            if (f !== "type_1" && f !== "type_2" && f!== "genus") {
+            if (f !== "type_1" && f !== "type_2" && f !== "genus") {
                 dist += (p1[f] !== p2[f]) ? 1.5 : 0;
             }
         });
@@ -259,10 +247,56 @@ async function getKnnData(pokemon) {
 
 
     function findNearest(pokemons, targetPokemon, k = 3) {
+        // Função para encontrar todos os pokémons da mesma linha evolutiva
+        function getEvolutionLineIds(targetId, targetEvolucao) {
+            const lineIds = new Set();
+
+            // Encontrar o primeiro pokémon da linha evolutiva (evolucao == 0)
+            let firstPokemonId = +targetId;
+            let currentEvolucao = +targetEvolucao;
+
+            // Percorrer para trás até encontrar o primeiro da linha
+            while (currentEvolucao !== 0) {
+                firstPokemonId = currentEvolucao;
+                const parentPokemon = pokemons.find(p => +p.id === currentEvolucao);
+                if (parentPokemon) {
+                    currentEvolucao = +parentPokemon.evolucao;
+                } else {
+                    break; // Sair se não encontrar o parent
+                }
+            }
+
+            // Agora percorrer toda a linha evolutiva a partir do primeiro
+            const toProcess = [firstPokemonId];
+            const processed = new Set();
+
+            while (toProcess.length > 0) {
+                const currentId = toProcess.pop();
+                if (processed.has(currentId)) continue;
+
+                processed.add(currentId);
+                lineIds.add(currentId);
+
+                // Encontrar todas as evoluções diretas deste pokémon
+                pokemons.forEach(p => {
+                    if (+p.evolucao === currentId && !processed.has(+p.id)) {
+                        toProcess.push(+p.id);
+                    }
+                });
+            }
+
+            return lineIds;
+        }
+
+        // Obter todos os IDs da linha evolutiva do pokémon alvo
+        const targetEvolutionLineIds = getEvolutionLineIds(targetPokemon.id, targetPokemon.evolucao);
+
         return pokemons
-            .filter(p => 
-                p.id !== targetPokemon.id && 
-                +p.evolucao == 0
+            .filter(p =>
+                p.id !== targetPokemon.id &&
+                +p.evolucao == 0 &&
+                +p.id <= 721 &&  // Apenas pokémons até Kalos (ID 721)
+                !targetEvolutionLineIds.has(+p.id) // Excluir mesma linha evolutiva
             )
             .map(p => ({ pokemon: p, dist: distance(p, targetPokemon) }))
             .sort((a, b) => a.dist - b.dist)
@@ -270,15 +304,17 @@ async function getKnnData(pokemon) {
     }
 
     try {
-        const data = await loadCsv("../knn_data.csv", d => d); 
-        const target = data.find(p => +p.id === +pokemon.pokemon_id);
+        const data = await loadCsv("../knn_data.csv", d => d);
+        // Filtrar apenas pokémons até ID 721 (Kalos)
+        const filteredData = data.filter(p => +p.id <= 721);
+        const target = filteredData.find(p => +p.id === +pokemon.pokemon_id);
 
         if (!target) {
             console.error("Pokémon alvo não encontrado:", pokemon.pokemon_id);
             return;
         }
 
-        const nearest = findNearest(data, target, 3);
+        const nearest = findNearest(filteredData, target, 3);
 
         return nearest;
     } catch (err) {

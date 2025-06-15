@@ -116,7 +116,7 @@ export function createHeatMapDef(selectedPokemons) {
     });
 
     const myColor = d3.scaleLinear()
-        .domain([0, 1, 4]) 
+        .domain([0, 1, 4])
         .range(["#2196f3", "#ffffff", "#f44336"]);
 
     // --- Tooltip setup ---
@@ -144,7 +144,7 @@ export function createHeatMapDef(selectedPokemons) {
                 .duration(200)
                 .style("opacity", .95);
             tooltip.html(`
-            <center><img src="assets/gifs/${d.pokemon.pokemon_id}.gif" class="heat-map-img"></img></center><br/>
+            <center><img src="assets/pokemons/${d.pokemon.pokemon_id}.png" class="heat-map-img"></img></center><br/>
             <strong>Pokémon:</strong> ${d.group}<br/>
             <strong>Tipo Atacante:</strong> ${tipoTraduzido[d.variable]}<br/>
             <strong>Efetividade:</strong> ${d.value}x

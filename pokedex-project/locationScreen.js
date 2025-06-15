@@ -31,21 +31,25 @@ Promise.all([
     const filteredEncounters = [];
 
     for (const row of encountersRaw) {
-        const key = `${row.location_area_id}-${row.pokemon_id}`;
-        if (!seen.has(key)) {
-            seen.add(key);
-            filteredEncounters.push(row);
+        // Filtrar apenas pokémons até ID 721 (Kalos)
+        if (row.pokemon_id <= 721) {
+            const key = `${row.location_area_id}-${row.pokemon_id}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                filteredEncounters.push(row);
+            }
         }
     }
 
     encountersData = filteredEncounters;
     locationsData = locations;
-    pokemonStatsData = pokemonStats;
+    // Filtrar stats e pokemon também por ID 721
+    pokemonStatsData = pokemonStats.filter(stat => stat.pokemon_id <= 721);
     statsData = stats;
 
     // Criar mapa dos dados básicos dos pokémons para acesso global
     pokemonBasicData = new Map();
-    pokemon.forEach(p => {
+    pokemon.filter(p => p.id <= 721).forEach(p => {
         pokemonBasicData.set(p.id, {
             id: p.id,
             identifier: p.identifier,
