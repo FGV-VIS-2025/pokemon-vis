@@ -305,11 +305,11 @@ function createSelectedPokemonDescription(selectedPokemon) {
                             ${generationMap[selectedPokemon.generation_id]}<br>
                             ${habitatMap[selectedPokemon.habitat_id]}<br>
                             ${selectedPokemon.capture_rate}<br>
-                            ${growthRateMap[selectedPokemon.growth_rate_id]?.name || 'Unknown'}<br>
+                            ${growthRateMap[selectedPokemon.growth_rate_id]?.name || 'Desconhecida'}<br>
                             ${selectedPokemon.base_happiness}<br>
-                            ${selectedPokemon.is_baby == 0 ? "No" : "Yes"}<br>
-                            ${selectedPokemon.is_legendary == 0 ? "No" : "Yes"}<br>
-                            ${selectedPokemon.is_mythical == 0 ? "No" : "Yes"}<br>
+                            ${selectedPokemon.is_baby == 0 ? "Não" : "Sim"}<br>
+                            ${selectedPokemon.is_legendary == 0 ? "Não" : "Sim"}<br>
+                            ${selectedPokemon.is_mythical == 0 ? "Não" : "Sim"}<br>
                         </div>
                     </div>`;
 

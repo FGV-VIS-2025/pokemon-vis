@@ -111,8 +111,8 @@ export async function createKnnDiagram(selectedPokemons) {
 
         const pokemonImage = document.createElement("img");
         pokemonImage.src = `./assets/pokemons/${pokemon.pokemon_id}.png`
-        pokemonImage.style.width = "95%";
-        pokemonImage.style.height = "95%";
+        pokemonImage.style.width = "85%";
+        pokemonImage.style.height = "85%";
         pokemonDiv.appendChild(pokemonImage);
 
         const comparasionDiv = document.createElement("div");
@@ -181,8 +181,8 @@ export async function createKnnDiagram(selectedPokemons) {
 
             const pokemonImageComparasion = document.createElement("img");
             pokemonImageComparasion.src = `./assets/pokemons/${knnData[j].pokemon.id}.png`
-            pokemonImageComparasion.style.width = "80%";
-            pokemonImageComparasion.style.height = "80%";
+            pokemonImageComparasion.style.width = "75%";
+            pokemonImageComparasion.style.height = "75%";
             comparasionPokemon.appendChild(pokemonImageComparasion);
 
             comparasionDiv.appendChild(comparasionPokemon);
