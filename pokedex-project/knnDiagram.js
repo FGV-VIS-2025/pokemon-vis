@@ -70,14 +70,14 @@ export async function createKnnDiagram(selectedPokemons) {
         pokemonDiv.style.border = "1px solid rgb(255, 255, 255)";
 
         pokemonDiv.addEventListener("mouseover", (event) => {
-            const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Unknown";
+            const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
             const tipos = pokemon.types.map(type => tipoTraduzido[type.type_name] || type.type_name).join(", ");
             const altura = pokemon.height / 10;
             const peso = pokemon.weight / 10;
             const lendario = pokemon.is_legendary === 0 ? "Não" : "Sim";
 
             const tooltipContent = `<strong>${pokemon.name}</strong> #${pokemon.pokemon_id}<br/>
-                <strong>Genus:</strong> ${genus}<br/>
+                <strong>Genética:</strong> ${genus}<br/>
                 <strong>Tipos:</strong> ${tipos}<br/>
                 <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
                 <strong>Lendário:</strong> ${lendario}<br/>
@@ -87,14 +87,14 @@ export async function createKnnDiagram(selectedPokemons) {
         });
 
         pokemonDiv.addEventListener("mousemove", (event) => {
-            const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Unknown";
+            const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
             const tipos = pokemon.types.map(type => tipoTraduzido[type.type_name] || type.type_name).join(", ");
             const altura = pokemon.height / 10;
             const peso = pokemon.weight / 10;
             const lendario = pokemon.is_legendary === 0 ? "Não" : "Sim";
 
             const tooltipContent = `<strong>${pokemon.name}</strong> #${pokemon.pokemon_id}<br/>
-                <strong>Genus:</strong> ${genus}<br/>
+                <strong>Genética:</strong> ${genus}<br/>
                 <strong>Tipos:</strong> ${tipos}<br/>
                 <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
                 <strong>Lendário:</strong> ${lendario}<br/>
@@ -137,7 +137,7 @@ export async function createKnnDiagram(selectedPokemons) {
             comparasionPokemon.style.border = "1px solid rgb(255, 255, 255)";
 
             comparasionPokemon.addEventListener("mouseover", (event) => {
-                const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Unknown";
+                const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
                 const tipo1 = knnData[j].pokemon.type_1;
                 const tipo2 = knnData[j].pokemon.type_2;
                 const tipos = [tipo1, tipo2].filter(t => t && t !== "").join(", ");
@@ -146,7 +146,7 @@ export async function createKnnDiagram(selectedPokemons) {
                 const lendario = +knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim";
 
                 const tooltipContent = `<strong>${knnData[j].pokemon.name}</strong> #${knnData[j].pokemon.id}<br/>
-                    <strong>Genus:</strong> ${genus}<br/>
+                    <strong>Genética:</strong> ${genus}<br/>
                     <strong>Tipos:</strong> ${tipos}<br/>
                     <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
                     <strong>Lendário:</strong> ${lendario}<br/>
@@ -156,7 +156,7 @@ export async function createKnnDiagram(selectedPokemons) {
             });
 
             comparasionPokemon.addEventListener("mousemove", (event) => {
-                const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Unknown";
+                const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
                 const tipo1 = knnData[j].pokemon.type_1;
                 const tipo2 = knnData[j].pokemon.type_2;
                 const tipos = [tipo1, tipo2].filter(t => t && t !== "").join(", ");
@@ -165,7 +165,7 @@ export async function createKnnDiagram(selectedPokemons) {
                 const lendario = +knnData[j].pokemon.is_legendary === 0 ? "Não" : "Sim";
 
                 const tooltipContent = `<strong>${knnData[j].pokemon.name}</strong> #${knnData[j].pokemon.id}<br/>
-                    <strong>Genus:</strong> ${genus}<br/>
+                    <strong>Genética:</strong> ${genus}<br/>
                     <strong>Tipos:</strong> ${tipos}<br/>
                     <strong>Altura:</strong> ${altura}m | <strong>Peso:</strong> ${peso}kg<br/>
                     <strong>Lendário:</strong> ${lendario}<br/>

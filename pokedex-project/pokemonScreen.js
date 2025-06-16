@@ -297,7 +297,7 @@ export async function editPokemonsCard() {
         heatSvg.innerHTML = "";
         heatSvg.style.border = 0;
         const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
-        
+
         const legendDefense = heatPaiSvg.querySelector('.heatmap-legend-defense');
         const legendAttack = heatPaiSvg.querySelector('.heatmap-legend-attack');
         if (legendDefense) legendDefense.remove();
@@ -385,7 +385,7 @@ async function createSelectedPokemonDescription(selectedPokemon) {
                                 <div class="info-value">${selectedPokemon.name}</div>
                             </div>
                             <div class="info-row">
-                                <div class="info-label"><strong>Genus:</strong></div>
+                                <div class="info-label"><strong>Genética:</strong></div>
                                 <div class="info-value">${selectedPokemon.genus.split(" Pokémon")[0]}</div>
                             </div>
                             <div class="info-row">

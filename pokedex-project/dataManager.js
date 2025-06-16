@@ -71,7 +71,7 @@ async function loadCsv(path, parser) {
                         reject(error);
                     });
 
-                setTimeout(() => reject(new Error(`Timeout ao carregar ${path}`)), 5000);
+                setTimeout(() => reject(new Error(`Tempo limite ao carregar ${path}`)), 5000);
             });
 
             csvCache.set(path, fetchPromise);
@@ -333,7 +333,7 @@ export async function getPokemonsByMultipleLocationAreas(locationAreas, region) 
             const types = pokemonTypesMap.get(encounter.pokemon_id) || [];
             uniquePokemonsMap.set(encounter.pokemon_id, {
                 pokemon_id: encounter.pokemon_id,
-                name: pokemonDetails?.name || 'Unknown',
+                name: pokemonDetails?.name || 'Desconhecido',
                 genus: pokemonDetails?.genus || '',
                 types: types.sort((a, b) => a.slot - b.slot),
                 min_level: Math.min(encounter.min_level, uniquePokemonsMap.get(encounter.pokemon_id)?.min_level || Infinity),
@@ -511,7 +511,7 @@ export async function getAllPokemons() {
             ...(pokemonsMap2.get(pokemon.pokemon_id) || {})
         }));
 
-        // Adicionar stats
+        // Adicionar atributos
         const pokemonsMap3 = new Map(
             stats.map(pokemons => [pokemons.Pokemon_Id, pokemons])
         );
@@ -644,7 +644,7 @@ export async function getPokemonsByGeneration(regionName) {
             }
         });
 
-        // Criar mapa para estatísticas
+        // Criar mapa para atributos
         const statsMap = new Map(pokemonStats.map(stats => [stats.Pokemon_Id, stats]));
 
         // Montar o resultado final com todas as informações

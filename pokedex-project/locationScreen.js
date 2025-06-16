@@ -130,7 +130,7 @@ export async function renderStatRadarChart(locationId) {
 
         // Para cada pokémon, somar suas estatísticas (cada pokémon conta apenas uma vez)
         pokemonsWithTypes.forEach(pokemon => {
-            // Verificar se o pokémon tem dados de estatísticas do arquivo pokemon_stats_clean.csv
+            // Verificar se o pokémon tem dados de atributos do arquivo pokemon_stats_clean.csv
             if (pokemon.Hp_Stat !== undefined &&
                 pokemon.Attack_Stat !== undefined &&
                 pokemon.Defense_Stat !== undefined &&
@@ -183,14 +183,14 @@ export async function renderStatRadarChart(locationId) {
             }
         }
 
-        // Criar array de estatísticas na ordem correta: HP, Attack, Defense, Speed, Sp. Defense, Sp. Attack
+        // Criar array de atributos na ordem correta: HP, Ataque, Defesa, Velocidade, Defesa Esp., Ataque Esp.
         const statsArray = [
             { label: 'HP', value: Number(avgStats['hp'].toFixed(2)) || 0 },
-            { label: 'Attack', value: Number(avgStats['attack'].toFixed(2)) || 0 },
-            { label: 'Defense', value: Number(avgStats['defense'].toFixed(2)) || 0 },
-            { label: 'Speed', value: Number(avgStats['speed'].toFixed(2)) || 0 },
-            { label: 'Sp. Defense', value: Number(avgStats['special-defense'].toFixed(2)) || 0 },
-            { label: 'Sp. Attack', value: Number(avgStats['special-attack'].toFixed(2)) || 0 }
+            { label: 'Ataque', value: Number(avgStats['attack'].toFixed(2)) || 0 },
+            { label: 'Defesa', value: Number(avgStats['defense'].toFixed(2)) || 0 },
+            { label: 'Velocidade', value: Number(avgStats['speed'].toFixed(2)) || 0 },
+            { label: 'Defesa Esp.', value: Number(avgStats['special-defense'].toFixed(2)) || 0 },
+            { label: 'Ataque Esp.', value: Number(avgStats['special-attack'].toFixed(2)) || 0 }
         ];
 
         // Limpar container do radar antes de renderizar
@@ -333,7 +333,7 @@ function createLocationInfoCards(locationId) {
 
     infoCard1.innerHTML = `
         <img id="strongest-pokemon-img" src="./assets/power.png" style="height: 56px; margin-bottom: 2px;">
-        <div style="font-weight: bold; margin-bottom: 2px;">Maior Status Base</div>
+        <div style="font-weight: bold; margin-bottom: 2px;">Maior Soma de Atributos</div>
         <div id="strongest-pokemon">Carregando...</div>
     `;
 
@@ -875,7 +875,7 @@ function setupStrongestPokemonInteraction(cardElement, pokemonData, totalStats) 
         }
 
         tooltipContent += `
-                    <div><strong>Total Stats:</strong> ${totalStats}</div>
+                    <div><strong>Total de Atributos:</strong> ${totalStats}</div>
                 </div>
                 <div style="font-size: 11px; color: #ccc; margin-top: 8px;">
                     Clique para ver estatísticas detalhadas
@@ -949,11 +949,11 @@ async function renderStrongestPokemonStats(pokemonId, pokemonName) {
         const mainStatIds = new Set([1, 2, 3, 4, 5, 6]);
         const statMapping = {
             1: 'HP',          // hp
-            2: 'Attack',      // attack  
-            3: 'Defense',     // defense
-            4: 'Sp. Attack',  // special-attack
-            5: 'Sp. Defense', // special-defense
-            6: 'Speed'        // speed
+            2: 'Ataque',      // attack  
+            3: 'Defesa',     // defense
+            4: 'Ataque Esp.',  // special-attack
+            5: 'Defesa Esp.', // special-defense
+            6: 'Velocidade'        // speed
         };
 
         // Buscar estatísticas do pokémon
@@ -961,14 +961,14 @@ async function renderStrongestPokemonStats(pokemonId, pokemonName) {
             stat.pokemon_id === pokemonId && mainStatIds.has(stat.stat_id)
         );
 
-        // Criar array de estatísticas na ordem correta: HP, Attack, Defense, Speed, Sp. Defense, Sp. Attack
+        // Criar array de atributos na ordem correta: HP, Ataque, Defesa, Velocidade, Defesa Esp., Ataque Esp.
         const statsArray = [
             { label: 'HP', value: 0 },
-            { label: 'Attack', value: 0 },
-            { label: 'Defense', value: 0 },
-            { label: 'Speed', value: 0 },
-            { label: 'Sp. Defense', value: 0 },
-            { label: 'Sp. Attack', value: 0 }
+            { label: 'Ataque', value: 0 },
+            { label: 'Defesa', value: 0 },
+            { label: 'Velocidade', value: 0 },
+            { label: 'Defesa Esp.', value: 0 },
+            { label: 'Ataque Esp.', value: 0 }
         ];
 
         // Preencher os valores das estatísticas

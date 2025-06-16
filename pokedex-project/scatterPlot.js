@@ -178,8 +178,6 @@ function drawScatterPlot(containerSelector, data) {
         .range([height, 0])
         .nice();
 
-    // Escala de raio baseada no total de stats para corresponder à legenda
-    // Valores da legenda: 200->9, 350->15, 500->20, 700->26
     const radiusScale = d3.scaleLinear()
         .domain([200, 500]) // Domínio baseado nos valores da legenda
         .range([8, 22]) // Range baseado nos raios da legenda
@@ -328,7 +326,7 @@ function drawScatterPlot(containerSelector, data) {
                         <div><strong>Tipo:</strong> ${d.types && d.types.length > 0 ? d.types.map(t => t.type_name.charAt(0).toUpperCase() + t.type_name.slice(1)).join(', ') : 'Desconhecido'}</div>
                         <div><strong>Peso:</strong> ${d.weight.toFixed(2)} kg</div>
                         <div><strong>Altura:</strong> ${d.height.toFixed(2)} m</div>
-                        <div><strong>Total Stats:</strong> ${d.totalStats}</div>
+                        <div><strong>Total de Atributos:</strong> ${d.totalStats}</div>
                     </div>
                     <div style="font-size: 11px; color: #ccc; margin-top: 8px;">
                         Clique para ver estatísticas detalhadas
@@ -466,11 +464,11 @@ async function renderPokemonStats(pokemonId) {
         const mainStatIds = new Set([1, 2, 3, 4, 5, 6]);
         const statMapping = {
             1: 'HP',          // hp
-            2: 'Attack',      // attack  
-            3: 'Defense',     // defense
-            4: 'Sp. Attack',  // special-attack
-            5: 'Sp. Defense', // special-defense
-            6: 'Speed'        // speed
+            2: 'Ataque',      // attack  
+            3: 'Defesa',     // defense
+            4: 'Ataque Esp.',  // special-attack
+            5: 'Defesa Esp.', // special-defense
+            6: 'Velocidade'        // speed
         };
 
         // Buscar estatísticas do pokémon
@@ -478,14 +476,14 @@ async function renderPokemonStats(pokemonId) {
             stat.pokemon_id === pokemonId && mainStatIds.has(stat.stat_id)
         );
 
-        // Criar array de estatísticas na ordem correta: HP, Attack, Defense, Speed, Sp. Defense, Sp. Attack
+        // Criar array de estatísticas na ordem correta: HP, Ataque, Defesa, Velocidade, Defesa Esp., Ataque Esp.
         const statsArray = [
             { label: 'HP', value: 0 },
-            { label: 'Attack', value: 0 },
-            { label: 'Defense', value: 0 },
-            { label: 'Speed', value: 0 },
-            { label: 'Sp. Defense', value: 0 },
-            { label: 'Sp. Attack', value: 0 }
+            { label: 'Ataque', value: 0 },
+            { label: 'Defesa', value: 0 },
+            { label: 'Velocidade', value: 0 },
+            { label: 'Defesa Esp.', value: 0 },
+            { label: 'Ataque Esp.', value: 0 }
         ];
 
         // Preencher os valores das estatísticas

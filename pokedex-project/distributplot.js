@@ -12,8 +12,8 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         { key: "Hp_Stat", label: "HP" },
         { key: "Attack_Stat", label: "Ataque" },
         { key: "Defense_Stat", label: "Defesa" },
-        { key: "Special_Attack_Stat", label: "Sp. Atk" },
-        { key: "Special_Defense_Stat", label: "Sp. Def" },
+        { key: "Special_Attack_Stat", label: "Ataque Esp." },
+        { key: "Special_Defense_Stat", label: "Defesa Esp." },
         { key: "Speed_Stat", label: "Velocidade" }
     ];
 

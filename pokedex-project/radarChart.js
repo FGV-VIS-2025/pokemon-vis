@@ -80,16 +80,16 @@ export function renderRadarChart(containerSelector, title, stats, color = "#4A90
 function buildRadarDataFromPokemons(selectedPokemons) {
     const statLabels = [
         { key: "Hp_Stat", label: "HP" },
-        { key: "Attack_Stat", label: "Attack" },
-        { key: "Defense_Stat", label: "Defense" },
-        { key: "Speed_Stat", label: "Speed" },
-        { key: "Special_Defense_Stat", label: "Sp. Defense" },
-        { key: "Special_Attack_Stat", label: "Sp. Attack" }
+        { key: "Attack_Stat", label: "Ataque" },
+        { key: "Defense_Stat", label: "Defesa" },
+        { key: "Speed_Stat", label: "Velocidade" },
+        { key: "Special_Defense_Stat", label: "Defesa Esp." },
+        { key: "Special_Attack_Stat", label: "Ataque Esp." }
     ];
 
     const tiposVistos = {};
     const formattedData = selectedPokemons.map(pokemon => {
-        const name = pokemon.Name || pokemon.name || "Unknown";
+        const name = pokemon.Name || pokemon.name || "Desconhecido";
         const axes = statLabels.map(stat => ({
             axis: stat.label,
             value: pokemon[stat.key],
@@ -270,7 +270,7 @@ export function RadarChart(className, data, options, showTitle = true) {
             .style("font-size", `${cfg.w / 18}px`)
             .style("font-weight", "bold")
             .style("fill", "#ffffff")
-            .text("Comparação dos Stats dos Pokémon");
+            .text("Comparação dos Atributos dos Pokémon");
     }
 
 

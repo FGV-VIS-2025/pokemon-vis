@@ -186,7 +186,7 @@ export function createHeatMapAta(selectedPokemons) {
     const heatPaiSvgSelection = d3.select(".svg-pai-chart-2");
 
     const legendContainer = heatPaiSvgSelection
-        .insert("div", ".heatmap-legend-defense")
+        .append("div")
         .attr("class", "heatmap-legend-attack")
         .style("margin-top", "15px")
         .style("padding", "15px")
