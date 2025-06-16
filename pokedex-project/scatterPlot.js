@@ -178,10 +178,12 @@ function drawScatterPlot(containerSelector, data) {
         .range([height, 0])
         .nice();
 
-    // Escala de raio baseada no total de stats
-    const radiusScale = d3.scaleSqrt()
-        .domain(d3.extent(data, d => d.totalStats))
-        .range([6, 24]);
+    // Escala de raio baseada no total de stats para corresponder à legenda
+    // Valores da legenda: 200->9, 350->15, 500->20, 700->26
+    const radiusScale = d3.scaleLinear()
+        .domain([200, 500]) // Domínio baseado nos valores da legenda
+        .range([8, 22]) // Range baseado nos raios da legenda
+        .clamp(true); // Garante que valores fora do domínio sejam limitados
 
     // Função para obter a cor baseada no tipo primário do pokémon
     const getColorByType = (pokemon) => {
@@ -233,7 +235,6 @@ function drawScatterPlot(containerSelector, data) {
 
     xAxis.selectAll("text")
         .style("fill", "white")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("font-size", "12px");
 
     xAxis.selectAll("path, line")
@@ -246,7 +247,6 @@ function drawScatterPlot(containerSelector, data) {
 
     yAxis.selectAll("text")
         .style("fill", "white")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("font-size", "12px");
 
     yAxis.selectAll("path, line")
@@ -261,7 +261,6 @@ function drawScatterPlot(containerSelector, data) {
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .text("Peso (kg)");
 
     g.append("text")
@@ -272,7 +271,6 @@ function drawScatterPlot(containerSelector, data) {
         .style("text-anchor", "middle")
         .style("font-size", "16px")
         .style("font-weight", "bold")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .text("Altura (m)");
 
     // Tooltip melhorado
@@ -284,7 +282,6 @@ function drawScatterPlot(containerSelector, data) {
         .style("padding", "12px")
         .style("border-radius", "8px")
         .style("font-size", "13px")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("pointer-events", "none")
         .style("opacity", 0)
         .style("z-index", "1000")
@@ -397,7 +394,6 @@ function drawScatterPlot(containerSelector, data) {
         .style("padding", "6px 12px")
         .style("border-radius", "6px")
         .style("font-size", "0.8em")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("cursor", "pointer")
         .style("transition", "background-color 0.2s ease")
         .text("✕ Limpar Seleção");
@@ -514,7 +510,7 @@ async function renderPokemonStats(pokemonId) {
             pokemonName,
             statsArray,
             radarColor,
-            locationMaxStatValue ? { maxValue: locationMaxStatValue } : {} // Usar o valor máximo da localização se disponível
+            locationMaxStatValue ? { maxValue: locationMaxStatValue, showTitle: false } : { showTitle: false } // Usar o valor máximo da localização se disponível
         );
 
         // Atualizar título do container do radar

@@ -46,7 +46,6 @@ function createRegionSearchBar(regionName = "Região Selecionada") {
     regionSearch.style.marginTop = "15px";
     regionSearch.style.marginBottom = "15px";
     regionSearch.style.position = "relative";
-    regionSearch.style.fontFamily = '"Pixelify Sans", sans-serif';
 
     const regionIcon = document.createElement("img");
     regionIcon.src = "./assets/earth-globe.png";
@@ -128,7 +127,6 @@ function createRegionDescription() {
     chordTitle.style.color = 'white';
     chordTitle.style.marginBottom = '2px';
     chordTitle.style.marginTop = '0px';
-    chordTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
     chordTitle.style.fontSize = '1.0em';
     chordTitle.style.textAlign = 'center';
     chordTitle.style.lineHeight = '1.1';
@@ -142,7 +140,6 @@ function createRegionDescription() {
     chordInstructions.style.textAlign = 'center';
     chordInstructions.style.marginBottom = '3px';
     chordInstructions.style.marginTop = '0px';
-    chordInstructions.style.fontFamily = '"Pixelify Sans", sans-serif';
     chordInstructions.style.lineHeight = '1.0';
     leftChordContainer.appendChild(chordInstructions);
 
@@ -187,7 +184,6 @@ function createRegionDescription() {
     title.style.color = 'white';
     title.style.marginBottom = '5px';
     title.style.marginTop = '0px';
-    title.style.fontFamily = '"Pixelify Sans", sans-serif';
     title.style.fontSize = '1.0em';
     title.style.textAlign = 'center';
     title.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
@@ -202,7 +198,6 @@ function createRegionDescription() {
     clearFilterBtn.style.padding = '6px 12px';
     clearFilterBtn.style.borderRadius = '6px';
     clearFilterBtn.style.fontSize = '0.8em';
-    clearFilterBtn.style.fontFamily = '"Pixelify Sans", sans-serif';
     clearFilterBtn.style.cursor = 'pointer';
     clearFilterBtn.style.display = 'none';
     clearFilterBtn.style.transition = 'background-color 0.2s ease';
@@ -266,7 +261,6 @@ function createRegionDescription() {
     prevButton.style.padding = '8px 16px';
     prevButton.style.cursor = 'pointer';
     prevButton.style.fontSize = '12px';
-    prevButton.style.fontFamily = '"Pixelify Sans", sans-serif';
     prevButton.style.fontWeight = '600';
     prevButton.style.display = 'flex';
     prevButton.style.alignItems = 'center';
@@ -282,7 +276,6 @@ function createRegionDescription() {
     pageIndicator.id = 'pokemon-page-indicator';
     pageIndicator.style.color = '#ffffff';
     pageIndicator.style.fontSize = '14px';
-    pageIndicator.style.fontFamily = '"Pixelify Sans", sans-serif';
     pageIndicator.style.fontWeight = '700';
     pageIndicator.style.minWidth = '80px';
     pageIndicator.style.textAlign = 'center';
@@ -305,7 +298,6 @@ function createRegionDescription() {
     nextButton.style.padding = '8px 16px';
     nextButton.style.cursor = 'pointer';
     nextButton.style.fontSize = '12px';
-    nextButton.style.fontFamily = '"Pixelify Sans", sans-serif';
     nextButton.style.fontWeight = '600';
     nextButton.style.display = 'flex';
     nextButton.style.alignItems = 'center';
@@ -439,7 +431,6 @@ function createAdditionalChartsArea() {
     distributionTitle.style.color = 'white';
     distributionTitle.style.marginBottom = '5px';
     distributionTitle.style.marginTop = '0px';
-    distributionTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
     distributionTitle.style.fontSize = '1.0em';
     distributionTitle.style.textAlign = 'center';
     distributionTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
@@ -493,7 +484,6 @@ export async function createRegionScreen(id_region = 3) {
     const loadingDiv = document.createElement("div");
     loadingDiv.style.color = "white";
     loadingDiv.style.fontSize = "1.2em";
-    loadingDiv.style.fontFamily = '"Pixelify Sans", sans-serif';
     loadingDiv.style.textAlign = "center";
     loadingDiv.style.marginTop = "50px";
     loadingDiv.textContent = "Carregando dados da região...";
@@ -539,7 +529,7 @@ export async function createRegionScreen(id_region = 3) {
     } catch (error) {
         console.error("Erro ao criar tela de região:", error);
         contentScreen.innerHTML = `
-            <div style="color: white; text-align: center; margin-top: 50px; font-family: 'Pixelify Sans', sans-serif;">
+            <div style="color: white; text-align: center; margin-top: 50px;">
                 <h2>Erro ao carregar dados</h2>
                 <p>Não foi possível carregar os dados da região.</p>
                 <p style="font-size: 0.9em; opacity: 0.7;">ID da região: ${id_region}</p>
@@ -604,7 +594,6 @@ function renderCurrentPage() {
         noDataMessage.style.gridRow = '1 / -1';
         noDataMessage.style.textAlign = 'center';
         noDataMessage.style.padding = '20px';
-        noDataMessage.style.fontFamily = '"Pixelify Sans", sans-serif';
         noDataMessage.style.alignSelf = 'center';
         noDataMessage.style.justifySelf = 'center';
         spritesGrid.appendChild(noDataMessage);
@@ -663,14 +652,12 @@ function renderCurrentPage() {
         numberLabel.style.color = '#cccccc';
         numberLabel.style.fontSize = '9px';
         numberLabel.style.marginTop = '2px';
-        numberLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
         numberLabel.style.textAlign = 'center';
 
         const nameLabel = document.createElement('span');
         nameLabel.textContent = pokemon.name;
         nameLabel.style.color = 'white';
         nameLabel.style.fontSize = '9px';
-        nameLabel.style.fontFamily = '"Pixelify Sans", sans-serif';
         nameLabel.style.textAlign = 'center';
         nameLabel.style.fontWeight = '600';
         nameLabel.style.maxWidth = '70px';
@@ -911,7 +898,7 @@ function setupClearFilterButton() {
 }
 
 // Expor função global para integração com o diagrama de acordes
-window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB) => {
+window.updateRegionSpritesGrid = (filteredPokemons, typeA, typeB, isMonotype) => {
     // Reset para a primeira página quando aplicar filtros
     currentPage = 1;
     // Usar o ID da região atual em vez de tentar descobrir via DOM

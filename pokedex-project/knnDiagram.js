@@ -33,7 +33,6 @@ export async function createKnnDiagram(selectedPokemons) {
     titleDiv.style.height = "10%"
     titleDiv.style.borderRadius = "10px";
     titleDiv.style.fontSize = `${knnWidth / 120}px`;
-    titleDiv.style.fontFamily = "Pixelify Sans, sans-serif";
 
     const titleText = document.createElement("h2");
     titleText.className = "knn-title-text";

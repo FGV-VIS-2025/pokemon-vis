@@ -105,7 +105,6 @@ export function drawDistributionPlot(containerSelector, pokemons) {
 
     xAxis.selectAll("text")
         .style("fill", "white")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("font-size", "12px");
 
     xAxis.selectAll("path, line")
@@ -119,7 +118,6 @@ export function drawDistributionPlot(containerSelector, pokemons) {
 
     yAxis.selectAll("text")
         .style("fill", "white")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("font-size", "12px");
 
     yAxis.selectAll("path, line")
@@ -286,7 +284,6 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .style("text-anchor", "middle")
         .style("font-size", "14px")
         .style("font-weight", "bold")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("text-shadow", "2px 2px 4px rgba(0, 0, 0, 0.7)")
         .text("Atributos");
 
@@ -298,7 +295,6 @@ export function drawDistributionPlot(containerSelector, pokemons) {
         .style("text-anchor", "middle")
         .style("font-size", "14px")
         .style("font-weight", "bold")
-        .style("font-family", '"Pixelify Sans", sans-serif')
         .style("text-shadow", "2px 2px 4px rgba(0, 0, 0, 0.7)")
         .text("Valor do Atributo");
 }

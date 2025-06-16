@@ -266,23 +266,23 @@ export function getOffensiveMultipliers(type1, type2 = null) {
 
 export const tipoTraduzido = {
     normal: "Normal",
-    fire: "Fogo",
-    water: "Água",
-    electric: "Elétrico",
-    grass: "Grama",
-    ice: "Gelo",
-    fighting: "Lutador",
-    poison: "Venenoso",
-    ground: "Terrestre",
-    flying: "Voador",
-    psychic: "Psíquico",
-    bug: "Inseto",
-    rock: "Pedra",
-    ghost: "Fantasma",
-    dragon: "Dragão",
-    dark: "Sombrio",
-    steel: "Metálico",
-    fairy: "Fada"
+    fire: "Fire",
+    water: "Water",
+    electric: "Electric",
+    grass: "Grass",
+    ice: "Ice",
+    fighting: "Fighting",
+    poison: "Poison",
+    ground: "Ground",
+    flying: "Flying",
+    psychic: "Psychic",
+    bug: "Bug",
+    rock: "Rock",
+    ghost: "Ghost",
+    dragon: "Dragon",
+    dark: "Dark",
+    steel: "Steel",
+    fairy: "Fairy"
 };
 
 export const shape_id_to_name = {

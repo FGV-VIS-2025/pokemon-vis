@@ -90,9 +90,17 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
       tooltip.style("opacity", 0);
       // Se houver filtro, reativa destaque do filtro
       if (currentFilter && currentFilter.length === 2) {
-        d3.selectAll(".group path").filter(function () {
-          return currentFilter.includes(d3.select(this).attr("data-type"));
-        }).classed("active", true);
+        if (currentFilter[1] === 'monotype') {
+          // Filtro monotipo - destacar apenas o tipo
+          d3.selectAll(".group path").filter(function () {
+            return d3.select(this).attr("data-type") === currentFilter[0];
+          }).classed("active", true);
+        } else {
+          // Filtro de tipos duplos - destacar ambos os tipos
+          d3.selectAll(".group path").filter(function () {
+            return currentFilter.includes(d3.select(this).attr("data-type"));
+          }).classed("active", true);
+        }
       } else if (currentFilter && currentFilter.length === 1) {
         d3.selectAll(".group path").filter(function () {
           return d3.select(this).attr("data-type") === currentFilter[0];
@@ -183,9 +191,15 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
       d3.selectAll(".group path").classed("fade", false).classed("active", false);
       tooltip.style("opacity", 0);
       if (currentFilter && currentFilter.length === 2) {
-        d3.selectAll(".group path").filter(function () {
-          return currentFilter.includes(d3.select(this).attr("data-type"));
-        }).classed("active", true);
+        if (currentFilter[1] === 'monotype') {
+          d3.selectAll(".group path").filter(function () {
+            return d3.select(this).attr("data-type") === currentFilter[0];
+          }).classed("active", true);
+        } else {
+          d3.selectAll(".group path").filter(function () {
+            return currentFilter.includes(d3.select(this).attr("data-type"));
+          }).classed("active", true);
+        }
       } else if (currentFilter && currentFilter.length === 1) {
         d3.selectAll(".group path").filter(function () {
           return d3.select(this).attr("data-type") === currentFilter[0];
@@ -195,11 +209,18 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     .on("click", (event, d) => {
       const typeA = filteredTypeNames[d.source.index];
       const typeB = filteredTypeNames[d.target.index];
-      filterSpritesByTypes(typeA, typeB);
-      d3.selectAll(".group path").classed("active", false);
-      d3.selectAll(".group path").filter(function () {
-        return currentFilter && currentFilter.length === 2 && currentFilter.includes(d3.select(this).attr("data-type"));
-      }).classed("active", true);
+
+      if (d.source.index === d.target.index) {
+        filterSpritesByMonotype(typeA);
+        d3.selectAll(".group path").classed("active", false);
+        d3.select(`.group path[data-type="${typeA}"]`).classed("active", true);
+      } else {
+        filterSpritesByTypes(typeA, typeB);
+        d3.selectAll(".group path").classed("active", false);
+        d3.selectAll(".group path").filter(function () {
+          return currentFilter && currentFilter.length === 2 && currentFilter.includes(d3.select(this).attr("data-type"));
+        }).classed("active", true);
+      }
     });
 
   let currentFilter = null;
@@ -221,6 +242,17 @@ export function renderTypeChord(containerSelector, typesData, pokemonTypesData, 
     }
     if (onFilter) onFilter(filtered, typeA, typeB);
     currentFilter = typeB ? [typeA, typeB] : [typeA];
+    showClearFilterButton();
+  }
+
+  function filterSpritesByMonotype(type) {
+    if (!Array.isArray(pokemonsFromGeneration) || pokemonsFromGeneration.length === 0) return;
+    const filtered = pokemonsFromGeneration.filter(p => {
+      if (!p.types || p.types.length !== 1) return false;
+      return p.types[0].type_name === type;
+    });
+    if (onFilter) onFilter(filtered, type, null, true);
+    currentFilter = [type, 'monotype'];
     showClearFilterButton();
   }
 
@@ -342,9 +374,9 @@ export async function updateTypeChordByRegion(regionId) {
       width = height = Math.max(250, availableSize);
     }
 
-    renderTypeChord('#chord-graph-container', typesData, filteredPokemonTypes, width, height, pokemonsFromGeneration, (filtered, typeA, typeB) => {
+    renderTypeChord('#chord-graph-container', typesData, filteredPokemonTypes, width, height, pokemonsFromGeneration, (filtered, typeA, typeB, isMonotype) => {
       if (typeof window.updateRegionSpritesGrid === 'function') {
-        window.updateRegionSpritesGrid(filtered, typeA, typeB);
+        window.updateRegionSpritesGrid(filtered, typeA, typeB, isMonotype);
       }
     });
 

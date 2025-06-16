@@ -12,7 +12,8 @@ export function renderRadarChart(containerSelector, title, stats, color = "#4A90
         opacityArea: 0.35,
         dotRadius: 4,
         strokeWidth: 2,
-        roundStrokes: true
+        roundStrokes: true,
+        showTitle: true
     };
 
     const cfg = { ...defaultOptions, ...options };
@@ -67,7 +68,7 @@ export function renderRadarChart(containerSelector, title, stats, color = "#4A90
     };
 
     // Renderizar o radar chart
-    RadarChart(containerSelector, radarData, radarChartOptions);
+    RadarChart(containerSelector, radarData, radarChartOptions, cfg.showTitle);
 }
 
 /**
@@ -142,7 +143,7 @@ export function createRadarChart(selectedPokemons) {
         color: color
     };
 
-    RadarChart(".svg-chart-1", data, radarChartOptions);
+    RadarChart(".svg-chart-1", data, radarChartOptions, true);
 }
 
 /**
@@ -152,7 +153,7 @@ export function createRadarChart(selectedPokemons) {
  * @param {*} data - A estrutura de dados que vai contruir o gráfico
  * @param {*} options - Uma série de configurações do gráfico de radar
  */
-export function RadarChart(className, data, options) {
+export function RadarChart(className, data, options, showTitle = true) {
 
     // Configurações globais padrão
     var cfg = {
@@ -260,15 +261,17 @@ export function RadarChart(className, data, options) {
         .style("stroke", "white")
         .style("stroke-width", "2px");
 
-    svg.append("text")
-        .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
-        .attr("y", 20) // ou ajuste como preferir
-        .attr("text-anchor", "middle")
-        .style("font-size", `${cfg.w / 18}px`)
-        .style("font-weight", "bold")
-        .style("fill", "#ffffff")
-        .style("font-family", "Pixelify Sans, sans-serif")
-        .text("Comparação dos Stats dos Pokémon");
+    // Adicionar título apenas se showTitle for true
+    if (showTitle) {
+        svg.append("text")
+            .attr("x", (cfg.w + cfg.margin.left + cfg.margin.right) / 2)
+            .attr("y", 20) // ou ajuste como preferir
+            .attr("text-anchor", "middle")
+            .style("font-size", `${cfg.w / 18}px`)
+            .style("font-weight", "bold")
+            .style("fill", "#ffffff")
+            .text("Comparação dos Stats dos Pokémon");
+    }
 
 
     // Configuração dos títulos dos eixos

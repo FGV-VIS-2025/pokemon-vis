@@ -152,7 +152,6 @@ body {
     align-items: center;
     justify-content: center;
     color: var(--white);
-    font-family: "Pixelify Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -279,6 +278,10 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    font-family: "Pixelify Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 /* Screen */
@@ -1575,10 +1578,6 @@ body {
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 12px;
-}
-
-.svg-pai-chart-2 {
-    font-family: "Pixelify Sans", sans-serif;
 }
 
 .tooltip-knn {

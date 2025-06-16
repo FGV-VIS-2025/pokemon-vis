@@ -198,7 +198,7 @@ export async function renderStatRadarChart(locationId) {
         if (container) container.innerHTML = '';
 
         // Usar a função modular para renderizar com a cor do tipo mais comum e valor máximo fixo
-        const options = locationMaxStatValue ? { maxValue: locationMaxStatValue } : {};
+        const options = locationMaxStatValue ? { maxValue: locationMaxStatValue, showTitle: false } : { showTitle: false };
         renderRadarChart(
             "#radar-chart-location",
             "Estatísticas Médias dos Pokémons",
@@ -256,7 +256,6 @@ function createLocationSearchBar(locationName = "Localização Selecionada") {
     locationSearch.style.marginTop = "15px";
     locationSearch.style.marginBottom = "15px";
     locationSearch.style.position = "relative";
-    locationSearch.style.fontFamily = '"Pixelify Sans", sans-serif';
 
     const locationIcon = document.createElement("img");
     locationIcon.src = "./assets/compass.png";
@@ -315,7 +314,6 @@ function createLocationInfoCards(locationId) {
     infoCard1.style.display = "flex";
     infoCard1.style.flexDirection = "column";
     infoCard1.style.alignItems = "center";
-    infoCard1.style.fontFamily = '"Pixelify Sans", sans-serif';
     infoCard1.style.fontSize = "0.8em";
     infoCard1.style.textAlign = "center";
     infoCard1.style.minHeight = "90px";
@@ -351,7 +349,6 @@ function createLocationInfoCards(locationId) {
     infoCard2.style.display = "flex";
     infoCard2.style.flexDirection = "column";
     infoCard2.style.alignItems = "center";
-    infoCard2.style.fontFamily = '"Pixelify Sans", sans-serif';
     infoCard2.style.fontSize = "0.8em";
     infoCard2.style.textAlign = "center";
     infoCard2.style.minHeight = "90px";
@@ -387,7 +384,6 @@ function createLocationInfoCards(locationId) {
     infoCard3.style.display = "flex";
     infoCard3.style.flexDirection = "column";
     infoCard3.style.alignItems = "center";
-    infoCard3.style.fontFamily = '"Pixelify Sans", sans-serif';
     infoCard3.style.fontSize = "0.8em";
     infoCard3.style.textAlign = "center";
     infoCard3.style.minHeight = "90px";
@@ -407,7 +403,7 @@ function createLocationInfoCards(locationId) {
 
     infoCard3.innerHTML = `
         <img src="assets/types/normal.png" style="height: 32px; margin-bottom: 8px;" id="most-common-type-img">
-        <div style="font-weight: bold; margin-bottom: 3px;">Tipo Comum</div>
+        <div style="font-weight: bold; margin-bottom: 3px;">Tipo Mais Comum</div>
         <div id="most-common-type">Carregando...</div>
     `;
 
@@ -422,7 +418,6 @@ function createLocationInfoCards(locationId) {
     infoCard4.style.display = "flex";
     infoCard4.style.flexDirection = "column";
     infoCard4.style.alignItems = "center";
-    infoCard4.style.fontFamily = '"Pixelify Sans", sans-serif';
     infoCard4.style.fontSize = "0.8em";
     infoCard4.style.textAlign = "center";
     infoCard4.style.minHeight = "90px";
@@ -588,7 +583,6 @@ function createChartContainer() {
     scatterTitle.style.color = 'white';
     scatterTitle.style.marginBottom = '5px';
     scatterTitle.style.marginTop = '0px';
-    scatterTitle.style.fontFamily = '"Pixelify Sans", sans-serif';
     scatterTitle.style.fontSize = '1.0em';
     scatterTitle.style.textAlign = 'center';
     scatterTitle.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
@@ -598,17 +592,83 @@ function createChartContainer() {
     const scatterChart = document.createElement('div');
     scatterChart.id = 'scatter-chart-container';
     scatterChart.style.width = '100%';
-    scatterChart.style.height = 'calc(100% - 35px)';
+    scatterChart.style.height = 'calc(100% - 85px)'; // Reduzido para dar espaço à legenda
     scatterChart.style.display = 'flex';
     scatterChart.style.justifyContent = 'center';
     scatterChart.style.alignItems = 'center';
-    scatterChart.style.minHeight = '450px';
-    scatterChart.style.maxHeight = '450px';
+    scatterChart.style.minHeight = '400px';
+    scatterChart.style.maxHeight = '400px';
     scatterChart.style.overflow = 'visible';
     scatterChart.style.boxSizing = 'border-box';
     scatterChart.style.position = 'relative';
 
     leftScatterContainer.appendChild(scatterChart);
+
+    // Container para a legenda do scatter plot
+    const legendContainer = document.createElement('div');
+    legendContainer.id = 'scatter-legend-container';
+    legendContainer.style.width = '100%';
+    legendContainer.style.height = '50px';
+    legendContainer.style.display = 'flex';
+    legendContainer.style.justifyContent = 'center';
+    legendContainer.style.alignItems = 'center';
+    legendContainer.style.backgroundColor = 'rgba(40, 40, 40, 0.8)';
+    legendContainer.style.borderRadius = '8px';
+    legendContainer.style.marginTop = '8px';
+    legendContainer.style.padding = '8px';
+    legendContainer.style.boxSizing = 'border-box';
+    legendContainer.style.border = '1px solid #555';
+
+    // Título da legenda
+    const legendTitle = document.createElement('div');
+    legendTitle.textContent = 'Soma do Total de Stats:';
+    legendTitle.style.color = 'white';
+    legendTitle.style.fontSize = '12px';
+    legendTitle.style.fontWeight = 'bold';
+    legendTitle.style.marginRight = '15px';
+
+    // Container para os exemplos de tamanho
+    const legendExamples = document.createElement('div');
+    legendExamples.style.display = 'flex';
+    legendExamples.style.alignItems = 'center';
+    legendExamples.style.gap = '20px';
+
+    // Criar exemplos de diferentes tamanhos usando a mesma escala do scatter plot
+    const examples = [
+        { stats: 200, radius: 8, label: '~200' },
+        { stats: 350, radius: 15, label: '~350' },
+        { stats: 500, radius: 22, label: '~500' },
+    ];
+
+    examples.forEach(example => {
+        const exampleContainer = document.createElement('div');
+        exampleContainer.style.display = 'flex';
+        exampleContainer.style.alignItems = 'center';
+        exampleContainer.style.gap = '6px';
+
+        // Círculo de exemplo
+        const circle = document.createElement('div');
+        circle.style.width = `${example.radius * 2}px`;
+        circle.style.height = `${example.radius * 2}px`;
+        circle.style.borderRadius = '50%';
+        circle.style.backgroundColor = 'rgba(74, 144, 226, 0.8)';
+        circle.style.border = '1px solid white';
+        circle.style.flexShrink = '0';
+
+        // Label do exemplo
+        const label = document.createElement('span');
+        label.textContent = example.label;
+        label.style.color = 'white';
+        label.style.fontSize = '11px';
+
+        exampleContainer.appendChild(circle);
+        exampleContainer.appendChild(label);
+        legendExamples.appendChild(exampleContainer);
+    });
+
+    legendContainer.appendChild(legendTitle);
+    legendContainer.appendChild(legendExamples);
+    leftScatterContainer.appendChild(legendContainer);
 
     // Container expandido para o radar chart
     const rightContainer = document.createElement('div');
@@ -632,7 +692,6 @@ function createChartContainer() {
     title.style.color = 'white';
     title.style.marginBottom = '5px';
     title.style.marginTop = '0px';
-    title.style.fontFamily = '"Pixelify Sans", sans-serif';
     title.style.fontSize = '1.0em';
     title.style.textAlign = 'center';
     title.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.7)';
@@ -674,7 +733,6 @@ export async function createLocationScreen(id_location = 28) {
     const loadingDiv = document.createElement("div");
     loadingDiv.style.color = "white";
     loadingDiv.style.fontSize = "1.2em";
-    loadingDiv.style.fontFamily = '"Pixelify Sans", sans-serif';
     loadingDiv.style.textAlign = "center";
     loadingDiv.style.marginTop = "50px";
     loadingDiv.textContent = "Carregando dados da localização...";
@@ -748,7 +806,7 @@ export async function createLocationScreen(id_location = 28) {
     } catch (error) {
         console.error("Erro ao criar tela de localização:", error);
         contentScreen.innerHTML = `
-            <div style="color: white; text-align: center; margin-top: 50px; font-family: 'Pixelify Sans', sans-serif;">
+            <div style="color: white; text-align: center; margin-top: 50px;">
                 <h2>Erro ao carregar dados</h2>
                 <p>Não foi possível carregar os dados da localização.</p>
                 <p style="font-size: 0.9em; opacity: 0.7;">ID da localização: ${id_location}</p>
@@ -782,7 +840,6 @@ function setupStrongestPokemonInteraction(cardElement, pokemonData, totalStats) 
             .style("padding", "12px")
             .style("border-radius", "8px")
             .style("font-size", "13px")
-            .style("font-family", '"Pixelify Sans", sans-serif')
             .style("pointer-events", "none")
             .style("opacity", 0)
             .style("z-index", "1000")
@@ -955,7 +1012,7 @@ async function renderStrongestPokemonStats(pokemonId, pokemonName) {
         const formattedPokemonName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
 
         // Usar a função modular para renderizar com a cor do tipo e valor máximo fixo da localização
-        const options = locationMaxStatValue ? { maxValue: locationMaxStatValue } : {};
+        const options = locationMaxStatValue ? { maxValue: locationMaxStatValue, showTitle: false } : { showTitle: false };
         renderRadarChart(
             "#radar-chart-location",
             formattedPokemonName,
@@ -1014,7 +1071,6 @@ function createClearRadarButton() {
     buttonElement.style.padding = '6px 12px';
     buttonElement.style.borderRadius = '6px';
     buttonElement.style.fontSize = '0.8em';
-    buttonElement.style.fontFamily = '"Pixelify Sans", sans-serif';
     buttonElement.style.cursor = 'pointer';
     buttonElement.style.transition = 'background-color 0.2s ease';
     buttonElement.textContent = '✕ Limpar Seleção';

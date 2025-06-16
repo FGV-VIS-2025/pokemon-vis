@@ -42,7 +42,7 @@ export async function createPokemonScreen() {
     pokemonSearch.classList.add("pokemons-search");
 
     const pokemonSearchBox = document.createElement("input");
-    pokemonSearchBox.placeholder = "Search for your favorite Pokémon...";
+    pokemonSearchBox.placeholder = "Busque pelo seu Pokémon favorito...";
     pokemonSearchBox.classList.add("pokemons-search-box");
 
     const pokemonSearchBoxImage = document.createElement("img");
@@ -68,7 +68,7 @@ export async function createPokemonScreen() {
 
         if (filtered.length === 0) {
             const li = document.createElement("li");
-            li.textContent = "Pokémon Not Found";
+            li.textContent = "Pokémon não encontrado";
             suggestionsList.appendChild(li);
             li.onclick = () => {
                 suggestionsList.style.display = "none";
@@ -297,6 +297,11 @@ export async function editPokemonsCard() {
         heatSvg.innerHTML = "";
         heatSvg.style.border = 0;
         const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
+        
+        const legendDefense = heatPaiSvg.querySelector('.heatmap-legend-defense');
+        const legendAttack = heatPaiSvg.querySelector('.heatmap-legend-attack');
+        if (legendDefense) legendDefense.remove();
+        if (legendAttack) legendAttack.remove();
         heatPaiSvg.style.padding = 0;
         heatPaiSvg.style.marginBottom = 0;
         pokemonsDescription.style.marginBottom = 0;

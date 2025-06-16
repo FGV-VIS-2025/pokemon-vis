@@ -34,6 +34,10 @@ function transformDataForHeatMap(data) {
 export function createHeatMapDef(selectedPokemons) {
     d3.select(".svg-chart-2").selectAll("*").remove();
 
+    const heatPaiSvgElement = document.getElementsByClassName("svg-pai-chart-2")[0];
+    const existingLegendDefense = heatPaiSvgElement.querySelector('.heatmap-legend-defense');
+    if (existingLegendDefense) existingLegendDefense.remove();
+
     const heatSvg = document.getElementsByClassName("svg-chart-2")[0];
     const heatPaiSvg = document.getElementsByClassName("svg-pai-chart-2")[0];
 
@@ -83,8 +87,7 @@ export function createHeatMapDef(selectedPokemons) {
         .selectAll("text")
         .style("text-anchor", "center")
         .style("font-size", `${svgWidth / 40}px`)
-        .style("fill", "#ffffff")
-        .style("font-family", "Pixelify Sans, sans-serif");
+        .style("fill", "#ffffff");
 
     // Escala Y (Tipos)
     const y = d3.scaleBand()
@@ -179,4 +182,74 @@ export function createHeatMapDef(selectedPokemons) {
         .style("font-weight", "bold")
         .style("font-family", "Arial, sans-serif")
         .text(d => `${d.value}x`);
+
+    const heatPaiSvgSelection = d3.select(".svg-pai-chart-2");
+
+    const legendContainer = heatPaiSvgSelection
+        .append("div")
+        .attr("class", "heatmap-legend-defense")
+        .style("margin-top", "15px")
+        .style("padding", "15px")
+        .style("background", "rgba(0, 0, 0, 0.8)")
+        .style("border", "1px solid rgb(255, 255, 255)")
+        .style("border-radius", "12px")
+        .style("color", "#ffffff")
+        .style("font-size", "12px")
+        .style("text-align", "center")
+        .style("width", "100%")
+        .style("box-sizing", "border-box");
+
+    legendContainer.append("div")
+        .style("font-weight", "bold")
+        .style("margin-bottom", "12px")
+        .style("text-align", "center")
+        .style("font-size", "14px")
+        .text("Efetividade das Defesas:");
+
+    const legendItems = legendContainer.append("div")
+        .style("display", "flex")
+        .style("justify-content", "space-around")
+        .style("flex-wrap", "wrap")
+        .style("gap", "10px");
+
+    const legendData = [
+        { multiplier: "0x", color: "#2196f3", description: "Imune (Não recebe dano)" },
+        { multiplier: "0.5x", color: "#87ceeb", description: "Resistente (Dano recebido reduzido)" },
+        { multiplier: "1x", color: "#ffffff", description: "Efetividade Normal" },
+        { multiplier: "2x", color: "#ffb3ba", description: "Fraco (Dano recebido aumentado)" },
+        { multiplier: "4x", color: "#f44336", description: "Muito fraco (Dano recebido muito aumentado)" }
+    ];
+
+    legendData.forEach(item => {
+        const legendItem = legendItems.append("div")
+            .style("display", "flex")
+            .style("align-items", "center")
+            .style("gap", "5px")
+            .style("flex-direction", "column")
+            .style("text-align", "center")
+            .style("justify-content", "center");
+
+        legendItem.append("div")
+            .style("width", "15px")
+            .style("height", "15px")
+            .style("background-color", item.color)
+            .style("border", "1px solid #555")
+            .style("border-radius", "3px")
+            .style("margin-bottom", "3px");
+
+        legendItem.append("span")
+            .style("font-size", "10px")
+            .style("line-height", "1.2")
+            .style("text-align", "center")
+            .style("font-weight", "bold")
+            .text(`${item.multiplier}`);
+
+        legendItem.append("span")
+            .style("font-size", "9px")
+            .style("line-height", "1.1")
+            .style("text-align", "center")
+            .style("max-width", "120px")
+            .style("word-wrap", "break-word")
+            .text(item.description);
+    });
 }
