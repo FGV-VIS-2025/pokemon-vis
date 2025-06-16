@@ -329,7 +329,7 @@ function drawScatterPlot(containerSelector, data) {
                         <div><strong>Total de Atributos:</strong> ${d.totalStats}</div>
                     </div>
                     <div style="font-size: 11px; color: #ccc; margin-top: 8px;">
-                        Clique para ver estatísticas detalhadas
+                        Clique para ver atributos detalhados
                     </div>
                 </div>
             `)
@@ -423,7 +423,7 @@ function drawScatterPlot(containerSelector, data) {
  */
 async function renderPokemonStats(pokemonId) {
     if (!pokemonStatsData || !statsData) {
-        console.warn("Dados de estatísticas não carregados.");
+        console.warn("Dados de atributos não carregados.");
         return;
     }
 
@@ -514,7 +514,7 @@ async function renderPokemonStats(pokemonId) {
         // Atualizar título do container do radar
         const radarTitle = document.querySelector('#location-radar-container h2');
         if (radarTitle) {
-            radarTitle.textContent = `Estatísticas de ${pokemonName}`;
+            radarTitle.textContent = `Atributos de ${pokemonName}`;
         }
 
         // Mostrar botão de limpar seleção do radar
@@ -534,7 +534,7 @@ async function renderPokemonStats(pokemonId) {
         }
 
     } catch (error) {
-        console.error("Erro ao renderizar estatísticas do pokémon:", error);
+        console.error("Erro ao renderizar atributos do pokémon:", error);
     }
 }
 
@@ -573,13 +573,13 @@ async function clearPokemonStats() {
         try {
             await renderStatRadarChart(currentLocationId);
         } catch (error) {
-            console.error("Erro ao carregar estatísticas médias:", error);
+            console.error("Erro ao carregar atributos médias:", error);
         }
 
         // Restaurar título original
         const radarTitle = document.querySelector('#location-radar-container h2');
         if (radarTitle) {
-            radarTitle.textContent = "Estatísticas Médias dos Pokémons";
+            radarTitle.textContent = "Atributos Médios dos Pokémons";
         }
 
         // Ocultar botão de limpar seleção do radar
