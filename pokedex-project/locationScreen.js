@@ -201,14 +201,14 @@ export async function renderStatRadarChart(locationId) {
         const options = locationMaxStatValue ? { maxValue: locationMaxStatValue, showTitle: false } : { showTitle: false };
         renderRadarChart(
             "#radar-chart-location",
-            "Estatísticas Médias dos Pokémons",
+            "Atributos Médios dos Pokémons",
             statsArray,
             radarColor,
             options // Passar o valor máximo calculado se disponível
         );
 
     } catch (error) {
-        console.error("Erro ao calcular Estatísticas Médias dos Pokémons:", error);
+        console.error("Erro ao calcular Atributos Médios dos Pokémons:", error);
     }
 }
 
@@ -579,7 +579,7 @@ function createChartContainer() {
 
     // Título do container de scatter plot
     const scatterTitle = document.createElement('h2');
-    scatterTitle.textContent = "Tamanho e Stats Totais dos Pokémons";
+    scatterTitle.textContent = "Tamanho e Atributos Totais dos Pokémons";
     scatterTitle.style.color = 'white';
     scatterTitle.style.marginBottom = '5px';
     scatterTitle.style.marginTop = '0px';
@@ -688,7 +688,7 @@ function createChartContainer() {
 
     // Título do container de radar chart
     const title = document.createElement('h2');
-    title.textContent = "Estatísticas Médias dos Pokémons";
+    title.textContent = "Atributos Médias dos Pokémons";
     title.style.color = 'white';
     title.style.marginBottom = '5px';
     title.style.marginTop = '0px';
@@ -878,7 +878,7 @@ function setupStrongestPokemonInteraction(cardElement, pokemonData, totalStats) 
                     <div><strong>Total de Atributos:</strong> ${totalStats}</div>
                 </div>
                 <div style="font-size: 11px; color: #ccc; margin-top: 8px;">
-                    Clique para ver estatísticas detalhadas
+                    Clique para ver atributos detalhados
                 </div>
             </div>
         `;
@@ -940,7 +940,7 @@ function setupStrongestPokemonInteraction(cardElement, pokemonData, totalStats) 
 // Função para renderizar estatísticas do pokémon mais forte no radar
 async function renderStrongestPokemonStats(pokemonId, pokemonName) {
     if (!pokemonStatsData || !statsData) {
-        console.warn("Dados de estatísticas não carregados.");
+        console.warn("Dados de atributos não carregados.");
         return;
     }
 
@@ -1024,7 +1024,7 @@ async function renderStrongestPokemonStats(pokemonId, pokemonName) {
         // Atualizar título do container do radar
         const radarTitle = document.querySelector('#location-radar-container h2');
         if (radarTitle) {
-            radarTitle.textContent = `Estatísticas de ${formattedPokemonName}`;
+            radarTitle.textContent = `Atributos de ${formattedPokemonName}`;
         }
 
         // Mostrar botão de limpar seleção do radar se não existir
@@ -1045,7 +1045,7 @@ async function renderStrongestPokemonStats(pokemonId, pokemonName) {
         }
 
     } catch (error) {
-        console.error("Erro ao renderizar estatísticas do pokémon mais forte:", error);
+        console.error("Erro ao renderizar atributos do pokémon mais forte:", error);
     }
 }
 
@@ -1115,13 +1115,13 @@ function createClearRadarButton() {
             try {
                 await renderStatRadarChart(currentLocationId);
             } catch (error) {
-                console.error("Erro ao carregar estatísticas médias:", error);
+                console.error("Erro ao carregar atributos médias:", error);
             }
 
             // Restaurar título original
             const radarTitle = document.querySelector('#location-radar-container h2');
             if (radarTitle) {
-                radarTitle.textContent = "Estatísticas Médias dos Pokémons";
+                radarTitle.textContent = "Atributos Médios dos Pokémons";
             }
 
             // Ocultar botão de limpar seleção do radar
