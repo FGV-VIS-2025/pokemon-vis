@@ -285,6 +285,31 @@ export const tipoTraduzido = {
     fairy: "Fairy"
 };
 
+export const tipoPtEn = {
+  "Normal": "Normal",
+  "Lutador": "Fighting",
+  "Voador": "Flying",
+  "Venenoso": "Poison",
+  "Terrestre": "Ground",
+  "Pedra": "Rock",
+  "Inseto": "Bug",
+  "Fantasma": "Ghost",
+  "Aço": "Steel",
+  "Fogo": "Fire",
+  "Água": "Water",
+  "Grama": "Grass",
+  "Elétrico": "Electric",
+  "Psíquico": "Psychic",
+  "Gelo": "Ice",
+  "Dragão": "Dragon",
+  "Sombrio": "Dark",
+  "Fada": "Fairy",
+  "Estelar": "Stellar",
+  "Desconhecido": "Unknown",
+  "Sombra": "Shadow"
+};
+
+
 export const shape_id_to_name = {
     1: "Ball",
     2: "Squiggle",

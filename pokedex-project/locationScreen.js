@@ -688,7 +688,7 @@ function createChartContainer() {
 
     // Título do container de radar chart
     const title = document.createElement('h2');
-    title.textContent = "Atributos Médias dos Pokémons";
+    title.textContent = "Atributos Médios dos Pokémons";
     title.style.color = 'white';
     title.style.marginBottom = '5px';
     title.style.marginTop = '0px';

@@ -1,4 +1,4 @@
-import { tipoTraduzido } from "./consts.js";
+import { tipoPtEn, tipoTraduzido } from "./consts.js";
 
 export async function createKnnDiagram(selectedPokemons) {
     const knnDiv = document.getElementsByClassName("knn")[0];
@@ -71,7 +71,7 @@ export async function createKnnDiagram(selectedPokemons) {
 
         pokemonDiv.addEventListener("mouseover", (event) => {
             const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
-            const tipos = pokemon.types.map(type => tipoTraduzido[type.type_name] || type.type_name).join(", ");
+            const tipos = pokemon.types.map(type => traduzirTipoParaEn(tipoTraduzido[type.type_name] || type.type_name)).join(", ");
             const altura = pokemon.height / 10;
             const peso = pokemon.weight / 10;
             const lendario = pokemon.is_legendary === 0 ? "Não" : "Sim";
@@ -88,7 +88,7 @@ export async function createKnnDiagram(selectedPokemons) {
 
         pokemonDiv.addEventListener("mousemove", (event) => {
             const genus = pokemon.genus ? pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
-            const tipos = pokemon.types.map(type => tipoTraduzido[type.type_name] || type.type_name).join(", ");
+            const tipos = pokemon.types.map(type => traduzirTipoParaEn(tipoTraduzido[type.type_name] || type.type_name)).join(", ");
             const altura = pokemon.height / 10;
             const peso = pokemon.weight / 10;
             const lendario = pokemon.is_legendary === 0 ? "Não" : "Sim";
@@ -138,8 +138,8 @@ export async function createKnnDiagram(selectedPokemons) {
 
             comparasionPokemon.addEventListener("mouseover", (event) => {
                 const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
-                const tipo1 = knnData[j].pokemon.type_1;
-                const tipo2 = knnData[j].pokemon.type_2;
+                const tipo1 = traduzirTipoParaEn(knnData[j].pokemon.type_1);
+                const tipo2 = traduzirTipoParaEn(knnData[j].pokemon.type_2);
                 const tipos = [tipo1, tipo2].filter(t => t && t !== "").join(", ");
                 const altura = knnData[j].pokemon.height / 10;
                 const peso = knnData[j].pokemon.weight / 10;
@@ -157,8 +157,8 @@ export async function createKnnDiagram(selectedPokemons) {
 
             comparasionPokemon.addEventListener("mousemove", (event) => {
                 const genus = knnData[j].pokemon.genus ? knnData[j].pokemon.genus.split(" Pokémon")[0] : "Desconhecido";
-                const tipo1 = knnData[j].pokemon.type_1;
-                const tipo2 = knnData[j].pokemon.type_2;
+                const tipo1 = traduzirTipoParaEn(knnData[j].pokemon.type_1);
+                const tipo2 = traduzirTipoParaEn(knnData[j].pokemon.type_2);
                 const tipos = [tipo1, tipo2].filter(t => t && t !== "").join(", ");
                 const altura = knnData[j].pokemon.height / 10;
                 const peso = knnData[j].pokemon.weight / 10;
@@ -315,4 +315,9 @@ async function getKnnData(pokemon) {
     } catch (err) {
         console.error("Erro em getKnnData:", err);
     }
+}
+
+// Função utilitária para traduzir tipo PT->EN
+export function traduzirTipoParaEn(tipo) {
+    return tipoPtEn[tipo] || tipo;
 }
