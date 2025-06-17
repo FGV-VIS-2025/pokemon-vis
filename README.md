@@ -4,6 +4,14 @@
 
 https://fgv-vis-2025.github.io/pokemon-vis/
 
+# Link do vídeo de apresentação
+
+https://drive.google.com/file/d/1fv6Xh9i2tMI0iRmE_sdLiVBsy90AUSnV/view?usp=sharing
+
+# Link do vídeo teaser
+
+https://drive.google.com/file/d/1dGBCXEYTBJR4omUht2bd4NSQstEeeH-m/view?usp=sharing
+
 ### **Equipe:**  
 > - Alessandra Belló Soares – alessandrabellosoares@gmail.com – @AlessandraBello  
 > - Matheus Fillype Ferreira de Carvalho – matheuscarvalho210404@outlook.com – @MatCarvalho21  
